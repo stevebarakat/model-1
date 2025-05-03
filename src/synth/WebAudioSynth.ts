@@ -1,302 +1,45 @@
-import Tuna from "tunajs";
-
-// Types
-export type Note = string;
-export type OscillatorType = "sine" | "square" | "sawtooth" | "triangle";
-type NoteData = {
-  oscillators: OscillatorNode[];
-  oscillatorGains: GainNode[];
-  gainNode: GainNode;
-  filterNode: BiquadFilterNode;
-  noiseNode?: AudioNode;
-  noiseGain?: GainNode;
-  lfo: OscillatorNode;
-  lfoGain: GainNode;
-  filterEnvelope: GainNode;
-  filterModGain: GainNode;
-};
-
-export type OscillatorSettings = {
-  type: OscillatorType;
-  frequency: number;
-  range: "32" | "16" | "8" | "4" | "2";
-  volume: number;
-  detune: number;
-};
-
-type NoiseGenerator = {
-  node: AudioNode;
-  start: () => void;
-  stop: () => void;
-  type: "white" | "pink";
-};
-
-export type SynthSettings = {
-  tune: number;
-  glide: number;
-  modMix: number;
-  oscillators: {
-    type: OscillatorType;
-    frequency: number;
-    range: "32" | "16" | "8" | "4" | "2";
-    volume: number;
-    detune: number;
-  }[];
-  noise: {
-    type: "white" | "pink";
-    volume: number;
-  };
-  filter: {
-    cutoff: number;
-    resonance: number;
-    contourAmount: number;
-  };
-  envelope: {
-    attack: number;
-    decay: number;
-    sustain: number;
-    release: number;
-  };
-  lfo: {
-    rate: number;
-    depth: number;
-  };
-  reverb: {
-    amount: number;
-  };
-  distortion: {
-    outputGain: number;
-  };
-  delay: {
-    amount: number;
-  };
-};
-
-// Constants
-const MASTER_VOLUME = 0.3;
-
-// Note to frequency mapping
-const NOTE_FREQUENCIES: Record<string, number> = {
-  C: 261.63,
-  "C#": 277.18,
-  D: 293.66,
-  "D#": 311.13,
-  E: 329.63,
-  F: 349.23,
-  "F#": 369.99,
-  G: 392.0,
-  "G#": 415.3,
-  A: 440.0,
-  "A#": 466.16,
-  B: 493.88,
-};
-
-// Pure functions
-const noteToFrequency = (note: Note, tune: number = 0): number => {
-  const noteName = note.slice(0, -1);
-  const octave = parseInt(note.slice(-1));
-  const baseFrequency = NOTE_FREQUENCIES[noteName];
-  return baseFrequency * Math.pow(2, octave - 4 + tune / 12);
-};
-
-const getRangeMultiplier = (range: string): number => {
-  const rangeMap: Record<string, number> = {
-    "32": 0.125,
-    "16": 0.25,
-    "8": 0.5,
-    "4": 1,
-    "2": 2,
-  };
-  return rangeMap[range] || 1;
-};
-
-const createOscillator = (
-  context: AudioContext,
-  settings: OscillatorSettings,
-  baseFrequency: number
-): OscillatorNode => {
-  const oscillator = context.createOscillator();
-  oscillator.type = settings.type;
-  const rangeMultiplier = getRangeMultiplier(settings.range);
-  const frequencyOffset = Math.pow(2, settings.frequency / 12);
-  const finalFrequency = baseFrequency * rangeMultiplier * frequencyOffset;
-  oscillator.frequency.value = finalFrequency;
-  oscillator.detune.value = settings.detune;
-  return oscillator;
-};
-
-const createNoiseGenerator = (
-  context: AudioContext,
-  type: "white" | "pink"
-): NoiseGenerator => {
-  if (type === "white") {
-    const bufferSize = 2 * context.sampleRate;
-    const noiseBuffer = context.createBuffer(1, bufferSize, context.sampleRate);
-    const output = noiseBuffer.getChannelData(0);
-    for (let i = 0; i < bufferSize; i++) {
-      output[i] = Math.random() * 2 - 1;
-    }
-
-    const whiteNoise = context.createBufferSource();
-    whiteNoise.buffer = noiseBuffer;
-    whiteNoise.loop = true;
-
-    return {
-      node: whiteNoise,
-      start: () => whiteNoise.start(),
-      stop: () => whiteNoise.stop(),
-      type,
-    };
-  } else {
-    // Pink noise implementation using AudioWorklet
-    const bufferSize = 4096;
-    const node = new AudioWorkletNode(context, "pink-noise-processor", {
-      numberOfInputs: 0,
-      numberOfOutputs: 1,
-      outputChannelCount: [1],
-      processorOptions: {
-        bufferSize,
-      },
-    });
-
-    return {
-      node,
-      start: () => {},
-      stop: () => {},
-      type,
-    };
-  }
-};
-
-const createGainNode = (context: AudioContext, volume: number): GainNode => {
-  const gainNode = context.createGain();
-  gainNode.gain.value = volume;
-  return gainNode;
-};
-
-// Add these types at the top with other types
-type NoteState = {
-  isPlaying: boolean;
-  isReleased: boolean;
-  startTime: number;
-  releaseTime: number | null;
-};
+import { Note, NoteData, NoteState, SynthSettings } from "./types";
+import { noteToFrequency, getRangeMultiplier } from "./utils/frequency";
+import {
+  createOscillator,
+  createNoiseGenerator,
+  createGainNode,
+} from "./audio/nodes";
+import { setupEffects } from "./audio/effects";
 
 // Factory function to create a synth
-export const createSynth = async () => {
+export async function createSynth() {
   const context = new AudioContext();
-
-  // Load the pink noise worklet
   await context.audioWorklet.addModule("pink-noise-processor.js");
 
-  const masterGain = createGainNode(context, MASTER_VOLUME);
-
-  // Create delay nodes
-  const delayNode = context.createDelay(1.0); // Max 1 second delay
-  delayNode.delayTime.value = 0.3; // Fixed 300ms delay
-  const delayGain = context.createGain();
-  delayGain.gain.value = 0; // Start with no delay
-  const delayFeedback = context.createGain();
-  delayFeedback.gain.value = 0.6; // Increased feedback to 60%
-
-  // Create reverb nodes
-  const reverbNode = context.createConvolver();
-  const reverbGain = context.createGain();
-  reverbGain.gain.value = 0;
-
-  // Create impulse response for reverb with fixed time
-  const sampleRate = context.sampleRate;
-  const length = sampleRate * 1.5; // Fixed 1.5 second reverb
-  const impulse = context.createBuffer(2, length, sampleRate);
-  const leftChannel = impulse.getChannelData(0);
-  const rightChannel = impulse.getChannelData(1);
-
-  // Generate impulse response
-  for (let i = 0; i < length; i++) {
-    const decay = Math.exp((-3 * i) / length);
-    leftChannel[i] = (Math.random() * 2 - 1) * decay;
-    rightChannel[i] = (Math.random() * 2 - 1) * decay;
-  }
-
-  reverbNode.buffer = impulse;
-
-  // Create distortion node using the same context
-  const tuna = new Tuna(context);
-  const distortion = new tuna.Overdrive({
-    outputGain: 0.5,
-    drive: 0.7,
-    curveAmount: 1,
-    algorithmIndex: 0,
-    bypass: 0,
-  });
-
-  // Create compressor to prevent distortion from getting too loud
-  const compressor = context.createDynamicsCompressor();
-  compressor.threshold.value = -24; // Start limiting at -24dB
-  compressor.knee.value = 12; // Smooth transition into limiting
-  compressor.ratio.value = 12; // Strong limiting
-  compressor.attack.value = 0.003; // Fast attack
-  compressor.release.value = 0.25; // Quick release
-
-  // Create gain nodes for wet/dry mix
-  const dryGain = context.createGain();
-  const wetGain = context.createGain();
-  dryGain.gain.value = 1; // Start with full dry signal
-  wetGain.gain.value = 0; // Start with no wet signal
-
-  // Connect nodes in the correct order
-  masterGain.connect(dryGain);
-  masterGain.connect(distortion);
-  distortion.connect(compressor);
-  compressor.connect(wetGain);
-
-  // Connect delay
-  masterGain.connect(delayNode);
-  delayNode.connect(delayFeedback);
-  delayFeedback.connect(delayNode); // Feedback loop
-  delayNode.connect(delayGain);
-
-  // Mix the dry and wet signals
-  dryGain.connect(reverbNode);
-  wetGain.connect(reverbNode);
-  delayGain.connect(reverbNode);
-
-  reverbNode.connect(reverbGain);
-  reverbGain.connect(context.destination);
-
-  // Also connect dry and wet directly to output
-  dryGain.connect(context.destination);
-  wetGain.connect(context.destination);
-  delayGain.connect(context.destination);
+  const { masterGain, delayGain, reverbGain, dryGain, wetGain } =
+    setupEffects(context);
 
   const activeNotes = new Map<Note, NoteData>();
-  let lastFrequency = 440; // Default to A4
-
-  // Add this after the activeNotes declaration
   const noteStates = new Map<Note, NoteState>();
+  let lastFrequency = 440;
 
-  // Synth settings
   let settings: SynthSettings = {
     tune: 0,
     glide: 0,
     modMix: 0,
     oscillators: [
       {
-        type: "triangle" as OscillatorType,
+        type: "triangle",
         frequency: 0,
         range: "8",
         volume: 0.7,
         detune: 0,
       },
       {
-        type: "triangle" as OscillatorType,
+        type: "triangle",
         frequency: 0,
         range: "8",
         volume: 0.7,
         detune: 0,
       },
       {
-        type: "triangle" as OscillatorType,
+        type: "triangle",
         frequency: 0,
         range: "8",
         volume: 0.7,
@@ -304,7 +47,7 @@ export const createSynth = async () => {
       },
     ],
     noise: {
-      type: "white" as "white" | "pink",
+      type: "white",
       volume: 0,
     },
     filter: {
@@ -333,41 +76,33 @@ export const createSynth = async () => {
     },
   };
 
-  const updateSettings = (newSettings: Partial<typeof settings>) => {
+  function updateSettings(newSettings: Partial<typeof settings>) {
     settings = { ...settings, ...newSettings };
 
-    // Update distortion settings
     if (newSettings.distortion) {
       if (newSettings.distortion.outputGain !== undefined) {
         const mix = newSettings.distortion.outputGain / 100;
-        // Convert linear mix to logarithmic scale
-        // This gives more precise control in the lower ranges
-        const logMix = Math.pow(mix, 2); // Square the mix value for a gentle curve
+        const logMix = Math.pow(mix, 2);
         dryGain.gain.value = 1 - logMix;
         wetGain.gain.value = logMix;
       }
     }
 
-    // Update reverb settings
     if (newSettings.reverb) {
       reverbGain.gain.value = newSettings.reverb.amount / 100;
     }
 
-    // Update delay settings
     if (newSettings.delay) {
       delayGain.gain.value = newSettings.delay.amount / 100;
     }
 
-    // Update active notes with new settings
     activeNotes.forEach((noteData, note) => {
       const baseFrequency = noteToFrequency(note, settings.tune);
 
-      // Update oscillator settings
       noteData.oscillators.forEach((osc, index) => {
         if (index < settings.oscillators.length) {
           const oscSettings = settings.oscillators[index];
 
-          // If volume is 0 and oscillator exists, disconnect and remove it
           if (oscSettings.volume === 0 && osc) {
             osc.stop();
             osc.disconnect();
@@ -376,9 +111,7 @@ export const createSynth = async () => {
             }
             noteData.oscillators[index] = null as unknown as OscillatorNode;
             noteData.oscillatorGains[index] = null as unknown as GainNode;
-          }
-          // If volume is > 0 and oscillator doesn't exist, create it
-          else if (oscSettings.volume > 0 && !osc) {
+          } else if (oscSettings.volume > 0 && !osc) {
             const newOsc = createOscillator(
               context,
               oscSettings,
@@ -390,22 +123,15 @@ export const createSynth = async () => {
             newOsc.start();
             noteData.oscillators[index] = newOsc;
             noteData.oscillatorGains[index] = newGain;
-          }
-          // If oscillator exists and volume > 0, update its settings
-          else if (osc && oscSettings.volume > 0) {
+          } else if (osc && oscSettings.volume > 0) {
             osc.type = oscSettings.type;
-
-            // Calculate new frequency based on base note, range, and frequency offset
             const rangeMultiplier = getRangeMultiplier(oscSettings.range);
             const frequencyOffset = Math.pow(2, oscSettings.frequency / 12);
             const newFrequency =
               baseFrequency * rangeMultiplier * frequencyOffset;
-
-            // Apply the new frequency immediately
             osc.frequency.value = newFrequency;
             osc.detune.value = oscSettings.detune;
 
-            // Update the gain node for this oscillator
             if (noteData.oscillatorGains[index]) {
               noteData.oscillatorGains[index].gain.value = oscSettings.volume;
             }
@@ -413,13 +139,11 @@ export const createSynth = async () => {
         }
       });
 
-      // Update filter
       if (noteData.filterNode) {
         noteData.filterNode.frequency.value = settings.filter.cutoff;
         noteData.filterNode.Q.value = settings.filter.resonance * 30;
       }
 
-      // Update noise settings
       if (settings.noise.volume > 0) {
         if (!noteData.noiseNode) {
           const noise = createNoiseGenerator(context, settings.noise.type);
@@ -441,12 +165,11 @@ export const createSynth = async () => {
         noteData.noiseGain = undefined;
       }
     });
-  };
+  }
 
-  const triggerAttack = (note: Note) => {
+  function triggerAttack(note: Note) {
     const now = context.currentTime;
 
-    // Update note state
     noteStates.set(note, {
       isPlaying: true,
       isReleased: false,
@@ -454,11 +177,9 @@ export const createSynth = async () => {
       releaseTime: null,
     });
 
-    // Force cleanup of any existing note
     if (activeNotes.has(note)) {
       const existingNote = activeNotes.get(note);
       if (existingNote) {
-        // Force immediate stop of all oscillators
         existingNote.oscillators.forEach((osc) => {
           if (osc) {
             try {
@@ -470,7 +191,6 @@ export const createSynth = async () => {
           }
         });
 
-        // Force immediate stop of all gain nodes
         try {
           existingNote.gainNode.gain.cancelScheduledValues(now);
           existingNote.gainNode.gain.setValueAtTime(0, now);
@@ -479,14 +199,12 @@ export const createSynth = async () => {
           console.warn("Error stopping gain node:", e);
         }
 
-        // Force immediate stop of filter
         try {
           existingNote.filterNode.disconnect();
         } catch (e) {
           console.warn("Error stopping filter:", e);
         }
 
-        // Force immediate stop of noise
         if (existingNote.noiseNode) {
           try {
             existingNote.noiseNode.disconnect();
@@ -502,7 +220,6 @@ export const createSynth = async () => {
           }
         }
 
-        // Force immediate stop of LFO
         try {
           existingNote.lfo.stop();
           existingNote.lfoGain.disconnect();
@@ -510,7 +227,6 @@ export const createSynth = async () => {
           console.warn("Error stopping LFO:", e);
         }
 
-        // Force immediate stop of filter envelope
         try {
           existingNote.filterEnvelope.disconnect();
           existingNote.filterModGain.disconnect();
@@ -522,7 +238,6 @@ export const createSynth = async () => {
       }
     }
 
-    // Check if any oscillator has non-zero volume
     const hasActiveOscillators = settings.oscillators.some(
       (osc) => osc.volume > 0
     );
@@ -533,12 +248,10 @@ export const createSynth = async () => {
     const filter = context.createBiquadFilter();
     filter.type = "lowpass";
 
-    // Scale the cutoff frequency to be more musical (20Hz to 20kHz)
     const baseCutoff = Math.min(Math.max(settings.filter.cutoff, 20), 20000);
     filter.frequency.value = baseCutoff;
     filter.Q.value = settings.filter.resonance * 30;
 
-    // Add LFO
     const lfo = context.createOscillator();
     lfo.type = "sine";
     lfo.frequency.value = settings.lfo.rate;
@@ -553,7 +266,6 @@ export const createSynth = async () => {
     }
     lfo.start();
 
-    // Add contour modulation
     const filterEnvelope = createGainNode(context, 0);
     const filterModGain = createGainNode(
       context,
@@ -652,9 +364,9 @@ export const createSynth = async () => {
       filterEnvelope,
       filterModGain,
     });
-  };
+  }
 
-  const triggerRelease = (note: Note) => {
+  function triggerRelease(note: Note) {
     const noteData = activeNotes.get(note);
     const noteState = noteStates.get(note);
 
@@ -664,15 +376,12 @@ export const createSynth = async () => {
     noteState.isReleased = true;
     noteState.releaseTime = now;
 
-    // Cancel all scheduled values
     noteData.gainNode.gain.cancelScheduledValues(now);
     noteData.filterEnvelope.gain.cancelScheduledValues(now);
 
-    // Get current values
     const currentGain = noteData.gainNode.gain.value;
     const currentFilterGain = noteData.filterEnvelope.gain.value;
 
-    // Immediate release
     noteData.gainNode.gain.setValueAtTime(currentGain, now);
     noteData.gainNode.gain.exponentialRampToValueAtTime(0.001, now + 0.01);
 
@@ -682,17 +391,14 @@ export const createSynth = async () => {
       now + 0.01
     );
 
-    // Stop LFO immediately
     noteData.lfo.stop();
     noteData.lfoGain.disconnect();
 
-    // Schedule immediate cleanup
     setTimeout(() => {
       const currentState = noteStates.get(note);
       if (!currentState || !currentState.isReleased) return;
 
       if (activeNotes.has(note)) {
-        // Force stop all oscillators
         noteData.oscillators.forEach((osc) => {
           if (osc) {
             try {
@@ -704,21 +410,18 @@ export const createSynth = async () => {
           }
         });
 
-        // Force stop all gain nodes
         try {
           noteData.gainNode.disconnect();
         } catch (e) {
           console.warn("Error stopping gain node:", e);
         }
 
-        // Force stop filter
         try {
           noteData.filterNode.disconnect();
         } catch (e) {
           console.warn("Error stopping filter:", e);
         }
 
-        // Force stop noise
         if (noteData.noiseNode) {
           try {
             noteData.noiseNode.disconnect();
@@ -734,7 +437,6 @@ export const createSynth = async () => {
           }
         }
 
-        // Force stop filter envelope
         try {
           noteData.filterEnvelope.disconnect();
           noteData.filterModGain.disconnect();
@@ -746,16 +448,14 @@ export const createSynth = async () => {
         noteStates.delete(note);
       }
     }, 20);
-  };
+  }
 
-  // Add a function to handle note transitions with glide
-  const handleNoteTransition = (fromNote: Note | null, toNote: Note) => {
+  function handleNoteTransition(fromNote: Note | null, toNote: Note) {
     const toFrequency = noteToFrequency(toNote, settings.tune);
     const now = context.currentTime;
-    const glideTime = settings.glide * 0.5; // Scale glide time (0-1 to 0-0.5 seconds)
+    const glideTime = settings.glide * 0.5;
 
     if (fromNote && settings.glide > 0) {
-      // If there's a previous note and glide is enabled, smoothly transition frequencies
       const fromNoteData = activeNotes.get(fromNote);
       if (fromNoteData) {
         fromNoteData.oscillators.forEach((osc, index) => {
@@ -768,16 +468,15 @@ export const createSynth = async () => {
       }
     }
 
-    // Trigger the new note
     triggerAttack(toNote);
-  };
+  }
 
-  const dispose = () => {
+  function dispose() {
     activeNotes.forEach((_, note) => triggerRelease(note));
     noteStates.clear();
     masterGain.disconnect();
     context.close();
-  };
+  }
 
   return {
     triggerAttack,
@@ -786,7 +485,7 @@ export const createSynth = async () => {
     dispose,
     handleNoteTransition,
   };
-};
+}
 
 // Remove the synchronous usage since createSynth is async
 // const synth = createSynth();
