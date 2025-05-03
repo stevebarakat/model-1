@@ -41,6 +41,7 @@ export type NoiseGenerator = {
 export type SynthSettings = {
   tune: number;
   modMix: number;
+  glide: number;
   oscillators: OscillatorSettings[];
   noise: {
     type: NoiseType;

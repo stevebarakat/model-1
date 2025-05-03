@@ -21,23 +21,24 @@ export async function createSynth() {
   let settings: SynthSettings = {
     tune: 0,
     modMix: 0,
+    glide: 0,
     oscillators: [
       {
-        type: "triangle",
+        waveform: "triangle",
         frequency: 0,
         range: "8",
         volume: 0.7,
         detune: 0,
       },
       {
-        type: "triangle",
+        waveform: "triangle",
         frequency: 0,
         range: "8",
         volume: 0.7,
         detune: 0,
       },
       {
-        type: "triangle",
+        waveform: "triangle",
         frequency: 0,
         range: "8",
         volume: 0.7,
@@ -100,8 +101,9 @@ export async function createSynth() {
       noteData.oscillators.forEach((osc, index) => {
         if (index < settings.oscillators.length) {
           const oscSettings = settings.oscillators[index];
+          const volume = oscSettings.volume ?? 0;
 
-          if (oscSettings.volume === 0 && osc) {
+          if (volume === 0 && osc) {
             osc.stop();
             osc.disconnect();
             if (noteData.oscillatorGains[index]) {
@@ -109,29 +111,29 @@ export async function createSynth() {
             }
             noteData.oscillators[index] = null as unknown as OscillatorNode;
             noteData.oscillatorGains[index] = null as unknown as GainNode;
-          } else if (oscSettings.volume > 0 && !osc) {
+          } else if (volume > 0 && !osc) {
             const newOsc = createOscillator(
               context,
               oscSettings,
               baseFrequency
             );
-            const newGain = createGainNode(context, oscSettings.volume);
+            const newGain = createGainNode(context, volume);
             newOsc.connect(newGain);
             newGain.connect(noteData.gainNode);
             newOsc.start();
             noteData.oscillators[index] = newOsc;
             noteData.oscillatorGains[index] = newGain;
-          } else if (osc && oscSettings.volume > 0) {
-            osc.type = oscSettings.type;
+          } else if (osc && volume > 0) {
+            osc.type = oscSettings.waveform;
             const rangeMultiplier = getRangeMultiplier(oscSettings.range);
             const frequencyOffset = Math.pow(2, oscSettings.frequency / 12);
             const newFrequency =
               baseFrequency * rangeMultiplier * frequencyOffset;
             osc.frequency.value = newFrequency;
-            osc.detune.value = oscSettings.detune;
+            osc.detune.value = oscSettings.detune ?? 0;
 
             if (noteData.oscillatorGains[index]) {
-              noteData.oscillatorGains[index].gain.value = oscSettings.volume;
+              noteData.oscillatorGains[index].gain.value = volume;
             }
           }
         }
@@ -174,6 +176,12 @@ export async function createSynth() {
       startTime: now,
       releaseTime: null,
     });
+
+    // Find the last active note for glide before cleaning up
+    const lastActiveNote = Array.from(activeNotes.keys())[0];
+    const lastFrequency = lastActiveNote
+      ? noteToFrequency(lastActiveNote, settings.tune)
+      : null;
 
     if (activeNotes.has(note)) {
       const existingNote = activeNotes.get(note);
@@ -237,7 +245,7 @@ export async function createSynth() {
     }
 
     const hasActiveOscillators = settings.oscillators.some(
-      (osc) => osc.volume > 0
+      (osc) => (osc.volume ?? 0) > 0
     );
     if (!hasActiveOscillators) return;
 
@@ -284,12 +292,42 @@ export async function createSynth() {
     const startTime = now;
 
     settings.oscillators.forEach((oscSettings) => {
-      if (oscSettings.volume > 0) {
-        const osc = createOscillator(context, oscSettings, targetFrequency);
-        const gainNode = createGainNode(context, oscSettings.volume);
+      const volume = oscSettings.volume ?? 0;
+      if (volume > 0) {
+        // Calculate the starting frequency based on glide
+        const rangeMultiplier = getRangeMultiplier(oscSettings.range);
+        const frequencyOffset = Math.pow(2, oscSettings.frequency / 12);
+        const finalFrequency =
+          targetFrequency * rangeMultiplier * frequencyOffset;
+
+        // If glide is enabled and we have a previous note, start from its frequency
+        const startFrequency =
+          settings.glide > 0 && lastFrequency
+            ? lastFrequency * rangeMultiplier * frequencyOffset
+            : finalFrequency;
+
+        const osc = createOscillator(
+          context,
+          {
+            ...oscSettings,
+            type: oscSettings.waveform,
+          },
+          startFrequency
+        );
+
+        const gainNode = createGainNode(context, volume);
         osc.connect(gainNode);
         gainNode.connect(noteGain);
         osc.start(startTime);
+
+        // Apply glide if enabled
+        if (settings.glide > 0 && lastFrequency) {
+          const glideTime = settings.glide * 0.5; // Scale glide time (0-1 to 0-0.5 seconds)
+          osc.frequency.linearRampToValueAtTime(
+            finalFrequency,
+            startTime + glideTime
+          );
+        }
 
         oscillators.push(osc);
         oscillatorGains.push(gainNode);

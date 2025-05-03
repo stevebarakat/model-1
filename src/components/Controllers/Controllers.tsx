@@ -5,15 +5,19 @@ import styles from "./Controllers.module.css";
 type ControllersProps = {
   tune: number;
   modMix: number;
+  glide: number;
   onTuneChange: (value: number) => void;
   onModMixChange: (value: number) => void;
+  onGlideChange: (value: number) => void;
 };
 
 const Controllers: React.FC<ControllersProps> = ({
   tune,
   modMix,
+  glide,
   onTuneChange,
   onModMixChange,
+  onGlideChange,
 }) => {
   return (
     <div className="box">
@@ -35,6 +39,14 @@ const Controllers: React.FC<ControllersProps> = ({
             step={0.01}
             label="MOD MIX"
             onChange={onModMixChange}
+          />
+          <Knob
+            value={glide}
+            min={0}
+            max={1}
+            step={0.01}
+            label="GLIDE"
+            onChange={onGlideChange}
           />
         </div>
         <span className="section-title">Control</span>
