@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import { createSynth, type OscillatorType } from "./synth/WebAudioSynth";
+import { createSynth } from "./synth/WebAudioSynth";
 import Keyboard from "./components/Keyboard";
 import Controllers from "./components/Controllers/Controllers";
 import OscillatorBank from "./components/OscillatorBank/OscillatorBank";
@@ -9,7 +9,7 @@ import ModWheel from "./components/ModWheel/ModWheel";
 import Reverb from "./components/Effects/Reverb";
 import Distortion from "./components/Effects/Distortion";
 import Delay from "./components/Effects/Delay";
-import { Plus, Minus } from "lucide-react";
+import OctaveControls from "./components/OctaveControls/OctaveControls";
 import styles from "./styles/App.module.css";
 import "./styles/variables.css";
 
@@ -83,25 +83,24 @@ function App() {
   // Add octave state
   const [currentOctave, setCurrentOctave] = useState(4);
 
-  // Base keyboard mapping (without octave)
-  const baseKeyboardMap: { [key: string]: string } = {
-    a: "C",
-    w: "C#",
-    s: "D",
-    e: "D#",
-    d: "E",
-    f: "F",
-    t: "F#",
-    g: "G",
-    y: "G#",
-    h: "A",
-    u: "A#",
-    j: "B",
-    k: "C+1", // Special marker for next octave
-  };
-
   // Add keyboard event listeners
   useEffect(() => {
+    // Base keyboard mapping (without octave)
+    const baseKeyboardMap: { [key: string]: string } = {
+      a: "C",
+      w: "C#",
+      s: "D",
+      e: "D#",
+      d: "E",
+      f: "F",
+      t: "F#",
+      g: "G",
+      y: "G#",
+      h: "A",
+      u: "A#",
+      j: "B",
+      k: "C+1", // Special marker for next octave
+    };
     const handleKeyboardDown = (e: KeyboardEvent) => {
       if (!e.key) return;
 
@@ -151,7 +150,7 @@ function App() {
       window.removeEventListener("keydown", handleKeyboardDown);
       window.removeEventListener("keyup", handleKeyboardUp);
     };
-  }, [currentOctave, activeKeys, baseKeyboardMap]);
+  }, [currentOctave, activeKeys]);
 
   // Initialize synth
   useEffect(() => {
@@ -311,7 +310,7 @@ function App() {
         <div className={styles.controlsContainer}>
           <div className={styles.backPanel}></div>
           <div className={styles.innerControlsContainer}>
-            <div className={styles.box}>
+            <div className="box">
               <Controllers
                 tune={tune}
                 modMix={modMix}
@@ -320,7 +319,7 @@ function App() {
               />
             </div>
             <div className={styles.indent}></div>
-            <div className={styles.box}>
+            <div className="box">
               <OscillatorBank
                 osc1={osc1}
                 osc2={osc2}
@@ -331,22 +330,20 @@ function App() {
               />
             </div>
             <div className={styles.indent}></div>
-            <div className={styles.box}>
-              <Mixer
-                osc1Volume={osc1Volume}
-                osc2Volume={osc2Volume}
-                osc3Volume={osc3Volume}
-                noiseVolume={noiseVolume}
-                noiseType={noiseType}
-                onOsc1VolumeChange={setOsc1Volume}
-                onOsc2VolumeChange={setOsc2Volume}
-                onOsc3VolumeChange={setOsc3Volume}
-                onNoiseVolumeChange={setNoiseVolume}
-                onNoiseTypeChange={setNoiseType}
-              />
-            </div>
+            <Mixer
+              osc1Volume={osc1Volume}
+              osc2Volume={osc2Volume}
+              osc3Volume={osc3Volume}
+              noiseVolume={noiseVolume}
+              noiseType={noiseType}
+              onOsc1VolumeChange={setOsc1Volume}
+              onOsc2VolumeChange={setOsc2Volume}
+              onOsc3VolumeChange={setOsc3Volume}
+              onNoiseVolumeChange={setNoiseVolume}
+              onNoiseTypeChange={setNoiseType}
+            />
             <div className={styles.indent}></div>
-            <div className={styles.box}>
+            <div className="box">
               <Modifiers
                 cutoff={cutoff}
                 resonance={resonance}
@@ -369,7 +366,7 @@ function App() {
               />
             </div>
             <div className={styles.indent}></div>
-            <div className={styles.box}>
+            <div className="box">
               <div className={styles.effectsContainer}>
                 <Reverb
                   amount={reverbAmount}
@@ -380,7 +377,7 @@ function App() {
                   amount={distortionOutputGain}
                   onAmountChange={setDistortionOutputGain}
                 />
-                <h3>Effects</h3>
+                <span className="section-title">Effects</span>
               </div>
             </div>
             <div className={styles.indent}></div>
@@ -418,28 +415,14 @@ function App() {
                 }}
               />
             </div>
-            <div className={styles.octaveControls}>
-              <button
-                className={styles.octaveButton}
-                onClick={() => {
-                  // Release all active notes before changing octave
-                  activeKeys.forEach((note) => handleKeyUp(note));
-                  setCurrentOctave((prev) => Math.min(prev + 1, 7));
-                }}
-              >
-                <Plus size={20} />
-              </button>
-              <button
-                className={styles.octaveButton}
-                onClick={() => {
-                  // Release all active notes before changing octave
-                  activeKeys.forEach((note) => handleKeyUp(note));
-                  setCurrentOctave((prev) => Math.max(prev - 1, 1));
-                }}
-              >
-                <Minus size={20} />
-              </button>
-            </div>
+            <OctaveControls
+              currentOctave={currentOctave}
+              onOctaveChange={setCurrentOctave}
+              onOctaveChangeStart={() => {
+                // Release all active notes before changing octave
+                activeKeys.forEach((note) => handleKeyUp(note));
+              }}
+            />
           </div>
 
           <Keyboard
@@ -447,7 +430,7 @@ function App() {
             activeKeys={Array.from(activeKeys)}
             onKeyDown={handleKeyDown}
             onKeyUp={handleKeyUp}
-            octaveRange={{ min: currentOctave, max: currentOctave + 1 }}
+            octaveRange={{ min: currentOctave, max: currentOctave + 2 }}
           />
         </div>
       </div>

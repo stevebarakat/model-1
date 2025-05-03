@@ -31,67 +31,69 @@ const Mixer: React.FC<MixerProps> = ({
   onNoiseTypeChange,
 }) => {
   return (
-    <div className={styles.mixer}>
-      <div className={styles.controls}>
-        <div className={styles.volumeContainer}>
-          <div className={styles.mixerColumn}>
-            <Knob
-              value={osc1Volume}
-              min={0}
-              max={1}
-              step={0.01}
-              label="Osc 1"
-              onChange={onOsc1VolumeChange}
-            />
+    <div className="box">
+      <div className={styles.mixer}>
+        <div className={styles.controls}>
+          <div className={styles.volumeContainer}>
+            <div className={styles.mixerColumn}>
+              <Knob
+                value={osc1Volume}
+                min={0}
+                max={1}
+                step={0.01}
+                label="Osc 1"
+                onChange={onOsc1VolumeChange}
+              />
+            </div>
+            <div className={styles.mixerColumn}>
+              <Knob
+                value={osc2Volume}
+                min={0}
+                max={1}
+                step={0.01}
+                label="Osc 2"
+                onChange={onOsc2VolumeChange}
+              />
+            </div>
+            <div className={styles.mixerColumn}>
+              <Knob
+                value={osc3Volume}
+                min={0}
+                max={1}
+                step={0.01}
+                label="Osc 3"
+                onChange={onOsc3VolumeChange}
+              />
+            </div>
           </div>
           <div className={styles.mixerColumn}>
             <Knob
-              value={osc2Volume}
+              value={noiseVolume}
               min={0}
               max={1}
               step={0.01}
-              label="Osc 2"
-              onChange={onOsc2VolumeChange}
+              label="Noise"
+              onChange={onNoiseVolumeChange}
             />
-          </div>
-          <div className={styles.mixerColumn}>
-            <Knob
-              value={osc3Volume}
-              min={0}
-              max={1}
-              step={0.01}
-              label="Osc 3"
-              onChange={onOsc3VolumeChange}
-            />
-          </div>
-        </div>
-        <div className={styles.mixerColumn}>
-          <Knob
-            value={noiseVolume}
-            min={0}
-            max={1}
-            step={0.01}
-            label="Noise"
-            onChange={onNoiseVolumeChange}
-          />
-          <div className={styles.noiseSwitch}>
-            <div className={styles.switchContainer}>
-              <label className={styles.switchLabel}>WHITE</label>
-              <Switch.Root
-                className={styles.switchRoot}
-                checked={noiseType === "pink"}
-                onCheckedChange={(checked) =>
-                  onNoiseTypeChange(checked ? "pink" : "white")
-                }
-              >
-                <Switch.Thumb className={styles.switchThumb} />
-              </Switch.Root>
-              <label className={styles.switchLabel}>PINK</label>
+            <div className={styles.noiseSwitch}>
+              <div className={styles.switchContainer}>
+                <label className={styles.switchLabel}>WHITE</label>
+                <Switch.Root
+                  className={styles.switchRoot}
+                  checked={noiseType === "pink"}
+                  onCheckedChange={(checked) =>
+                    onNoiseTypeChange(checked ? "pink" : "white")
+                  }
+                >
+                  <Switch.Thumb className={styles.switchThumb} />
+                </Switch.Root>
+                <label className={styles.switchLabel}>PINK</label>
+              </div>
             </div>
           </div>
         </div>
+        <span className="section-title">Mixer</span>
       </div>
-      <h3>MIXER</h3>
     </div>
   );
 };

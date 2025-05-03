@@ -103,17 +103,6 @@
   overflow: hidden;
 }
 
-.box {
-  position: relative;
-  height: calc(var(--row-height) - 8px);
-  height: fit-content;
-  margin: 4px;
-  border: 2px solid hsla(217, 30%, 40%, 0.4);
-  border-radius: 2px;
-  background: hsl(217, 40%, 15%);
-  overflow: hidden;
-}
-
 .indent {
   width: 8px;
   background: linear-gradient(
@@ -260,13 +249,6 @@ input:checked + .toggleSlider:before {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
-}
-
-.effectsContainer h3 {
-  font-size: 0.8rem;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  text-align: center;
 }
 
 .octaveControls {

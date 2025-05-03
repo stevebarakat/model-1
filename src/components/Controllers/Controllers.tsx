@@ -36,7 +36,7 @@ const Controllers: React.FC<ControllersProps> = ({
           onChange={onModMixChange}
         />
       </div>
-      <h3>Control</h3>
+      <span className="section-title">Control</span>
     </div>
   );
 };

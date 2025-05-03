@@ -110,7 +110,7 @@ const Modifiers: React.FC<ModifiersProps> = ({
           </div>
         </div>
       </div>
-      <h3>Modifiers</h3>
+      <span className="section-title">Modifiers</span>
     </div>
   );
 };

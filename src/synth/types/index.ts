@@ -22,12 +22,24 @@ export type NoteState = {
   releaseTime: number | null;
 };
 
+export type WaveformType = "sine" | "triangle" | "sawtooth" | "square";
+export type RangeType = "32" | "16" | "8" | "4" | "2";
+export type OscillatorParam = "frequency" | "waveform" | "range";
+export type OscillatorParamValue = number | WaveformType | RangeType;
+
+export type OscillatorBankProps = {
+  osc1: OscillatorSettings;
+  osc2: OscillatorSettings;
+  osc3: OscillatorSettings;
+  onOsc1Change: (param: OscillatorParam, value: OscillatorParamValue) => void;
+  onOsc2Change: (param: OscillatorParam, value: OscillatorParamValue) => void;
+  onOsc3Change: (param: OscillatorParam, value: OscillatorParamValue) => void;
+};
+
 export type OscillatorSettings = {
-  type: OscillatorType;
   frequency: number;
-  range: "32" | "16" | "8" | "4" | "2";
-  volume: number;
-  detune: number;
+  waveform: WaveformType;
+  range: RangeType;
 };
 
 export type NoiseGenerator = {

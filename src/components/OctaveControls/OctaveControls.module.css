@@ -1,0 +1,33 @@
+.octaveControls {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.octaveButton {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-color);
+  transition: background-color 0.2s;
+}
+
+.octaveButton:hover {
+  background-color: var(--hover-color);
+}
+
+.octaveButton:active {
+  background-color: var(--active-color);
+}
+
+.octaveDisplay {
+  min-width: 20px;
+  text-align: center;
+  font-size: 14px;
+  color: var(--text-color);
+}

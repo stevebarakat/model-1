@@ -3,26 +3,7 @@ import Knob from "../Knob/Knob";
 import styles from "./OscillatorBank.module.css";
 import { Square, Triangle, AudioWaveform } from "lucide-react";
 import SawtoothWave from "../Icons/SawtoothWave";
-
-type WaveformType = "sine" | "triangle" | "sawtooth" | "square";
-type RangeType = "32" | "16" | "8" | "4" | "2";
-type OscillatorParam = "frequency" | "waveform" | "range";
-type OscillatorParamValue = number | WaveformType | RangeType;
-
-type OscillatorSettings = {
-  frequency: number;
-  waveform: WaveformType;
-  range: RangeType;
-};
-
-type OscillatorBankProps = {
-  osc1: OscillatorSettings;
-  osc2: OscillatorSettings;
-  osc3: OscillatorSettings;
-  onOsc1Change: (param: OscillatorParam, value: OscillatorParamValue) => void;
-  onOsc2Change: (param: OscillatorParam, value: OscillatorParamValue) => void;
-  onOsc3Change: (param: OscillatorParam, value: OscillatorParamValue) => void;
-};
+import { OscillatorBankProps, RangeType, WaveformType } from "@/synth/types";
 
 // Helper functions to convert between numeric values and discrete options
 const rangeToValue = (range: RangeType): number => {
@@ -67,13 +48,11 @@ const OscillatorBank: React.FC<OscillatorBankProps> = ({
   onOsc3Change,
 }) => {
   const renderOscillator = (
-    oscNum: number,
     osc: typeof osc1,
     onChange: typeof onOsc1Change
   ) => (
     <>
       <div className={styles.controls}>
-        {/* <h4>OSC {oscNum}</h4> */}
         <Knob
           value={rangeToValue(osc.range)}
           min={0}
@@ -120,11 +99,11 @@ const OscillatorBank: React.FC<OscillatorBankProps> = ({
   return (
     <div className={styles.oscillatorBank}>
       <div className={styles.oscillators}>
-        {renderOscillator(1, osc1, onOsc1Change)}
-        {renderOscillator(2, osc2, onOsc2Change)}
-        {renderOscillator(3, osc3, onOsc3Change)}
+        {renderOscillator(osc1, onOsc1Change)}
+        {renderOscillator(osc2, onOsc2Change)}
+        {renderOscillator(osc3, onOsc3Change)}
       </div>
-      <h3>Oscillator Bank</h3>
+      <span className="section-title">Oscillator Bank</span>
     </div>
   );
 };
