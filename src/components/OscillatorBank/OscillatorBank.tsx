@@ -1,8 +1,7 @@
 import React from "react";
 import Knob from "../Knob/Knob";
 import styles from "./OscillatorBank.module.css";
-import { Square, Triangle, AudioWaveform } from "lucide-react";
-import SawtoothWave from "../Icons/SawtoothWave";
+import { Square, Triangle, AudioWaveform, Activity } from "lucide-react";
 import { OscillatorBankProps, RangeType, WaveformType } from "@/synth/types";
 
 // Helper functions to convert between numeric values and discrete options
@@ -85,10 +84,10 @@ const OscillatorBank: React.FC<OscillatorBankProps> = ({
           step={1}
           label="Wave"
           valueLabels={{
-            0: <Triangle size={16} strokeWidth={2} />,
-            1: <SawtoothWave size={16} strokeWidth={2} />,
-            2: <Square size={16} strokeWidth={2} />,
-            3: <AudioWaveform size={16} strokeWidth={2} />,
+            0: <AudioWaveform size={14} strokeWidth={2} />,
+            1: <Square size={14} strokeWidth={2} />,
+            2: <Activity size={14} strokeWidth={2} />,
+            3: <Triangle size={14} strokeWidth={2} />,
           }}
           onChange={(value) => onChange("waveform", valueToWaveform(value))}
         />

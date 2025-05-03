@@ -72,3 +72,35 @@ export type SynthSettings = {
     amount: number;
   };
 };
+
+export type WaveformType = "triangle" | "sawtooth" | "square" | "sine";
+
+export type OscillatorBankProps = {
+  osc1: {
+    range: RangeType;
+    frequency: number;
+    waveform: WaveformType;
+  };
+  osc2: {
+    range: RangeType;
+    frequency: number;
+    waveform: WaveformType;
+  };
+  osc3: {
+    range: RangeType;
+    frequency: number;
+    waveform: WaveformType;
+  };
+  onOsc1Change: (
+    param: "range" | "frequency" | "waveform",
+    value: number | string
+  ) => void;
+  onOsc2Change: (
+    param: "range" | "frequency" | "waveform",
+    value: number | string
+  ) => void;
+  onOsc3Change: (
+    param: "range" | "frequency" | "waveform",
+    value: number | string
+  ) => void;
+};

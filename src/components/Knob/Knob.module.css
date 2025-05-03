@@ -12,12 +12,11 @@
   border-radius: 50%;
   background: radial-gradient(
     ellipse at center,
-    hsl(0, 0%, 95%) 0,
-    hsl(0, 0%, 85%) 8px,
-    hsl(0, 0%, 70%) 9px,
+    hsl(0, 0%, 85%) 0,
+    hsl(0, 0%, 75%) 8px,
+    hsl(0, 0%, 80%) 9px,
     hsl(0, 0%, 0%) 10px,
-    hsl(0, 0%, 0.5%) 11px,
-    hsl(0, 0%, 0%) 16px
+    hsl(0, 0%, 5%) 16px
   );
   position: relative;
   cursor: pointer;
@@ -43,9 +42,17 @@
   z-index: 5;
 }
 
-.knob.disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
+.knobGradient {
+  position: absolute;
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  background: hsl(0, 0%, 85% / 0.2);
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 1;
+  pointer-events: none;
 }
 
 .knobLabel {
@@ -63,12 +70,12 @@
 }
 
 .knobValue {
-  font-size: 0.875rem;
+  font-size: 0.68rem;
   color: hsl(220, 13%, 90%);
   user-select: none;
   white-space: nowrap;
   position: absolute;
-  bottom: 100%;
+  top: -15px;
   left: 50%;
   transform: translateX(-50%);
 }

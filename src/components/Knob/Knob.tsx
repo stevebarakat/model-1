@@ -92,7 +92,7 @@ function Knob({
         style={{ transform: `rotate(${rotation}deg)` }}
         onMouseDown={handleMouseDown}
       />
-      <div className={styles.knobShadow}></div>
+      <div className={styles.knobGradient}></div>
     </div>
   );
 }
