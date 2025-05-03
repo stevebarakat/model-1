@@ -1,5 +1,5 @@
-import { create, StateCreator } from "zustand";
-import { type OscillatorType } from "../synth/WebAudioSynth";
+import { create } from "zustand";
+import { Note, OscillatorType, RangeType, WaveformType } from "../synth/types";
 
 type RangeType = "32" | "16" | "8" | "4" | "2";
 type Note = string;
@@ -55,6 +55,7 @@ interface SynthState {
     lfo: {
       rate: number;
       depth: number;
+      waveform: OscillatorType;
     };
   };
 
@@ -129,6 +130,7 @@ const initialState: Omit<
     lfo: {
       rate: 5,
       depth: 0.5,
+      waveform: "sine",
     },
   },
   effects: {

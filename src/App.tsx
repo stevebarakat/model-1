@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { createSynth } from "./synth/WebAudioSynth";
 import Keyboard from "./components/Keyboard";
 import Controllers from "./components/Controllers/Controllers";
@@ -9,7 +9,7 @@ import Effects from "./components/Effects/Effects";
 import SidePanel from "./components/SidePanel/SidePanel";
 import styles from "./styles/App.module.css";
 import "./styles/variables.css";
-import { OscillatorSettings } from "./synth/types";
+import { OscillatorSettings, WaveformType } from "./synth/types";
 
 type Note = string;
 
@@ -65,6 +65,7 @@ function App() {
   const [releaseTime, setReleaseTime] = useState(0.3);
   const [lfoRate, setLfoRate] = useState(5);
   const [lfoDepth, setLfoDepth] = useState(0.5);
+  const [lfoWaveform, setLfoWaveform] = useState<WaveformType>("sine");
 
   // Reverb state
   const [reverbAmount, setReverbAmount] = useState(0);
@@ -201,6 +202,7 @@ function App() {
         lfo: {
           rate: lfoRate,
           depth: lfoDepth,
+          waveform: lfoWaveform,
         },
       });
     }
@@ -226,6 +228,7 @@ function App() {
     glide,
     lfoRate,
     lfoDepth,
+    lfoWaveform,
     currentOctave,
   ]);
 
@@ -369,6 +372,7 @@ function App() {
               releaseTime={releaseTime}
               lfoRate={lfoRate}
               lfoDepth={lfoDepth}
+              lfoWaveform={lfoWaveform}
               onCutoffChange={setCutoff}
               onResonanceChange={setResonance}
               onContourAmountChange={setContourAmount}
@@ -378,6 +382,7 @@ function App() {
               onReleaseTimeChange={setReleaseTime}
               onLfoRateChange={setLfoRate}
               onLfoDepthChange={setLfoDepth}
+              onLfoWaveformChange={setLfoWaveform}
             />
             <div className={styles.indent}></div>
             <Effects

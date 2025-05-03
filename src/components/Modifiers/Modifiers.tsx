@@ -2,6 +2,8 @@ import React from "react";
 import Knob from "../Knob/Knob";
 import ADSR from "../ADSR/ADSR";
 import styles from "./Modifiers.module.css";
+import { WaveformType } from "../../synth/types";
+import { Square, Triangle, AudioWaveform, Activity } from "lucide-react";
 
 type ModifiersProps = {
   cutoff: number;
@@ -13,6 +15,7 @@ type ModifiersProps = {
   releaseTime: number;
   lfoRate: number;
   lfoDepth: number;
+  lfoWaveform: WaveformType;
   onCutoffChange: (value: number) => void;
   onResonanceChange: (value: number) => void;
   onContourAmountChange: (value: number) => void;
@@ -22,6 +25,23 @@ type ModifiersProps = {
   onReleaseTimeChange: (value: number) => void;
   onLfoRateChange: (value: number) => void;
   onLfoDepthChange: (value: number) => void;
+  onLfoWaveformChange: (waveform: WaveformType) => void;
+};
+
+const waveformToValue = (waveform: WaveformType): number => {
+  const waveformMap: Record<WaveformType, number> = {
+    triangle: 0,
+    sawtooth: 1,
+    square: 2,
+    sine: 3,
+  };
+  return waveformMap[waveform];
+};
+
+const valueToWaveform = (value: number): WaveformType => {
+  const waveforms: WaveformType[] = ["triangle", "sawtooth", "square", "sine"];
+  const index = Math.round(value);
+  return waveforms[Math.max(0, Math.min(waveforms.length - 1, index))];
 };
 
 const Modifiers: React.FC<ModifiersProps> = ({
@@ -34,6 +54,7 @@ const Modifiers: React.FC<ModifiersProps> = ({
   releaseTime,
   lfoRate,
   lfoDepth,
+  lfoWaveform,
   onCutoffChange,
   onResonanceChange,
   onContourAmountChange,
@@ -43,6 +64,7 @@ const Modifiers: React.FC<ModifiersProps> = ({
   onReleaseTimeChange,
   onLfoRateChange,
   onLfoDepthChange,
+  onLfoWaveformChange,
 }) => {
   return (
     <div className="box">
@@ -107,6 +129,22 @@ const Modifiers: React.FC<ModifiersProps> = ({
                 step={0.01}
                 label="DEPTH"
                 onChange={onLfoDepthChange}
+              />
+              <Knob
+                value={waveformToValue(lfoWaveform)}
+                min={0}
+                max={3}
+                step={1}
+                label="WAVE"
+                valueLabels={{
+                  0: <Triangle size={14} strokeWidth={2} />,
+                  1: <Activity size={14} strokeWidth={2} />,
+                  2: <Square size={14} strokeWidth={2} />,
+                  3: <AudioWaveform size={14} strokeWidth={2} />,
+                }}
+                onChange={(value) =>
+                  onLfoWaveformChange(valueToWaveform(value))
+                }
               />
             </div>
           </div>

@@ -63,6 +63,7 @@ export async function createSynth() {
     lfo: {
       rate: 0,
       depth: 0,
+      waveform: "sine",
     },
     reverb: {
       amount: 0,
@@ -164,7 +165,33 @@ export async function createSynth() {
         noteData.noiseNode = undefined;
         noteData.noiseGain = undefined;
       }
+
+      if (noteData.lfo) {
+        noteData.lfo.type = settings.lfo.waveform;
+        noteData.lfo.frequency.value = settings.lfo.rate;
+      }
     });
+
+    if (
+      newSettings.lfo?.waveform !== undefined ||
+      newSettings.lfo?.rate !== undefined ||
+      newSettings.lfo?.depth !== undefined
+    ) {
+      activeNotes.forEach((noteData) => {
+        if (noteData.lfo) {
+          if (newSettings.lfo?.waveform !== undefined) {
+            noteData.lfo.type = newSettings.lfo.waveform;
+          }
+          if (newSettings.lfo?.rate !== undefined) {
+            noteData.lfo.frequency.value = newSettings.lfo.rate;
+          }
+          if (newSettings.lfo?.depth !== undefined) {
+            noteData.lfoGain.gain.value =
+              newSettings.lfo.depth * settings.filter.cutoff;
+          }
+        }
+      });
+    }
   }
 
   function triggerAttack(note: Note) {
@@ -258,22 +285,17 @@ export async function createSynth() {
     filter.frequency.value = baseCutoff;
     filter.Q.value = settings.filter.resonance * 30;
 
+    // Create LFO
     const lfo = context.createOscillator();
-    lfo.type = "sine";
+    lfo.type = settings.lfo.waveform;
     lfo.frequency.value = settings.lfo.rate;
-    // Use logarithmic scaling for more natural depth control
-    const minDepth = 0.01; // Minimum depth to avoid zero
-    const depthScale =
-      minDepth +
-      ((1 - minDepth) *
-        Math.log10(1 + 9 * Math.min(settings.lfo.depth, 0.99))) /
-        Math.log10(10);
-    const lfoGain = createGainNode(context, depthScale * baseCutoff);
-    lfo.connect(lfoGain);
 
-    if (settings.modMix > 0) {
-      lfoGain.connect(filter.frequency);
-    }
+    // Create LFO gain with depth control
+    const lfoGain = createGainNode(context, settings.lfo.depth * baseCutoff);
+
+    // Connect LFO to filter frequency
+    lfo.connect(lfoGain);
+    lfoGain.connect(filter.frequency);
     lfo.start();
 
     const filterEnvelope = createGainNode(context, 0);
@@ -286,9 +308,9 @@ export async function createSynth() {
     filterEnvelope.connect(filterModGain);
     filterModGain.connect(filter.frequency);
 
-    const modGain = createGainNode(context, settings.modMix);
-    noteGain.connect(modGain);
-    modGain.connect(filter);
+    // Connect the main signal chain
+    noteGain.connect(filter);
+    filter.connect(masterGain);
 
     const oscillators: OscillatorNode[] = [];
     const oscillatorGains: GainNode[] = [];
@@ -474,6 +496,9 @@ export async function createSynth() {
   }
 
   function handleNoteTransition(fromNote: Note | null, toNote: Note) {
+    if (fromNote) {
+      triggerRelease(fromNote);
+    }
     triggerAttack(toNote);
   }
 

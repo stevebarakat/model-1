@@ -61,6 +61,7 @@ export type SynthSettings = {
   lfo: {
     rate: number;
     depth: number;
+    waveform: WaveformType;
   };
   reverb: {
     amount: number;
