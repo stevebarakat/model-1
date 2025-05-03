@@ -96,7 +96,7 @@ function App() {
     h: "A",
     u: "A#",
     j: "B",
-    k: "C",
+    k: "C+1", // Special marker for next octave
   };
 
   // Add keyboard event listeners
@@ -120,7 +120,11 @@ function App() {
 
       const baseNote = baseKeyboardMap[e.key.toLowerCase()];
       if (baseNote && !e.repeat) {
-        const note = `${baseNote}${currentOctave}`;
+        // Handle special case for K key (next octave)
+        const note =
+          baseNote === "C+1"
+            ? `C${currentOctave + 1}`
+            : `${baseNote}${currentOctave}`;
         handleKeyDown(note);
       }
     };
@@ -130,7 +134,11 @@ function App() {
 
       const baseNote = baseKeyboardMap[e.key.toLowerCase()];
       if (baseNote) {
-        const note = `${baseNote}${currentOctave}`;
+        // Handle special case for K key (next octave)
+        const note =
+          baseNote === "C+1"
+            ? `C${currentOctave + 1}`
+            : `${baseNote}${currentOctave}`;
         handleKeyUp(note);
       }
     };
@@ -142,7 +150,7 @@ function App() {
       window.removeEventListener("keydown", handleKeyboardDown);
       window.removeEventListener("keyup", handleKeyboardUp);
     };
-  }, [currentOctave, activeKeys]); // Add activeKeys to dependencies
+  }, [currentOctave, activeKeys]);
 
   // Initialize synth
   useEffect(() => {
