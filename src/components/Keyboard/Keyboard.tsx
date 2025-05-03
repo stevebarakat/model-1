@@ -6,7 +6,6 @@ import {
   useCallback,
 } from "react";
 import { createSynth } from "../../synth/WebAudioSynth";
-import { INSTRUMENT_TYPES } from "../../constants";
 import styles from "./Keyboard.module.css";
 
 type Props = {
@@ -14,7 +13,6 @@ type Props = {
   octaveRange?: { min: number; max: number };
   onKeyDown?: (note: string) => void;
   onKeyUp?: (note: string) => void;
-  instrumentType?: string;
 };
 
 function Keyboard(
@@ -23,7 +21,6 @@ function Keyboard(
     octaveRange = { min: 3, max: 5 },
     onKeyDown = () => {},
     onKeyUp = () => {},
-    instrumentType = INSTRUMENT_TYPES.SYNTH,
   }: Props,
   ref: React.ForwardedRef<{
     synth: Awaited<ReturnType<typeof createSynth>> | null;
@@ -33,8 +30,6 @@ function Keyboard(
   const [synth, setSynth] = useState<Awaited<
     ReturnType<typeof createSynth>
   > | null>(null);
-  const [currentInstrumentType, setCurrentInstrumentType] =
-    useState(instrumentType);
 
   // Keep track of currently playing notes
   const [activeNotes, setActiveNotes] = useState<Set<string>>(new Set());
@@ -66,14 +61,6 @@ function Keyboard(
       }
     });
   }
-
-  // Update current instrument type when prop changes
-  useEffect(() => {
-    if (currentInstrumentType !== instrumentType) {
-      setCurrentInstrumentType(instrumentType);
-      setIsLoaded(false);
-    }
-  }, [instrumentType, currentInstrumentType]);
 
   // Handle key press
   const handleKeyPress = useCallback(
