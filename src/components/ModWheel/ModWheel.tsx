@@ -9,6 +9,7 @@ interface RangeSliderProps {
   onChange: (value: number) => void;
   onMouseUp?: () => void;
   disabled?: boolean;
+  label?: string;
 }
 
 const ModWheel: React.FC<RangeSliderProps> = ({
@@ -19,6 +20,7 @@ const ModWheel: React.FC<RangeSliderProps> = ({
   onChange,
   onMouseUp,
   disabled = false,
+  label = "MOD",
 }) => {
   const sliderRef = useRef<HTMLDivElement>(null);
   const [isDragging, setIsDragging] = useState(false);
@@ -65,13 +67,16 @@ const ModWheel: React.FC<RangeSliderProps> = ({
   }, [handleMouseMove, onMouseUp, isDragging]);
 
   return (
-    <div
-      ref={sliderRef}
-      className={`${styles.slider} ${disabled ? styles.disabled : ""}`}
-      onMouseDown={handleMouseDown}
-    >
-      <div className={styles.track}></div>
-      <div className={styles.thumb} style={{ left: `${percentage}%` }} />
+    <div className={styles.modWheelContainer}>
+      <div className={styles.modLabel}>{label}</div>
+      <div
+        ref={sliderRef}
+        className={`${styles.slider} ${disabled ? styles.disabled : ""}`}
+        onMouseDown={handleMouseDown}
+      >
+        <div className={styles.track}></div>
+        <div className={styles.thumb} style={{ left: `${percentage}%` }} />
+      </div>
     </div>
   );
 };

@@ -1,0 +1,29 @@
+.sidePanel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  min-width: 120px; /* Ensure enough width for rotated wheels */
+}
+
+.modWheels {
+  display: flex;
+  flex-direction: row; /* Lay out wheels horizontally */
+  justify-content: center;
+  width: 100%;
+}
+
+.modWheelwell {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  /* height: 100px; */
+  width: 36px;
+}
+
+.octaveControlsRow {
+  margin: 24px 0 8px;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}

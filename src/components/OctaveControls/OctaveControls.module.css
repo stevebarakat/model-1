@@ -1,14 +1,19 @@
 .octaveControls {
   display: flex;
+  flex-direction: column;
   gap: 8px;
   align-items: center;
 }
 
+.octaveButtons {
+  display: flex;
+  gap: 8px;
+}
+
 .octaveButton {
-  background: none;
+  background: hsl(216, 34%, 45%);
   border: none;
   cursor: pointer;
-  padding: 4px;
   border-radius: 4px;
   display: flex;
   align-items: center;
@@ -18,16 +23,18 @@
 }
 
 .octaveButton:hover {
-  background-color: var(--hover-color);
+  background-color: hsl(217, 32%, 10%);
 }
 
 .octaveButton:active {
-  background-color: var(--active-color);
+  background-color: hsl(217, 32%, 15%);
 }
 
-.octaveDisplay {
-  min-width: 20px;
-  text-align: center;
-  font-size: 14px;
-  color: var(--text-color);
+.octaveLabel {
+  font-size: 0.58rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  user-select: none;
+  text-transform: uppercase;
+  color: hsl(220, 13%, 70%);
 }

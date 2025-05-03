@@ -5,9 +5,8 @@ import Controllers from "./components/Controllers/Controllers";
 import OscillatorBank from "./components/OscillatorBank/OscillatorBank";
 import Mixer from "./components/Mixer/Mixer";
 import Modifiers from "./components/Modifiers/Modifiers";
-import ModWheel from "./components/ModWheel/ModWheel";
 import Effects from "./components/Effects/Effects";
-import OctaveControls from "./components/OctaveControls/OctaveControls";
+import SidePanel from "./components/SidePanel/SidePanel";
 import styles from "./styles/App.module.css";
 import "./styles/variables.css";
 import { OscillatorSettings } from "./synth/types";
@@ -367,45 +366,31 @@ function App() {
           <div className={styles.horizontalIndent}></div>
         </div>
         <div className={styles.keyRow}>
-          <div className={styles.modWheels}>
-            <div className={styles.modWheelwell}>
-              <ModWheel
-                value={pitchWheel}
-                min={0}
-                max={100}
-                onChange={(value) => {
-                  setPitchWheel(value);
-                  // Convert 0-100 range to -12 to +12 semitones
-                  const semitones = ((value - 50) / 50) * 12;
-                  setTune(semitones);
-                }}
-                onMouseUp={() => {
-                  setPitchWheel(50);
-                  setTune(0);
-                }}
-              />
-            </div>
-            <div className={styles.modWheelwell}>
-              <ModWheel
-                value={modWheel}
-                min={0}
-                max={100}
-                onChange={(value) => {
-                  setModWheel(value);
-                  // Convert 0-100 range to 0-1 range
-                  setModMix(value / 100);
-                }}
-              />
-            </div>
-            <OctaveControls
-              currentOctave={currentOctave}
-              onOctaveChange={setCurrentOctave}
-              onOctaveChangeStart={() => {
-                // Release all active notes before changing octave
-                activeKeys.forEach((note) => handleKeyUp(note));
-              }}
-            />
-          </div>
+          <SidePanel
+            pitchWheel={pitchWheel}
+            modWheel={modWheel}
+            currentOctave={currentOctave}
+            onPitchWheelChange={(value) => {
+              setPitchWheel(value);
+              // Convert 0-100 range to -12 to +12 semitones
+              const semitones = ((value - 50) / 50) * 12;
+              setTune(semitones);
+            }}
+            onModWheelChange={(value) => {
+              setModWheel(value);
+              // Convert 0-100 range to 0-1 range
+              setModMix(value / 100);
+            }}
+            onPitchWheelReset={() => {
+              setPitchWheel(50);
+              setTune(0);
+            }}
+            onOctaveChange={setCurrentOctave}
+            onOctaveChangeStart={() => {
+              // Release all active notes before changing octave
+              activeKeys.forEach((note) => handleKeyUp(note));
+            }}
+          />
 
           <Keyboard
             ref={keyboardRef}

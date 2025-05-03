@@ -1,12 +1,9 @@
 .slider {
   position: relative;
-  top: 27px;
-  width: 75px;
   height: 20px;
   cursor: pointer;
   user-select: none;
   transform: rotate(270deg);
-  transform-origin: top left;
 }
 
 .track {
@@ -54,11 +51,12 @@
   border-bottom: 1.5px solid hsl(0, 0%, 25%);
 }
 
-.disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-.disabled .thumb {
-  background: linear-gradient(135deg, hsl(0, 0%, 75%), hsl(0, 0%, 65%));
+.modLabel {
+  text-align: center;
+  font-size: 0.58rem;
+  font-weight: 500;
+  color: hsl(220, 13%, 70%);
+  margin-bottom: 2.25rem;
+  letter-spacing: 0.08em;
+  user-select: none;
 }
