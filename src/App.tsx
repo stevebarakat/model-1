@@ -12,15 +12,9 @@ import Delay from "./components/Effects/Delay";
 import OctaveControls from "./components/OctaveControls/OctaveControls";
 import styles from "./styles/App.module.css";
 import "./styles/variables.css";
+import { OscillatorSettings } from "./synth/types";
 
 type Note = string;
-type RangeType = "32" | "16" | "8" | "4" | "2";
-
-interface OscillatorSettings {
-  frequency: number;
-  waveform: OscillatorType;
-  range: RangeType;
-}
 
 function App() {
   const [activeKeys, setActiveKeys] = useState<Set<Note>>(new Set());
