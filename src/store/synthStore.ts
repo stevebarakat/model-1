@@ -23,7 +23,6 @@ interface SynthState {
   pitchWheel: number;
   modWheel: number;
   tune: number;
-  glide: number;
   modMix: number;
 
   // Oscillator state
@@ -76,7 +75,6 @@ interface SynthState {
   setPitchWheel: (value: number) => void;
   setModWheel: (value: number) => void;
   setTune: (value: number) => void;
-  setGlide: (value: number) => void;
   setModMix: (value: number) => void;
   updateOscillator: (
     id: 1 | 2 | 3,
@@ -94,7 +92,6 @@ const initialState: Omit<
   | "setPitchWheel"
   | "setModWheel"
   | "setTune"
-  | "setGlide"
   | "setModMix"
   | "updateOscillator"
   | "updateMixer"
@@ -106,7 +103,6 @@ const initialState: Omit<
   pitchWheel: 50,
   modWheel: 0,
   tune: 0,
-  glide: 0,
   modMix: 0,
   oscillators: {
     osc1: { frequency: 0, waveform: "triangle", range: "8" },
@@ -141,6 +137,7 @@ const initialState: Omit<
     delay: { amount: 0 },
   },
 };
+
 export const useSynthStore = create<SynthState>((set) => ({
   ...initialState,
   setActiveKeys: (keys: Set<Note>) => set({ activeKeys: keys }),
@@ -152,7 +149,6 @@ export const useSynthStore = create<SynthState>((set) => ({
   setPitchWheel: (value: number) => set({ pitchWheel: value }),
   setModWheel: (value: number) => set({ modWheel: value }),
   setTune: (value: number) => set({ tune: value }),
-  setGlide: (value: number) => set({ glide: value }),
   setModMix: (value: number) => set({ modMix: value }),
   updateOscillator: (id: 1 | 2 | 3, settings: Partial<OscillatorSettings>) =>
     set((state: SynthState) => ({

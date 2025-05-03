@@ -33,7 +33,6 @@ function App() {
 
   // Controllers state
   const [tune, setTune] = useState(0);
-  const [glide, setGlide] = useState(0);
   const [modMix, setModMix] = useState(0);
 
   // Oscillator Bank state
@@ -80,6 +79,71 @@ function App() {
   // Delay state
   const [delayAmount, setDelayAmount] = useState(0);
 
+  // Add octave state
+  const [currentOctave, setCurrentOctave] = useState(4);
+
+  // Base keyboard mapping (without octave)
+  const baseKeyboardMap: { [key: string]: string } = {
+    a: "C",
+    w: "C#",
+    s: "D",
+    e: "D#",
+    d: "E",
+    f: "F",
+    t: "F#",
+    g: "G",
+    y: "G#",
+    h: "A",
+    u: "A#",
+    j: "B",
+    k: "C",
+  };
+
+  // Add keyboard event listeners
+  useEffect(() => {
+    const handleKeyboardDown = (e: KeyboardEvent) => {
+      if (!e.key) return;
+
+      // Handle octave changes
+      if (e.key === "+" || e.key === "=") {
+        // Release all active notes before changing octave
+        activeKeys.forEach((note) => handleKeyUp(note));
+        setCurrentOctave((prev) => Math.min(prev + 1, 7)); // Limit to 7th octave
+        return;
+      }
+      if (e.key === "-" || e.key === "_") {
+        // Release all active notes before changing octave
+        activeKeys.forEach((note) => handleKeyUp(note));
+        setCurrentOctave((prev) => Math.max(prev - 1, 1)); // Limit to 1st octave
+        return;
+      }
+
+      const baseNote = baseKeyboardMap[e.key.toLowerCase()];
+      if (baseNote && !e.repeat) {
+        const note = `${baseNote}${currentOctave}`;
+        handleKeyDown(note);
+      }
+    };
+
+    const handleKeyboardUp = (e: KeyboardEvent) => {
+      if (!e.key) return;
+
+      const baseNote = baseKeyboardMap[e.key.toLowerCase()];
+      if (baseNote) {
+        const note = `${baseNote}${currentOctave}`;
+        handleKeyUp(note);
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyboardDown);
+    window.addEventListener("keyup", handleKeyboardUp);
+
+    return () => {
+      window.removeEventListener("keydown", handleKeyboardDown);
+      window.removeEventListener("keyup", handleKeyboardUp);
+    };
+  }, [currentOctave, activeKeys]); // Add activeKeys to dependencies
+
   // Initialize synth
   useEffect(() => {
     const initSynth = async () => {
@@ -114,7 +178,6 @@ function App() {
           volume: noiseVolume,
         },
         tune,
-        glide,
         modMix,
         lfo: {
           rate: lfoRate,
@@ -140,7 +203,6 @@ function App() {
     noiseVolume,
     releaseTime,
     tune,
-    glide,
     modMix,
     lfoRate,
     lfoDepth,
@@ -186,9 +248,7 @@ function App() {
       return newSet;
     });
 
-    // Get the last active note for glide
-    const lastNote = Array.from(activeKeys)[activeKeys.size - 1] || null;
-    keyboardRef.current.synth?.handleNoteTransition(lastNote, note);
+    keyboardRef.current.synth?.triggerAttack(note);
   };
 
   const handleKeyUp = (note: Note) => {
@@ -239,10 +299,8 @@ function App() {
             <div className={styles.box}>
               <Controllers
                 tune={tune}
-                glide={glide}
                 modMix={modMix}
                 onTuneChange={setTune}
-                onGlideChange={setGlide}
                 onModMixChange={setModMix}
               />
             </div>

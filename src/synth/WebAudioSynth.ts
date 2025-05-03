@@ -17,11 +17,9 @@ export async function createSynth() {
 
   const activeNotes = new Map<Note, NoteData>();
   const noteStates = new Map<Note, NoteState>();
-  let lastFrequency = 440;
 
   let settings: SynthSettings = {
     tune: 0,
-    glide: 0,
     modMix: 0,
     oscillators: [
       {
@@ -293,21 +291,6 @@ export async function createSynth() {
         gainNode.connect(noteGain);
         osc.start(startTime);
 
-        if (settings.glide > 0) {
-          const glideTime = settings.glide * 0.5;
-          const rangeMultiplier = getRangeMultiplier(oscSettings.range);
-          const frequencyOffset = Math.pow(2, oscSettings.frequency / 12);
-          const fromFrequency =
-            lastFrequency * rangeMultiplier * frequencyOffset;
-          const toFrequency =
-            targetFrequency * rangeMultiplier * frequencyOffset;
-          osc.frequency.setValueAtTime(fromFrequency, startTime);
-          osc.frequency.linearRampToValueAtTime(
-            toFrequency,
-            startTime + glideTime
-          );
-        }
-
         oscillators.push(osc);
         oscillatorGains.push(gainNode);
       } else {
@@ -346,8 +329,6 @@ export async function createSynth() {
       settings.envelope.sustain,
       startTime + settings.envelope.attack + settings.envelope.decay
     );
-
-    lastFrequency = targetFrequency;
 
     noteGain.connect(filter);
     filter.connect(masterGain);
@@ -451,23 +432,6 @@ export async function createSynth() {
   }
 
   function handleNoteTransition(fromNote: Note | null, toNote: Note) {
-    const toFrequency = noteToFrequency(toNote, settings.tune);
-    const now = context.currentTime;
-    const glideTime = settings.glide * 0.5;
-
-    if (fromNote && settings.glide > 0) {
-      const fromNoteData = activeNotes.get(fromNote);
-      if (fromNoteData) {
-        fromNoteData.oscillators.forEach((osc, index) => {
-          if (index < settings.oscillators.length && osc) {
-            const fromFreq = osc.frequency.value;
-            osc.frequency.setValueAtTime(fromFreq, now);
-            osc.frequency.linearRampToValueAtTime(toFrequency, now + glideTime);
-          }
-        });
-      }
-    }
-
     triggerAttack(toNote);
   }
 
