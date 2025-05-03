@@ -224,10 +224,10 @@ input:checked + .toggleSlider:before {
 }
 
 .modWheels {
-  padding: 0 1rem;
   display: flex;
-  position: relative;
-  top: 30px;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
 }
 
 .modWheelKnob {
@@ -267,4 +267,31 @@ input:checked + .toggleSlider:before {
   text-transform: uppercase;
   letter-spacing: 0.1em;
   text-align: center;
+}
+
+.octaveControls {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.octaveButton {
+  background: var(--control-bg);
+  border: 1px solid var(--control-border);
+  border-radius: 4px;
+  padding: 0.5rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-color);
+  transition: all 0.2s ease;
+}
+
+.octaveButton:hover {
+  background: var(--control-hover);
+}
+
+.octaveButton:active {
+  background: var(--control-active);
 }

@@ -55,10 +55,7 @@ function Keyboard(
   for (let o = octaveRange.min; o <= octaveRange.max; o++) {
     octave.forEach((key) => {
       const note = `${key.note}${o}`;
-      // Only include notes from G3 to B5 (two and a half octaves)
-      if (o >= 3 && o <= 5) {
-        keys.push({ note, isSharp: key.isSharp });
-      }
+      keys.push({ note, isSharp: key.isSharp });
     });
   }
 

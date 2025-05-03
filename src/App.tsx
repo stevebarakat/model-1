@@ -9,6 +9,7 @@ import ModWheel from "./components/ModWheel/ModWheel";
 import Reverb from "./components/Effects/Reverb";
 import Distortion from "./components/Effects/Distortion";
 import Delay from "./components/Effects/Delay";
+import { Plus, Minus } from "lucide-react";
 import styles from "./styles/App.module.css";
 import "./styles/variables.css";
 
@@ -150,7 +151,7 @@ function App() {
       window.removeEventListener("keydown", handleKeyboardDown);
       window.removeEventListener("keyup", handleKeyboardUp);
     };
-  }, [currentOctave, activeKeys]);
+  }, [currentOctave, activeKeys, baseKeyboardMap]);
 
   // Initialize synth
   useEffect(() => {
@@ -214,6 +215,7 @@ function App() {
     modMix,
     lfoRate,
     lfoDepth,
+    currentOctave,
   ]);
 
   // Update synth settings when reverb controls change
@@ -250,21 +252,26 @@ function App() {
   }, [delayAmount]);
 
   const handleKeyDown = (note: Note) => {
+    // Store the original note for visual state
     setActiveKeys((prev) => {
       const newSet = new Set(prev);
       newSet.add(note);
       return newSet;
     });
 
+    // Use the note directly without octave conversion since noteToFrequency handles it
     keyboardRef.current.synth?.triggerAttack(note);
   };
 
   const handleKeyUp = (note: Note) => {
+    // Remove the original note from visual state
     setActiveKeys((prev) => {
       const newSet = new Set(prev);
       newSet.delete(note);
       return newSet;
     });
+
+    // Use the note directly without octave conversion since noteToFrequency handles it
     keyboardRef.current.synth?.triggerRelease(note);
   };
 
@@ -411,6 +418,28 @@ function App() {
                 }}
               />
             </div>
+            <div className={styles.octaveControls}>
+              <button
+                className={styles.octaveButton}
+                onClick={() => {
+                  // Release all active notes before changing octave
+                  activeKeys.forEach((note) => handleKeyUp(note));
+                  setCurrentOctave((prev) => Math.min(prev + 1, 7));
+                }}
+              >
+                <Plus size={20} />
+              </button>
+              <button
+                className={styles.octaveButton}
+                onClick={() => {
+                  // Release all active notes before changing octave
+                  activeKeys.forEach((note) => handleKeyUp(note));
+                  setCurrentOctave((prev) => Math.max(prev - 1, 1));
+                }}
+              >
+                <Minus size={20} />
+              </button>
+            </div>
           </div>
 
           <Keyboard
@@ -418,6 +447,7 @@ function App() {
             activeKeys={Array.from(activeKeys)}
             onKeyDown={handleKeyDown}
             onKeyUp={handleKeyUp}
+            octaveRange={{ min: currentOctave, max: currentOctave + 1 }}
           />
         </div>
       </div>
