@@ -261,10 +261,14 @@ export async function createSynth() {
     const lfo = context.createOscillator();
     lfo.type = "sine";
     lfo.frequency.value = settings.lfo.rate;
-    const lfoGain = createGainNode(
-      context,
-      settings.lfo.depth * baseCutoff * 0.5
-    );
+    // Use logarithmic scaling for more natural depth control
+    const minDepth = 0.01; // Minimum depth to avoid zero
+    const depthScale =
+      minDepth +
+      ((1 - minDepth) *
+        Math.log10(1 + 9 * Math.min(settings.lfo.depth, 0.99))) /
+        Math.log10(10);
+    const lfoGain = createGainNode(context, depthScale * baseCutoff);
     lfo.connect(lfoGain);
 
     if (settings.modMix > 0) {

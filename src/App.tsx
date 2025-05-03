@@ -25,7 +25,7 @@ function App() {
 
   // Controllers state
   const [tune, setTune] = useState(0);
-  const [modMix, setModMix] = useState(0);
+  const [modMix, setModMix] = useState(0.5);
   const [glide, setGlide] = useState(0);
 
   // Oscillator Bank state
