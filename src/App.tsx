@@ -6,9 +6,7 @@ import OscillatorBank from "./components/OscillatorBank/OscillatorBank";
 import Mixer from "./components/Mixer/Mixer";
 import Modifiers from "./components/Modifiers/Modifiers";
 import ModWheel from "./components/ModWheel/ModWheel";
-import Reverb from "./components/Effects/Reverb";
-import Distortion from "./components/Effects/Distortion";
-import Delay from "./components/Effects/Delay";
+import Effects from "./components/Effects/Effects";
 import OctaveControls from "./components/OctaveControls/OctaveControls";
 import styles from "./styles/App.module.css";
 import "./styles/variables.css";
@@ -304,14 +302,12 @@ function App() {
         <div className={styles.controlsContainer}>
           <div className={styles.backPanel}></div>
           <div className={styles.innerControlsContainer}>
-            <div className="box">
-              <Controllers
-                tune={tune}
-                modMix={modMix}
-                onTuneChange={setTune}
-                onModMixChange={setModMix}
-              />
-            </div>
+            <Controllers
+              tune={tune}
+              modMix={modMix}
+              onTuneChange={setTune}
+              onModMixChange={setModMix}
+            />
             <div className={styles.indent}></div>
             <div className="box">
               <OscillatorBank
@@ -337,43 +333,35 @@ function App() {
               onNoiseTypeChange={setNoiseType}
             />
             <div className={styles.indent}></div>
-            <div className="box">
-              <Modifiers
-                cutoff={cutoff}
-                resonance={resonance}
-                contourAmount={contourAmount}
-                attackTime={attackTime}
-                decayTime={decayTime}
-                sustainLevel={sustainLevel}
-                releaseTime={releaseTime}
-                lfoRate={lfoRate}
-                lfoDepth={lfoDepth}
-                onCutoffChange={setCutoff}
-                onResonanceChange={setResonance}
-                onContourAmountChange={setContourAmount}
-                onAttackTimeChange={setAttackTime}
-                onDecayTimeChange={setDecayTime}
-                onSustainLevelChange={setSustainLevel}
-                onReleaseTimeChange={setReleaseTime}
-                onLfoRateChange={setLfoRate}
-                onLfoDepthChange={setLfoDepth}
-              />
-            </div>
+            <Modifiers
+              cutoff={cutoff}
+              resonance={resonance}
+              contourAmount={contourAmount}
+              attackTime={attackTime}
+              decayTime={decayTime}
+              sustainLevel={sustainLevel}
+              releaseTime={releaseTime}
+              lfoRate={lfoRate}
+              lfoDepth={lfoDepth}
+              onCutoffChange={setCutoff}
+              onResonanceChange={setResonance}
+              onContourAmountChange={setContourAmount}
+              onAttackTimeChange={setAttackTime}
+              onDecayTimeChange={setDecayTime}
+              onSustainLevelChange={setSustainLevel}
+              onReleaseTimeChange={setReleaseTime}
+              onLfoRateChange={setLfoRate}
+              onLfoDepthChange={setLfoDepth}
+            />
             <div className={styles.indent}></div>
-            <div className="box">
-              <div className={styles.effectsContainer}>
-                <Reverb
-                  amount={reverbAmount}
-                  onAmountChange={setReverbAmount}
-                />
-                <Delay amount={delayAmount} onAmountChange={setDelayAmount} />
-                <Distortion
-                  amount={distortionOutputGain}
-                  onAmountChange={setDistortionOutputGain}
-                />
-                <span className="section-title">Effects</span>
-              </div>
-            </div>
+            <Effects
+              reverbAmount={reverbAmount}
+              delayAmount={delayAmount}
+              distortionAmount={distortionOutputGain}
+              onReverbAmountChange={setReverbAmount}
+              onDelayAmountChange={setDelayAmount}
+              onDistortionAmountChange={setDistortionOutputGain}
+            />
             <div className={styles.indent}></div>
           </div>
           <div className={styles.horizontalIndent}></div>

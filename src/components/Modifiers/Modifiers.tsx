@@ -45,72 +45,74 @@ const Modifiers: React.FC<ModifiersProps> = ({
   onLfoDepthChange,
 }) => {
   return (
-    <div className={styles.modifiers}>
-      <div className={styles.sections}>
-        <div className={styles.envelopeSection}>
-          <ADSR
-            attack={attackTime}
-            decay={decayTime}
-            sustain={sustainLevel}
-            release={releaseTime}
-            onAttackChange={onAttackTimeChange}
-            onDecayChange={onDecayTimeChange}
-            onSustainChange={onSustainLevelChange}
-            onReleaseChange={onReleaseTimeChange}
-          />
-        </div>
-        <div className={styles.filterSection}>
-          <div className={styles.controls}>
-            <Knob
-              value={cutoff}
-              min={20}
-              max={20000}
-              step={1}
-              label="CUTOFF"
-              unit="Hz"
-              onChange={onCutoffChange}
-            />
-            <Knob
-              value={resonance}
-              min={0}
-              max={1}
-              step={0.01}
-              label="EMPHASIS"
-              onChange={onResonanceChange}
-            />
-            <Knob
-              value={contourAmount}
-              min={0}
-              max={1}
-              step={0.01}
-              label="CONTOUR"
-              onChange={onContourAmountChange}
+    <div className="box">
+      <div className={styles.modifiers}>
+        <div className={styles.sections}>
+          <div className={styles.envelopeSection}>
+            <ADSR
+              attack={attackTime}
+              decay={decayTime}
+              sustain={sustainLevel}
+              release={releaseTime}
+              onAttackChange={onAttackTimeChange}
+              onDecayChange={onDecayTimeChange}
+              onSustainChange={onSustainLevelChange}
+              onReleaseChange={onReleaseTimeChange}
             />
           </div>
-        </div>
-        <div className={styles.lfoSection}>
-          <div className={styles.controls}>
-            <Knob
-              value={lfoRate}
-              min={0.1}
-              max={20}
-              step={0.1}
-              label="RATE"
-              unit="Hz"
-              onChange={onLfoRateChange}
-            />
-            <Knob
-              value={lfoDepth}
-              min={0}
-              max={1}
-              step={0.01}
-              label="DEPTH"
-              onChange={onLfoDepthChange}
-            />
+          <div className={styles.filterSection}>
+            <div className={styles.controls}>
+              <Knob
+                value={cutoff}
+                min={20}
+                max={20000}
+                step={1}
+                label="CUTOFF"
+                unit="Hz"
+                onChange={onCutoffChange}
+              />
+              <Knob
+                value={resonance}
+                min={0}
+                max={1}
+                step={0.01}
+                label="EMPHASIS"
+                onChange={onResonanceChange}
+              />
+              <Knob
+                value={contourAmount}
+                min={0}
+                max={1}
+                step={0.01}
+                label="CONTOUR"
+                onChange={onContourAmountChange}
+              />
+            </div>
+          </div>
+          <div className={styles.lfoSection}>
+            <div className={styles.controls}>
+              <Knob
+                value={lfoRate}
+                min={0.1}
+                max={20}
+                step={0.1}
+                label="RATE"
+                unit="Hz"
+                onChange={onLfoRateChange}
+              />
+              <Knob
+                value={lfoDepth}
+                min={0}
+                max={1}
+                step={0.01}
+                label="DEPTH"
+                onChange={onLfoDepthChange}
+              />
+            </div>
           </div>
         </div>
+        <span className="section-title">Modifiers</span>
       </div>
-      <span className="section-title">Modifiers</span>
     </div>
   );
 };

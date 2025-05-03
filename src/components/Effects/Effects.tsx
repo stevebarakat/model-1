@@ -1,0 +1,40 @@
+import Reverb from "./Reverb";
+import Delay from "./Delay";
+import Distortion from "./Distortion";
+import styles from "./Effects.module.css";
+
+interface EffectsProps {
+  reverbAmount: number;
+  delayAmount: number;
+  distortionAmount: number;
+  onReverbAmountChange: (amount: number) => void;
+  onDelayAmountChange: (amount: number) => void;
+  onDistortionAmountChange: (amount: number) => void;
+}
+
+const Effects = ({
+  reverbAmount,
+  delayAmount,
+  distortionAmount,
+  onReverbAmountChange,
+  onDelayAmountChange,
+  onDistortionAmountChange,
+}: EffectsProps) => {
+  return (
+    <div className="box">
+      <div className={styles.effectsContainer}>
+        <div className={styles.effects}>
+          <Reverb amount={reverbAmount} onAmountChange={onReverbAmountChange} />
+          <Delay amount={delayAmount} onAmountChange={onDelayAmountChange} />
+          <Distortion
+            amount={distortionAmount}
+            onAmountChange={onDistortionAmountChange}
+          />
+        </div>
+        <span className="section-title">Effects</span>
+      </div>
+    </div>
+  );
+};
+
+export default Effects;

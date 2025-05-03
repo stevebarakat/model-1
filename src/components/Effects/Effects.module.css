@@ -1,0 +1,12 @@
+.effectsContainer {
+  display: flex;
+  flex-direction: column;
+  padding: 0.5rem;
+}
+
+.effects {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  position: relative;
+}
