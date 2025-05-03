@@ -1,0 +1,35 @@
+.modifiers {
+  padding: 0.5rem;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100%;
+}
+
+.modifiers h3 {
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  text-align: center;
+  margin-top: 0.5rem;
+}
+
+.sections {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.filterSection,
+.envelopeSection,
+.lfoSection {
+  display: flex;
+  justify-content: center;
+}
+
+.controls {
+  display: flex;
+  gap: 1.5rem;
+  align-items: flex-start;
+}

@@ -1,0 +1,14 @@
+:root {
+  /* Keyboard Colors */
+  --keyboard-bg: hsl(220, 13%, 15%);
+  --keyboard-border: hsl(220, 13%, 25%);
+  --key-white: hsl(0, 0%, 100%);
+  --key-white-hover: hsl(220, 10%, 95%);
+  --key-white-active: hsl(220, 70%, 85%);
+  --key-black: hsl(220, 13%, 18%);
+  --key-black-hover: hsl(220, 13%, 25%);
+  --key-black-active: hsl(220, 70%, 30%);
+  --highlight-color: hsl(45, 100%, 50%);
+  --text-primary: hsl(220, 13%, 95%);
+  --text-secondary: hsl(220, 13%, 65%);
+}

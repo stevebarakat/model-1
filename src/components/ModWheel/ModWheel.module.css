@@ -1,0 +1,64 @@
+.slider {
+  position: relative;
+  top: 27px;
+  width: 75px;
+  height: 20px;
+  cursor: pointer;
+  user-select: none;
+  transform: rotate(270deg);
+  transform-origin: top left;
+}
+
+.track {
+  position: relative;
+  top: 50%;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, hsl(217, 30%, 20%), hsl(217, 40%, 25%));
+  border-radius: 2px;
+  transform: translateY(-50%);
+  --base-texture: linear-gradient(
+    270deg,
+    hsl(217, 25%, 10%),
+    hsl(0, 0%, 100%) 28%,
+    hsl(217, 25%, 10%)
+  );
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  height: 12px;
+  width: 85px;
+  background: var(--base-texture);
+  cursor: pointer;
+  box-shadow: 0px 1px 2px hsl(217 40% 3% / 0.95),
+    0px 2px 4px hsl(217 40% 3% / 0.95);
+}
+
+.thumb {
+  position: absolute;
+  /* position: relative; */
+  display: flex;
+  width: 9px;
+  height: 14px;
+  background: linear-gradient(
+    270deg,
+    hsl(0, 0%, 25%) 0%,
+    hsl(0, 0%, 75%) 37.5%,
+    hsl(0, 0%, 85%) 62.5%,
+    hsl(0, 0%, 25%) 100%
+  );
+  left: 0;
+  top: 3px;
+  border-top: 1.5px solid hsl(0, 0%, 25%);
+  border-bottom: 1.5px solid hsl(0, 0%, 25%);
+}
+
+.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.disabled .thumb {
+  background: linear-gradient(135deg, hsl(0, 0%, 75%), hsl(0, 0%, 65%));
+}

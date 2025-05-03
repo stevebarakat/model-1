@@ -1,0 +1,93 @@
+.mixer {
+  padding: 0.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: space-between;
+  justify-content: space-between;
+  height: 100%;
+}
+
+.mixer h3 {
+  color: white;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  text-align: center;
+  margin-top: 0.5rem;
+}
+
+.mixer h4 {
+  font-size: 0.65rem;
+  margin: 0 0 1rem 0;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  text-align: center;
+}
+
+.controls {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.volumeContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.mixerColumn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.switchContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.15rem;
+}
+
+.switchLabel {
+  font-size: 0.68rem;
+  color: hsl(220, 13%, 70%);
+  text-align: center;
+  user-select: none;
+  white-space: nowrap;
+  text-transform: uppercase;
+  font-weight: 500;
+}
+
+.switchRoot {
+  width: 32px;
+  height: 17px;
+  background: black;
+  position: relative;
+  border: none;
+  rotate: 90deg;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  border-radius: 3px;
+}
+
+.switchThumb {
+  display: block;
+  width: 15px;
+  height: 15px;
+  background: linear-gradient(to left, hsl(0 0% 90%), hsl(0 0% 70%));
+  position: absolute;
+  left: 1px;
+  top: 1px;
+  will-change: transform;
+  border-radius: 2px;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  transition: transform 0.1s ease;
+}
+
+.switchThumb[data-state="checked"] {
+  background: hotpink;
+  transform: translateX(15px);
+  transition: transform 0.1s ease;
+}

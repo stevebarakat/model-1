@@ -1,0 +1,47 @@
+.oscillatorBank {
+  padding: 0.5rem;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100%;
+}
+
+.oscillatorBank h3 {
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  text-align: center;
+  white-space: nowrap;
+  margin-top: 0.5rem;
+}
+
+.oscillators {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.controls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.rangeSwitch select,
+.waveformSwitch select {
+  background: #333;
+  color: white;
+  border: 1px solid #666;
+  padding: 0.3rem;
+  border-radius: 3px;
+  font-family: monospace;
+  cursor: pointer;
+}
+
+.rangeSwitch select:focus,
+.waveformSwitch select:focus {
+  outline: none;
+  border-color: #999;
+}

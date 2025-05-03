@@ -1,0 +1,362 @@
+import { useState, useRef, useEffect } from "react";
+import { createSynth, type OscillatorType } from "./synth/WebAudioSynth";
+import Keyboard from "./components/Keyboard";
+import Controllers from "./components/Controllers/Controllers";
+import OscillatorBank from "./components/OscillatorBank/OscillatorBank";
+import Mixer from "./components/Mixer/Mixer";
+import Modifiers from "./components/Modifiers/Modifiers";
+import ModWheel from "./components/ModWheel/ModWheel";
+import Reverb from "./components/Effects/Reverb";
+import Distortion from "./components/Effects/Distortion";
+import Delay from "./components/Effects/Delay";
+import styles from "./styles/App.module.css";
+import "./styles/variables.css";
+
+type Note = string;
+type RangeType = "32" | "16" | "8" | "4" | "2";
+
+interface OscillatorSettings {
+  frequency: number;
+  waveform: OscillatorType;
+  range: RangeType;
+}
+
+function App() {
+  const [activeKeys, setActiveKeys] = useState<Set<Note>>(new Set());
+  const keyboardRef = useRef<{
+    synth: Awaited<ReturnType<typeof createSynth>> | null;
+  }>({ synth: null });
+
+  // Replace slider value state with pitch and mod wheel states
+  const [pitchWheel, setPitchWheel] = useState(50);
+  const [modWheel, setModWheel] = useState(0);
+
+  // Controllers state
+  const [tune, setTune] = useState(0);
+  const [glide, setGlide] = useState(0);
+  const [modMix, setModMix] = useState(0);
+
+  // Oscillator Bank state
+  const [osc1, setOsc1] = useState<OscillatorSettings>({
+    frequency: 0,
+    waveform: "triangle",
+    range: "8",
+  });
+  const [osc2, setOsc2] = useState<OscillatorSettings>({
+    frequency: 0,
+    waveform: "triangle",
+    range: "8",
+  });
+  const [osc3, setOsc3] = useState<OscillatorSettings>({
+    frequency: 0,
+    waveform: "triangle",
+    range: "8",
+  });
+
+  // Mixer state
+  const [osc1Volume, setOsc1Volume] = useState(0.7);
+  const [osc2Volume, setOsc2Volume] = useState(0.7);
+  const [osc3Volume, setOsc3Volume] = useState(0.7);
+  const [noiseVolume, setNoiseVolume] = useState(0);
+  const [noiseType, setNoiseType] = useState<"white" | "pink">("white");
+
+  // Modifiers state
+  const [cutoff, setCutoff] = useState(2000);
+  const [resonance, setResonance] = useState(0);
+  const [contourAmount, setContourAmount] = useState(0);
+  const [attackTime, setAttackTime] = useState(0.1);
+  const [decayTime, setDecayTime] = useState(0.1);
+  const [sustainLevel, setSustainLevel] = useState(0.7);
+  const [releaseTime, setReleaseTime] = useState(0.3);
+  const [lfoRate, setLfoRate] = useState(5);
+  const [lfoDepth, setLfoDepth] = useState(0.5);
+
+  // Reverb state
+  const [reverbAmount, setReverbAmount] = useState(0);
+
+  // Distortion state
+  const [distortionOutputGain, setDistortionOutputGain] = useState(0);
+
+  // Delay state
+  const [delayAmount, setDelayAmount] = useState(0);
+
+  // Initialize synth
+  useEffect(() => {
+    const initSynth = async () => {
+      const synth = await createSynth();
+      keyboardRef.current.synth = synth;
+    };
+    initSynth();
+  }, []);
+
+  // Initialize synth settings when keyboard ref is available
+  useEffect(() => {
+    if (keyboardRef.current.synth) {
+      keyboardRef.current.synth.updateSettings({
+        oscillators: [
+          { ...osc1, type: osc1.waveform, volume: osc1Volume, detune: 0 },
+          { ...osc2, type: osc2.waveform, volume: osc2Volume, detune: 0 },
+          { ...osc3, type: osc3.waveform, volume: osc3Volume, detune: 0 },
+        ],
+        envelope: {
+          attack: attackTime,
+          decay: decayTime,
+          sustain: sustainLevel,
+          release: releaseTime,
+        },
+        filter: {
+          cutoff,
+          resonance,
+          contourAmount,
+        },
+        noise: {
+          type: noiseType,
+          volume: noiseVolume,
+        },
+        tune,
+        glide,
+        modMix,
+        lfo: {
+          rate: lfoRate,
+          depth: lfoDepth,
+        },
+      });
+    }
+  }, [
+    keyboardRef.current.synth,
+    osc1,
+    osc2,
+    osc3,
+    osc1Volume,
+    osc2Volume,
+    osc3Volume,
+    attackTime,
+    decayTime,
+    sustainLevel,
+    cutoff,
+    resonance,
+    contourAmount,
+    noiseType,
+    noiseVolume,
+    releaseTime,
+    tune,
+    glide,
+    modMix,
+    lfoRate,
+    lfoDepth,
+  ]);
+
+  // Update synth settings when reverb controls change
+  useEffect(() => {
+    if (keyboardRef.current.synth) {
+      keyboardRef.current.synth.updateSettings({
+        reverb: {
+          amount: reverbAmount,
+        },
+      });
+    }
+  }, [reverbAmount]);
+
+  // Update synth settings when distortion controls change
+  useEffect(() => {
+    if (keyboardRef.current.synth) {
+      keyboardRef.current.synth.updateSettings({
+        distortion: {
+          outputGain: distortionOutputGain,
+        },
+      });
+    }
+  }, [distortionOutputGain]);
+
+  // Update synth settings when delay controls change
+  useEffect(() => {
+    if (keyboardRef.current.synth) {
+      keyboardRef.current.synth.updateSettings({
+        delay: {
+          amount: delayAmount,
+        },
+      });
+    }
+  }, [delayAmount]);
+
+  const handleKeyDown = (note: Note) => {
+    setActiveKeys((prev) => {
+      const newSet = new Set(prev);
+      newSet.add(note);
+      return newSet;
+    });
+
+    // Get the last active note for glide
+    const lastNote = Array.from(activeKeys)[activeKeys.size - 1] || null;
+    keyboardRef.current.synth?.handleNoteTransition(lastNote, note);
+  };
+
+  const handleKeyUp = (note: Note) => {
+    setActiveKeys((prev) => {
+      const newSet = new Set(prev);
+      newSet.delete(note);
+      return newSet;
+    });
+    keyboardRef.current.synth?.triggerRelease(note);
+  };
+
+  const handleOsc1Change = (
+    param: keyof OscillatorSettings,
+    value: OscillatorSettings[keyof OscillatorSettings]
+  ) => {
+    setOsc1((prev) => {
+      const updated = { ...prev, [param]: value };
+      return updated;
+    });
+  };
+
+  const handleOsc2Change = (
+    param: keyof OscillatorSettings,
+    value: OscillatorSettings[keyof OscillatorSettings]
+  ) => {
+    setOsc2((prev) => {
+      const updated = { ...prev, [param]: value };
+      return updated;
+    });
+  };
+
+  const handleOsc3Change = (
+    param: keyof OscillatorSettings,
+    value: OscillatorSettings[keyof OscillatorSettings]
+  ) => {
+    setOsc3((prev) => {
+      const updated = { ...prev, [param]: value };
+      return updated;
+    });
+  };
+
+  return (
+    <div className={styles.synthSides}>
+      <div className={styles.synth}>
+        <div className={styles.controlsContainer}>
+          <div className={styles.backPanel}></div>
+          <div className={styles.innerControlsContainer}>
+            <div className={styles.box}>
+              <Controllers
+                tune={tune}
+                glide={glide}
+                modMix={modMix}
+                onTuneChange={setTune}
+                onGlideChange={setGlide}
+                onModMixChange={setModMix}
+              />
+            </div>
+            <div className={styles.indent}></div>
+            <div className={styles.box}>
+              <OscillatorBank
+                osc1={osc1}
+                osc2={osc2}
+                osc3={osc3}
+                onOsc1Change={handleOsc1Change}
+                onOsc2Change={handleOsc2Change}
+                onOsc3Change={handleOsc3Change}
+              />
+            </div>
+            <div className={styles.indent}></div>
+            <div className={styles.box}>
+              <Mixer
+                osc1Volume={osc1Volume}
+                osc2Volume={osc2Volume}
+                osc3Volume={osc3Volume}
+                noiseVolume={noiseVolume}
+                noiseType={noiseType}
+                onOsc1VolumeChange={setOsc1Volume}
+                onOsc2VolumeChange={setOsc2Volume}
+                onOsc3VolumeChange={setOsc3Volume}
+                onNoiseVolumeChange={setNoiseVolume}
+                onNoiseTypeChange={setNoiseType}
+              />
+            </div>
+            <div className={styles.indent}></div>
+            <div className={styles.box}>
+              <Modifiers
+                cutoff={cutoff}
+                resonance={resonance}
+                contourAmount={contourAmount}
+                attackTime={attackTime}
+                decayTime={decayTime}
+                sustainLevel={sustainLevel}
+                releaseTime={releaseTime}
+                lfoRate={lfoRate}
+                lfoDepth={lfoDepth}
+                onCutoffChange={setCutoff}
+                onResonanceChange={setResonance}
+                onContourAmountChange={setContourAmount}
+                onAttackTimeChange={setAttackTime}
+                onDecayTimeChange={setDecayTime}
+                onSustainLevelChange={setSustainLevel}
+                onReleaseTimeChange={setReleaseTime}
+                onLfoRateChange={setLfoRate}
+                onLfoDepthChange={setLfoDepth}
+              />
+            </div>
+            <div className={styles.indent}></div>
+            <div className={styles.box}>
+              <div className={styles.effectsContainer}>
+                <Reverb
+                  amount={reverbAmount}
+                  onAmountChange={setReverbAmount}
+                />
+                <Delay amount={delayAmount} onAmountChange={setDelayAmount} />
+                <Distortion
+                  amount={distortionOutputGain}
+                  onAmountChange={setDistortionOutputGain}
+                />
+                <h3>Effects</h3>
+              </div>
+            </div>
+            <div className={styles.indent}></div>
+          </div>
+          <div className={styles.horizontalIndent}></div>
+        </div>
+        <div className={styles.keyRow}>
+          <div className={styles.modWheels}>
+            <div className={styles.modWheelwell}>
+              <ModWheel
+                value={pitchWheel}
+                min={0}
+                max={100}
+                onChange={(value) => {
+                  setPitchWheel(value);
+                  // Convert 0-100 range to -12 to +12 semitones
+                  const semitones = ((value - 50) / 50) * 12;
+                  setTune(semitones);
+                }}
+                onMouseUp={() => {
+                  setPitchWheel(50);
+                  setTune(0);
+                }}
+              />
+            </div>
+            <div className={styles.modWheelwell}>
+              <ModWheel
+                value={modWheel}
+                min={0}
+                max={100}
+                onChange={(value) => {
+                  setModWheel(value);
+                  // Convert 0-100 range to 0-1 range
+                  setModMix(value / 100);
+                }}
+              />
+            </div>
+          </div>
+
+          <Keyboard
+            ref={keyboardRef}
+            activeKeys={Array.from(activeKeys)}
+            onKeyDown={handleKeyDown}
+            onKeyUp={handleKeyUp}
+          />
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export default App;

@@ -1,0 +1,73 @@
+.knobContainer {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 1rem;
+}
+
+.knob {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: radial-gradient(
+    ellipse at center,
+    hsl(0, 0%, 95%) 0,
+    hsl(0, 0%, 85%) 8px,
+    hsl(0, 0%, 70%) 9px,
+    hsl(0, 0%, 10%) 10px,
+    hsl(0, 0%, 1.5%) 11px,
+    hsl(0, 0%, 0%) 16px
+  );
+  position: relative;
+  cursor: pointer;
+  transition: transform 0.1s ease;
+  z-index: 1;
+}
+
+.knob::after {
+  content: "";
+  position: absolute;
+  top: 25%;
+  left: 50%;
+  width: 2px;
+  height: 8px;
+  background: linear-gradient(
+    to bottom,
+    hsl(220, 13%, 95%),
+    hsl(220, 13%, 85%)
+  );
+  border-radius: 2px 2px 0 0;
+  transform: translate(-50%, -100%);
+  transform-origin: bottom center;
+}
+
+.knob.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.knobLabel {
+  font-size: 0.68rem;
+  color: hsl(220, 13%, 70%);
+  text-align: center;
+  user-select: none;
+  white-space: nowrap;
+  text-transform: uppercase;
+  font-weight: 500;
+  position: absolute;
+  top: -15px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.knobValue {
+  font-size: 0.875rem;
+  color: hsl(220, 13%, 90%);
+  user-select: none;
+  white-space: nowrap;
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+}
