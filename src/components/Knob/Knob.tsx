@@ -9,8 +9,8 @@ interface KnobProps {
   label: string;
   unit?: string;
   onChange: (value: number) => void;
-  disabled?: boolean;
   valueLabels?: Record<number, string | React.ReactElement>;
+  labelPosition?: "left" | "right" | "top" | "bottom";
 }
 
 function Knob({
@@ -21,7 +21,6 @@ function Knob({
   label,
   unit = "",
   onChange,
-  disabled = false,
   valueLabels,
 }: KnobProps) {
   const knobRef = useRef<HTMLDivElement>(null);
@@ -40,7 +39,6 @@ function Knob({
   const rotation = getRotation(value);
 
   function handleMouseDown(e: React.MouseEvent) {
-    if (disabled) return;
     setIsDragging(true);
     setStartY(e.clientY);
     setStartValue(value);
@@ -86,7 +84,7 @@ function Knob({
       )}
       <div
         ref={knobRef}
-        className={`${styles.knob} ${disabled ? styles.disabled : ""}`}
+        className={styles.knob}
         style={{ transform: `rotate(${rotation}deg)` }}
         onMouseDown={handleMouseDown}
       />

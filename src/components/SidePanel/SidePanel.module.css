@@ -17,12 +17,11 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  /* height: 100px; */
   width: 36px;
 }
 
 .octaveControlsRow {
-  margin: 24px 0 8px;
+  margin: 16px 0 0;
   width: 100%;
   display: flex;
   justify-content: center;
