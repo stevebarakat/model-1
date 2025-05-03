@@ -10,7 +10,6 @@ interface KnobProps {
   unit?: string;
   onChange: (value: number) => void;
   valueLabels?: Record<number, string | React.ReactElement>;
-  labelPosition?: "left" | "right" | "top" | "bottom";
 }
 
 function Knob({
@@ -81,6 +80,11 @@ function Knob({
         <div className={styles.knobValue}>{displayValue}</div>
       ) : (
         hasLabel && <div className={styles.knobLabel}>{label}</div>
+      )}
+      {label === "Octaves" && (
+        <div className={styles.knobLabel}>
+          {valueLabels?.[Math.round(value)]}
+        </div>
       )}
       <div
         ref={knobRef}

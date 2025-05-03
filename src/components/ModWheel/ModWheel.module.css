@@ -12,7 +12,6 @@
   left: 0;
   right: 0;
   background: linear-gradient(90deg, hsl(217, 30%, 20%), hsl(217, 40%, 25%));
-  border-radius: 2px;
   transform: translateY(-50%);
   --base-texture: linear-gradient(
     270deg,
@@ -46,6 +45,8 @@
   top: 3px;
   border-top: 1.5px solid hsl(0, 0%, 25%);
   border-bottom: 1.5px solid hsl(0, 0%, 25%);
+  transform: translateX(-50%);
+  left: clamp(4.5px, calc(var(--thumb-position, 0%)), calc(100% - 4.5px));
 }
 
 .modLabel {

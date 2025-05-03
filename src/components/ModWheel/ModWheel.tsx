@@ -73,9 +73,10 @@ const ModWheel: React.FC<RangeSliderProps> = ({
         ref={sliderRef}
         className={`${styles.slider} ${disabled ? styles.disabled : ""}`}
         onMouseDown={handleMouseDown}
+        style={{ "--thumb-position": `${percentage}%` } as React.CSSProperties}
       >
         <div className={styles.track}></div>
-        <div className={styles.thumb} style={{ left: `${percentage}%` }} />
+        <div className={styles.thumb} />
       </div>
     </div>
   );
