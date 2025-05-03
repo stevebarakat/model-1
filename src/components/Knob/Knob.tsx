@@ -10,6 +10,7 @@ interface KnobProps {
   unit?: string;
   onChange: (value: number) => void;
   valueLabels?: Record<number, string | React.ReactElement>;
+  style?: React.CSSProperties;
 }
 
 function Knob({
@@ -21,6 +22,7 @@ function Knob({
   unit = "",
   onChange,
   valueLabels,
+  style,
 }: KnobProps) {
   const knobRef = useRef<HTMLDivElement>(null);
   const [isDragging, setIsDragging] = useState(false);
@@ -76,10 +78,11 @@ function Knob({
 
   return (
     <div className={styles.knobContainer}>
-      {isDragging ? (
+      {isDragging && label !== "Octaves" ? (
         <div className={styles.knobValue}>{displayValue}</div>
       ) : (
-        hasLabel && <div className={styles.knobLabel}>{label}</div>
+        hasLabel &&
+        label !== "Octaves" && <div className={styles.knobLabel}>{label}</div>
       )}
       {label === "Octaves" && (
         <div className={styles.knobLabel}>
@@ -92,7 +95,6 @@ function Knob({
         style={{ transform: `rotate(${rotation}deg)` }}
         onMouseDown={handleMouseDown}
       />
-      <div className={styles.knobGradient}></div>
     </div>
   );
 }

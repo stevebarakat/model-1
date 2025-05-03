@@ -42,19 +42,6 @@
   z-index: 5;
 }
 
-.knobGradient {
-  position: absolute;
-  width: 15px;
-  height: 15px;
-  border-radius: 50%;
-  background: hsl(0, 0%, 85% / 0.2);
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  z-index: 1;
-  pointer-events: none;
-}
-
 .knobLabel {
   font-size: 0.68rem;
   color: hsl(220, 13%, 70%);

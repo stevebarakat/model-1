@@ -17,7 +17,7 @@ const OctaveControls = ({
       min={1}
       max={7}
       step={1}
-      label="Octave"
+      label="Octaves"
       onChange={(newValue: number) => {
         onOctaveChangeStart();
         onOctaveChange(Math.round(newValue));
