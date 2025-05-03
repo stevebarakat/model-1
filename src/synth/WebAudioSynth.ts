@@ -279,7 +279,7 @@ export async function createSynth() {
     const filterEnvelope = createGainNode(context, 0);
     const filterModGain = createGainNode(
       context,
-      settings.filter.contourAmount * baseCutoff * 0.3
+      settings.filter.contourAmount * baseCutoff * 0.15
     );
 
     noteGain.connect(filterEnvelope);
