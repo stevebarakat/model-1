@@ -309,7 +309,11 @@ function App() {
               modMix={modMix}
               glide={glide}
               onTuneChange={setTune}
-              onModMixChange={setModMix}
+              onModMixChange={(value) => {
+                setModMix(value);
+                // Convert 0-1 range to 0-100 range
+                setModWheel(value * 100);
+              }}
               onGlideChange={setGlide}
             />
             <div className={styles.indent}></div>
