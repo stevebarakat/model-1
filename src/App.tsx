@@ -33,16 +33,19 @@ function App() {
     frequency: 0,
     waveform: "triangle",
     range: "8",
+    detune: 0,
   });
   const [osc2, setOsc2] = useState<OscillatorSettings>({
     frequency: 0,
     waveform: "triangle",
     range: "8",
+    detune: 0,
   });
   const [osc3, setOsc3] = useState<OscillatorSettings>({
     frequency: 0,
     waveform: "triangle",
     range: "8",
+    detune: 0,
   });
 
   // Mixer state
@@ -158,9 +161,24 @@ function App() {
     if (keyboardRef.current.synth) {
       keyboardRef.current.synth.updateSettings({
         oscillators: [
-          { ...osc1, type: osc1.waveform, volume: osc1Volume, detune: 0 },
-          { ...osc2, type: osc2.waveform, volume: osc2Volume, detune: 0 },
-          { ...osc3, type: osc3.waveform, volume: osc3Volume, detune: 0 },
+          {
+            ...osc1,
+            type: osc1.waveform,
+            volume: osc1Volume,
+            detune: osc1.detune,
+          },
+          {
+            ...osc2,
+            type: osc2.waveform,
+            volume: osc2Volume,
+            detune: osc2.detune,
+          },
+          {
+            ...osc3,
+            type: osc3.waveform,
+            volume: osc3Volume,
+            detune: osc3.detune,
+          },
         ],
         envelope: {
           attack: attackTime,

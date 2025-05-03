@@ -2,7 +2,12 @@ import React from "react";
 import Knob from "../Knob/Knob";
 import styles from "./OscillatorBank.module.css";
 import { Square, Triangle, AudioWaveform, Activity } from "lucide-react";
-import { OscillatorBankProps, RangeType, WaveformType } from "@/synth/types";
+import {
+  OscillatorSettings,
+  RangeType,
+  OscillatorType,
+  OscillatorBankProps,
+} from "../../synth/types";
 
 // Helper functions to convert between numeric values and discrete options
 const rangeToValue = (range: RangeType): number => {
@@ -22,8 +27,8 @@ const valueToRange = (value: number): RangeType => {
   return ranges[Math.max(0, Math.min(ranges.length - 1, index))];
 };
 
-const waveformToValue = (waveform: WaveformType): number => {
-  const waveformMap: Record<WaveformType, number> = {
+const waveformToValue = (waveform: OscillatorType): number => {
+  const waveformMap: Record<OscillatorType, number> = {
     triangle: 0,
     sawtooth: 1,
     square: 2,
@@ -32,8 +37,13 @@ const waveformToValue = (waveform: WaveformType): number => {
   return waveformMap[waveform];
 };
 
-const valueToWaveform = (value: number): WaveformType => {
-  const waveforms: WaveformType[] = ["triangle", "sawtooth", "square", "sine"];
+const valueToWaveform = (value: number): OscillatorType => {
+  const waveforms: OscillatorType[] = [
+    "triangle",
+    "sawtooth",
+    "square",
+    "sine",
+  ];
   const index = Math.round(value);
   return waveforms[Math.max(0, Math.min(waveforms.length - 1, index))];
 };
@@ -47,8 +57,11 @@ const OscillatorBank: React.FC<OscillatorBankProps> = ({
   onOsc3Change,
 }) => {
   const renderOscillator = (
-    osc: typeof osc1,
-    onChange: typeof onOsc1Change
+    osc: OscillatorSettings,
+    onChange: (
+      param: keyof OscillatorSettings,
+      value: OscillatorSettings[keyof OscillatorSettings]
+    ) => void
   ) => (
     <>
       <div className={styles.controls}>
@@ -69,15 +82,6 @@ const OscillatorBank: React.FC<OscillatorBankProps> = ({
           onChange={(value) => onChange("range", valueToRange(value))}
         />
         <Knob
-          value={osc.frequency}
-          min={-12}
-          max={12}
-          step={0.1}
-          label="Freq"
-          unit="st"
-          onChange={(value) => onChange("frequency", value)}
-        />
-        <Knob
           value={waveformToValue(osc.waveform)}
           min={0}
           max={3}
@@ -90,6 +94,24 @@ const OscillatorBank: React.FC<OscillatorBankProps> = ({
             3: <Triangle size={14} strokeWidth={2} />,
           }}
           onChange={(value) => onChange("waveform", valueToWaveform(value))}
+        />
+        <Knob
+          value={osc.frequency}
+          min={-12}
+          max={12}
+          step={0.1}
+          label="Freq"
+          unit="st"
+          onChange={(value) => onChange("frequency", value)}
+        />
+        <Knob
+          value={osc.detune}
+          min={-50}
+          max={50}
+          step={1}
+          label="Detune"
+          unit="ct"
+          onChange={(value) => onChange("detune", value)}
         />
       </div>
     </>

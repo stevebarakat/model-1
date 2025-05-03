@@ -28,7 +28,7 @@ export type OscillatorSettings = {
   frequency: number;
   range: RangeType;
   volume?: number;
-  detune?: number;
+  detune: number;
 };
 
 export type NoiseGenerator = {
@@ -76,31 +76,19 @@ export type SynthSettings = {
 export type WaveformType = "triangle" | "sawtooth" | "square" | "sine";
 
 export type OscillatorBankProps = {
-  osc1: {
-    range: RangeType;
-    frequency: number;
-    waveform: WaveformType;
-  };
-  osc2: {
-    range: RangeType;
-    frequency: number;
-    waveform: WaveformType;
-  };
-  osc3: {
-    range: RangeType;
-    frequency: number;
-    waveform: WaveformType;
-  };
+  osc1: OscillatorSettings;
+  osc2: OscillatorSettings;
+  osc3: OscillatorSettings;
   onOsc1Change: (
-    param: "range" | "frequency" | "waveform",
-    value: number | string
+    param: keyof OscillatorSettings,
+    value: OscillatorSettings[keyof OscillatorSettings]
   ) => void;
   onOsc2Change: (
-    param: "range" | "frequency" | "waveform",
-    value: number | string
+    param: keyof OscillatorSettings,
+    value: OscillatorSettings[keyof OscillatorSettings]
   ) => void;
   onOsc3Change: (
-    param: "range" | "frequency" | "waveform",
-    value: number | string
+    param: keyof OscillatorSettings,
+    value: OscillatorSettings[keyof OscillatorSettings]
   ) => void;
 };
