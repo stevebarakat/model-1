@@ -70,9 +70,46 @@ function Knob({
     };
   }, [isDragging, min, max, startY, startValue, onChange]);
 
+  // Add keyboard event handling
+  useEffect(() => {
+    function handleKeyDown(e: KeyboardEvent) {
+      if (!knobRef.current?.contains(document.activeElement)) return;
+
+      const isShiftPressed = e.shiftKey;
+      const multiplier = isShiftPressed ? 10 : 1;
+      const stepSize = step * multiplier;
+
+      let newValue = value;
+
+      switch (e.key) {
+        case "ArrowUp":
+        case "ArrowRight":
+          newValue = Math.min(max, value + stepSize);
+          break;
+        case "ArrowDown":
+        case "ArrowLeft":
+          newValue = Math.max(min, value - stepSize);
+          break;
+        default:
+          return;
+      }
+
+      onChange(Number(newValue.toFixed(2)));
+    }
+
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
+  }, [value, min, max, step, onChange]);
+
   const displayValue =
     valueLabels?.[Math.round(value)] ??
     value.toFixed(step >= 1 ? 0 : 2) + (unit ? ` ${unit}` : "");
+
+  // Convert displayValue to string for aria-valuetext
+  const ariaValueText =
+    typeof displayValue === "string"
+      ? displayValue
+      : value.toFixed(step >= 1 ? 0 : 2) + (unit ? ` ${unit}` : "");
 
   return (
     <div className={styles.knobContainer}>
@@ -86,6 +123,13 @@ function Knob({
         className={styles.knob}
         style={{ transform: `rotate(${rotation}deg)` }}
         onMouseDown={handleMouseDown}
+        tabIndex={0} // Make the knob focusable
+        role="slider"
+        aria-valuemin={min}
+        aria-valuemax={max}
+        aria-valuenow={value}
+        aria-label={label}
+        aria-valuetext={ariaValueText}
       />
       <div className={styles.knobShadow}></div>
     </div>

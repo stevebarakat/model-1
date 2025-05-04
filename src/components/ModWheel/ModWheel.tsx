@@ -51,6 +51,33 @@ const ModWheel: React.FC<RangeSliderProps> = ({
     [isDragging, min, max, onChange, step]
   );
 
+  // Add keyboard event handling
+  const handleKeyDown = useCallback(
+    (e: React.KeyboardEvent) => {
+      if (disabled) return;
+
+      const isShiftPressed = e.shiftKey;
+      const multiplier = isShiftPressed ? 10 : 1;
+      const stepSize = step * multiplier;
+
+      let newValue = value;
+
+      switch (e.key) {
+        case "ArrowUp":
+          newValue = Math.min(max, value + stepSize);
+          break;
+        case "ArrowDown":
+          newValue = Math.max(min, value - stepSize);
+          break;
+        default:
+          return;
+      }
+
+      onChange(Math.max(min, Math.min(max, newValue)));
+    },
+    [disabled, max, min, onChange, step, value]
+  );
+
   React.useEffect(() => {
     const handleMouseUp = () => {
       setIsDragging(false);
@@ -72,7 +99,14 @@ const ModWheel: React.FC<RangeSliderProps> = ({
         ref={sliderRef}
         className={`${styles.slider} ${disabled ? styles.disabled : ""}`}
         onMouseDown={handleMouseDown}
+        onKeyDown={handleKeyDown}
         style={{ "--thumb-position": `${percentage}%` } as React.CSSProperties}
+        tabIndex={disabled ? -1 : 0}
+        role="slider"
+        aria-valuemin={min}
+        aria-valuemax={max}
+        aria-valuenow={value}
+        aria-label={label}
       >
         <div className={styles.track}></div>
         <div className={styles.thumb} />
