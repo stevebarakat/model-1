@@ -1,4 +1,4 @@
-import { useRef, useEffect, useCallback } from "react";
+import { useRef, useEffect, useCallback, useState } from "react";
 import { createSynth } from "./synth/WebAudioSynth";
 import Keyboard from "./components/Keyboard";
 import OscillatorBank from "./components/OscillatorBank/OscillatorBank";
@@ -40,6 +40,10 @@ function App() {
     synth: Awaited<ReturnType<typeof createSynth>> | null;
   }>({ synth: null });
 
+  // Add state for tracking glissando
+  const [lastPlayedNote, setLastPlayedNote] = useState<string | null>(null);
+  const [isMouseDown, setIsMouseDown] = useState(false);
+
   const handleKeyDown = useCallback(
     (note: Note) => {
       // Store the original note for visual state
@@ -49,10 +53,16 @@ function App() {
         return newSet;
       });
 
-      // Use the note directly without octave conversion since noteToFrequency handles it
-      keyboardRef.current.synth?.triggerAttack(note);
+      // During glissando, use handleNoteTransition
+      if (isMouseDown && lastPlayedNote && lastPlayedNote !== note) {
+        keyboardRef.current.synth?.handleNoteTransition(lastPlayedNote, note);
+      } else {
+        // For regular key press or first note in glissando
+        keyboardRef.current.synth?.triggerAttack(note);
+      }
+      setLastPlayedNote(note);
     },
-    [setActiveKeys]
+    [setActiveKeys, isMouseDown, lastPlayedNote]
   );
 
   const handleKeyUp = useCallback(
@@ -64,11 +74,30 @@ function App() {
         return newSet;
       });
 
-      // Use the note directly without octave conversion since noteToFrequency handles it
-      keyboardRef.current.synth?.triggerRelease(note);
+      // Only release if we're not in a glissando or if this is the last played note
+      if (!isMouseDown || note === lastPlayedNote) {
+        keyboardRef.current.synth?.triggerRelease(note);
+        if (note === lastPlayedNote) {
+          setLastPlayedNote(null);
+        }
+      }
     },
-    [setActiveKeys]
+    [setActiveKeys, isMouseDown, lastPlayedNote]
   );
+
+  // Add mouse state handlers
+  const handleMouseDown = useCallback(() => {
+    setIsMouseDown(true);
+  }, []);
+
+  const handleMouseUp = useCallback(() => {
+    setIsMouseDown(false);
+    // Release all active notes when mouse is released
+    activeKeys.forEach((note) => {
+      keyboardRef.current.synth?.triggerRelease(note);
+    });
+    setLastPlayedNote(null);
+  }, [activeKeys]);
 
   // Add keyboard event listeners
   useEffect(() => {
@@ -374,6 +403,8 @@ function App() {
             activeKeys={Array.from(activeKeys)}
             onKeyDown={handleKeyDown}
             onKeyUp={handleKeyUp}
+            onMouseDown={handleMouseDown}
+            onMouseUp={handleMouseUp}
             octaveRange={{ min: currentOctave, max: currentOctave + 2 }}
           />
         </div>

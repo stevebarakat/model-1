@@ -13,6 +13,8 @@ type Props = {
   octaveRange?: { min: number; max: number };
   onKeyDown?: (note: string) => void;
   onKeyUp?: (note: string) => void;
+  onMouseDown?: () => void;
+  onMouseUp?: () => void;
 };
 
 function Keyboard(
@@ -21,6 +23,8 @@ function Keyboard(
     octaveRange = { min: 3, max: 6 },
     onKeyDown = () => {},
     onKeyUp = () => {},
+    onMouseDown = () => {},
+    onMouseUp = () => {},
   }: Props,
   ref: React.ForwardedRef<{
     synth: Awaited<ReturnType<typeof createSynth>> | null;
@@ -31,8 +35,8 @@ function Keyboard(
     ReturnType<typeof createSynth>
   > | null>(null);
 
-  // Keep track of currently playing notes
-  const [activeNotes, setActiveNotes] = useState<Set<string>>(new Set());
+  // Track mouse state for glissando
+  const [isMouseDown, setIsMouseDown] = useState(false);
 
   // Define notes for one octave in order (important for layout)
   const octave = [
@@ -62,50 +66,44 @@ function Keyboard(
   // Handle key press
   const handleKeyPress = useCallback(
     (note: string) => {
-      if (!isLoaded || !synth) return;
-
-      // Add to active notes
-      setActiveNotes((prev) => {
-        const newActiveNotes = new Set(prev);
-        newActiveNotes.add(note);
-        return newActiveNotes;
-      });
-
-      // Trigger attack
-      synth.triggerAttack(note);
+      if (!isLoaded) return;
       onKeyDown(note);
     },
-    [isLoaded, synth, onKeyDown]
+    [isLoaded, onKeyDown]
   );
 
   // Handle key release
   const handleKeyRelease = useCallback(
     (note: string) => {
-      if (!isLoaded || !synth) return;
-
-      // Remove from active notes
-      setActiveNotes((prev) => {
-        const newActiveNotes = new Set(prev);
-        newActiveNotes.delete(note);
-        return newActiveNotes;
-      });
-
-      // Trigger release
-      synth.triggerRelease(note);
+      if (!isLoaded) return;
       onKeyUp(note);
     },
-    [isLoaded, synth, onKeyUp]
+    [isLoaded, onKeyUp]
   );
 
-  // Release all notes when unmounting or changing instruments
-  useEffect(() => {
-    return () => {
-      if (synth && activeNotes.size > 0) {
-        activeNotes.forEach((note) => synth.triggerRelease(note));
-        setActiveNotes(new Set());
-      }
-    };
-  }, [synth, activeNotes]);
+  // Handle mouse down on keyboard
+  const handleMouseDown = useCallback(() => {
+    setIsMouseDown(true);
+    onMouseDown();
+  }, [onMouseDown]);
+
+  // Handle mouse up on keyboard
+  const handleMouseUp = useCallback(() => {
+    setIsMouseDown(false);
+    // Release all active keys
+    activeKeys.forEach(onKeyUp);
+    onMouseUp();
+  }, [activeKeys, onKeyUp, onMouseUp]);
+
+  // Handle mouse leave from keyboard
+  const handleMouseLeave = useCallback(() => {
+    if (isMouseDown) {
+      setIsMouseDown(false);
+      // Release all active keys
+      activeKeys.forEach(onKeyUp);
+      onMouseUp();
+    }
+  }, [isMouseDown, activeKeys, onKeyUp, onMouseUp]);
 
   // Expose the synth to parent components via ref
   useImperativeHandle(
@@ -152,9 +150,16 @@ function Keyboard(
             className={`${styles.whiteKey} ${
               isActive ? styles.whiteKeyActive : ""
             } `}
-            onPointerDown={() => handleKeyPress(key.note)}
+            onPointerDown={() => {
+              handleMouseDown();
+              handleKeyPress(key.note);
+            }}
             onPointerUp={() => handleKeyRelease(key.note)}
-            onPointerLeave={() => handleKeyRelease(key.note)}
+            onPointerEnter={() => {
+              if (isMouseDown) {
+                handleKeyPress(key.note);
+              }
+            }}
           />
         );
       });
@@ -186,16 +191,27 @@ function Keyboard(
               isActive ? styles.blackKeyActive : ""
             }`}
             style={{ left: `${position}%`, width: `${whiteKeyWidth * 0.7}%` }}
-            onPointerDown={() => handleKeyPress(key.note)}
+            onPointerDown={() => {
+              handleMouseDown();
+              handleKeyPress(key.note);
+            }}
             onPointerUp={() => handleKeyRelease(key.note)}
-            onPointerLeave={() => handleKeyRelease(key.note)}
+            onPointerEnter={() => {
+              if (isMouseDown) {
+                handleKeyPress(key.note);
+              }
+            }}
           />
         );
       });
   }
 
   return (
-    <div className={styles.keyboardContainer}>
+    <div
+      className={styles.keyboardContainer}
+      onPointerUp={handleMouseUp}
+      onPointerLeave={handleMouseLeave}
+    >
       <div className={styles.keyboard}>
         <div className={styles.pianoKeys}>
           {<div className={styles.leftShadow} />}
