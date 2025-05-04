@@ -34,7 +34,7 @@
 }
 
 .switchLabel {
-  padding-bottom: 1rem;
+  padding-bottom: 0.6rem;
   font-size: 0.68rem;
   color: hsl(220, 13%, 70%);
   text-align: center;
