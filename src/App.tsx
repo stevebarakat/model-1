@@ -340,13 +340,28 @@ function App() {
         <div className={styles.controlsContainer}>
           <div className={styles.backPanel}></div>
           <div className={styles.innerControlsContainer}>
-            <Controllers
+            {/* <Controllers
               modMix={modMix}
               onModMixChange={(value) => {
                 setModMix(value);
                 setModWheel(value * 100); // Convert 0-1 range to 0-100 range;
               }}
+            /> */}
+            <Mixer
+              osc1Volume={osc1Volume}
+              osc2Volume={osc2Volume}
+              osc3Volume={osc3Volume}
+              noiseVolume={noiseVolume}
+              noiseType={noiseType}
+              modMix={modMix}
+              onModMixChange={setModMix}
+              onOsc1VolumeChange={setOsc1Volume}
+              onOsc2VolumeChange={setOsc2Volume}
+              onOsc3VolumeChange={setOsc3Volume}
+              onNoiseVolumeChange={setNoiseVolume}
+              onNoiseTypeChange={setNoiseType}
             />
+            <div className={styles.indent}></div>
             <div className={styles.indent}></div>
             <div className="box">
               <OscillatorBank
@@ -358,19 +373,6 @@ function App() {
                 onOsc3Change={handleOsc3Change}
               />
             </div>
-            <div className={styles.indent}></div>
-            <Mixer
-              osc1Volume={osc1Volume}
-              osc2Volume={osc2Volume}
-              osc3Volume={osc3Volume}
-              noiseVolume={noiseVolume}
-              noiseType={noiseType}
-              onOsc1VolumeChange={setOsc1Volume}
-              onOsc2VolumeChange={setOsc2Volume}
-              onOsc3VolumeChange={setOsc3Volume}
-              onNoiseVolumeChange={setNoiseVolume}
-              onNoiseTypeChange={setNoiseType}
-            />
             <div className={styles.indent}></div>
             <Modifiers
               cutoff={cutoff}

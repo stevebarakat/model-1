@@ -11,6 +11,8 @@ type MixerProps = {
   osc3Volume: number;
   noiseVolume: number;
   noiseType: NoiseType;
+  modMix: number;
+  onModMixChange: (value: number) => void;
   onOsc1VolumeChange: (value: number) => void;
   onOsc2VolumeChange: (value: number) => void;
   onOsc3VolumeChange: (value: number) => void;
@@ -24,6 +26,8 @@ const Mixer: React.FC<MixerProps> = ({
   osc3Volume,
   noiseVolume,
   noiseType,
+  modMix,
+  onModMixChange,
   onOsc1VolumeChange,
   onOsc2VolumeChange,
   onOsc3VolumeChange,
@@ -77,7 +81,9 @@ const Mixer: React.FC<MixerProps> = ({
             />
             <div className={styles.noiseSwitch}>
               <div className={styles.switchContainer}>
-                <label className={styles.switchLabel}>WHITE</label>
+                <label className={styles.switchLabel}>
+                  {noiseType === "white" ? "White" : "Pink"}
+                </label>
                 <Switch.Root
                   className={styles.switchRoot}
                   checked={noiseType === "pink"}
@@ -87,9 +93,16 @@ const Mixer: React.FC<MixerProps> = ({
                 >
                   <Switch.Thumb className={styles.switchThumb} />
                 </Switch.Root>
-                <label className={styles.switchLabel}>PINK</label>
               </div>
             </div>
+            <Knob
+              value={modMix}
+              min={0}
+              max={1}
+              step={0.01}
+              label="Mod"
+              onChange={onModMixChange}
+            />
           </div>
         </div>
         <span className="section-title">Mixer</span>

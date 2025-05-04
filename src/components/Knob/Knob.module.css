@@ -66,3 +66,7 @@
   left: 50%;
   transform: translateX(-50%);
 }
+
+.knobValue span {
+  font-size: 0.48rem;
+}

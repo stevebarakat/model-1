@@ -55,22 +55,22 @@ const FILTER_TYPE_MAP: Record<FilterType, number> = {
 const FILTER_TYPES: FilterType[] = ["lowpass", "highpass", "bandpass", "notch"];
 
 const ROUTING_LABELS = [
-  "OFF",
-  "CUTOFF",
-  "RESONANCE",
-  "CUT+RES",
-  "PITCH",
-  "CUT+PITCH",
-  "RES+PITCH",
-  "CUT+RES +PITCH",
-  "VOLUME",
-  "CUT+VOL",
-  "RES+VOL",
-  "CUT+RES +VOL",
-  "PITCH+VOL",
-  "CUT+PITCH +VOL",
-  "RES+PITCH +VOL",
-  "ALL",
+  <span>OFF</span>,
+  <span>CUTOFF</span>,
+  <span>RESONANCE</span>,
+  <span>CUT+RES</span>,
+  <span>PITCH</span>,
+  <span>CUT+PITCH</span>,
+  <span>RES+PITCH</span>,
+  <span>CUT+RES+PITCH</span>,
+  <span>VOLUME</span>,
+  <span>CUT+VOL</span>,
+  <span>RES+VOL</span>,
+  <span>CUT+RES+VOL</span>,
+  <span>PITCH+VOL</span>,
+  <span>CUT+PITCH+VOL</span>,
+  <span>RES+PITCH+VOL</span>,
+  <span>ALL</span>,
 ];
 
 function waveformToValue(waveform: WaveformType): number {

@@ -1,6 +1,5 @@
 import React from "react";
 import Knob from "../Knob/Knob";
-import styles from "./ADSR.module.css";
 
 interface ADSRProps {
   attack: number;
@@ -25,43 +24,41 @@ const ADSR: React.FC<ADSRProps> = ({
 }) => {
   return (
     <>
-      <div className={styles.controls}>
-        <Knob
-          value={attack}
-          min={0}
-          max={2}
-          step={0.01}
-          label="ATTACK"
-          unit="s"
-          onChange={onAttackChange}
-        />
-        <Knob
-          value={decay}
-          min={0}
-          max={2}
-          step={0.01}
-          label="DECAY"
-          unit="s"
-          onChange={onDecayChange}
-        />
-        <Knob
-          value={sustain}
-          min={0}
-          max={1}
-          step={0.01}
-          label="SUSTAIN"
-          onChange={onSustainChange}
-        />
-        <Knob
-          value={release}
-          min={0}
-          max={4}
-          step={0.01}
-          label="RELEASE"
-          unit="s"
-          onChange={onReleaseChange}
-        />
-      </div>
+      <Knob
+        value={attack}
+        min={0}
+        max={2}
+        step={0.01}
+        label="ATTACK"
+        unit="s"
+        onChange={onAttackChange}
+      />
+      <Knob
+        value={decay}
+        min={0}
+        max={2}
+        step={0.01}
+        label="DECAY"
+        unit="s"
+        onChange={onDecayChange}
+      />
+      <Knob
+        value={sustain}
+        min={0}
+        max={1}
+        step={0.01}
+        label="SUSTAIN"
+        onChange={onSustainChange}
+      />
+      <Knob
+        value={release}
+        min={0}
+        max={4}
+        step={0.01}
+        label="RELEASE"
+        unit="s"
+        onChange={onReleaseChange}
+      />
     </>
   );
 };
