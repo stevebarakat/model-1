@@ -34,6 +34,7 @@ export type OscillatorSettings = {
   range: RangeType;
   detune: number;
   volume?: number;
+  type?: OscillatorType;
 };
 
 export type NoiseGenerator = {
