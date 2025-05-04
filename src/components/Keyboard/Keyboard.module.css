@@ -17,6 +17,7 @@
     0 4px 6px -1px hsl(217, 50%, 10%);
   &:before {
     content: "";
+    box-shadow: 0 4px 8px 8px hsl(217 30% 0% / 0.375);
     background: linear-gradient(180deg, hsl(217, 50%, 20%), hsl(217, 10%, 5%));
     display: flex;
     position: relative;

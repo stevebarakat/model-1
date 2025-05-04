@@ -47,7 +47,7 @@ function Knob({
     if (!isDragging) return;
 
     function handleMouseMove(e: MouseEvent) {
-      const sensitivity = 0.1; // Reduced sensitivity for cents
+      const sensitivity = 1.0; // Further increased sensitivity for more responsive control
       const deltaY = (startY - e.clientY) * sensitivity;
       const range = max - min;
       const newValue = Math.min(
