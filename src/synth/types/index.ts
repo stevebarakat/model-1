@@ -29,12 +29,11 @@ export type NoteState = {
 };
 
 export type OscillatorSettings = {
-  type?: OscillatorType;
   waveform: OscillatorType;
   frequency: number;
   range: RangeType;
-  volume?: number;
   detune: number;
+  volume?: number;
 };
 
 export type NoiseGenerator = {
@@ -107,4 +106,11 @@ export type OscillatorBankProps = {
     param: keyof OscillatorSettings,
     value: OscillatorSettings[keyof OscillatorSettings]
   ) => void;
+};
+
+export type FilterSettings = {
+  type: FilterType;
+  cutoff: number;
+  resonance: number;
+  envelopeAmount: number;
 };

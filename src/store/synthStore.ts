@@ -1,16 +1,10 @@
 import { create } from "zustand";
+import { OscillatorSettings } from "@/synth/types";
 
 type OscillatorType = "sine" | "square" | "sawtooth" | "triangle";
-type RangeType = "32" | "16" | "8" | "4" | "2";
 type Note = string;
 
-interface OscillatorSettings {
-  frequency: number;
-  waveform: OscillatorType;
-  range: RangeType;
-}
-
-interface SynthState {
+type SynthState = {
   // Keyboard state
   activeKeys: Set<Note>;
   keyboardRef: {
@@ -90,7 +84,7 @@ interface SynthState {
   updateMixer: (settings: Partial<SynthState["mixer"]>) => void;
   updateModifiers: (settings: Partial<SynthState["modifiers"]>) => void;
   updateEffects: (settings: Partial<SynthState["effects"]>) => void;
-}
+};
 
 const initialState: Omit<
   SynthState,
@@ -112,9 +106,9 @@ const initialState: Omit<
   tune: 0,
   modMix: 0,
   oscillators: {
-    osc1: { frequency: 0, waveform: "triangle", range: "8" },
-    osc2: { frequency: 0, waveform: "triangle", range: "8" },
-    osc3: { frequency: 0, waveform: "triangle", range: "8" },
+    osc1: { frequency: 0, waveform: "triangle", range: "8", detune: 0 },
+    osc2: { frequency: 0, waveform: "triangle", range: "8", detune: 0 },
+    osc3: { frequency: 0, waveform: "triangle", range: "8", detune: 0 },
   },
   mixer: {
     osc1Volume: 0.7,
