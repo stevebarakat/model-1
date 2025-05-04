@@ -1,0 +1,8 @@
+/* Preconnect to Google Fonts */
+@import url("https://fonts.googleapis.com/css2?family=Urbanist:wght@500&display=swap");
+
+/* Define font variables */
+:root {
+  --font-primary: "Urbanist", -apple-system, BlinkMacSystemFont, "Segoe UI",
+    Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+}

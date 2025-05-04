@@ -113,14 +113,6 @@ const OscillatorBank: React.FC<OscillatorBankProps> = ({
           unit="ct"
           onChange={(value) => onChange("detune", value)}
         />
-        <Knob
-          value={osc.pan ?? 0}
-          min={-1}
-          max={1}
-          step={0.01}
-          label="Pan"
-          onChange={(value) => onChange("pan", value)}
-        />
       </div>
     </>
   );

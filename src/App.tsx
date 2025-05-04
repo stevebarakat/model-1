@@ -282,6 +282,9 @@ function App() {
               osc1Volume={mixer.osc1Volume}
               osc2Volume={mixer.osc2Volume}
               osc3Volume={mixer.osc3Volume}
+              osc1Pan={oscillators.osc1.pan ?? 0}
+              osc2Pan={oscillators.osc2.pan ?? 0}
+              osc3Pan={oscillators.osc3.pan ?? 0}
               noiseVolume={mixer.noiseVolume}
               noiseType={mixer.noiseType}
               modMix={mixer.modMix}
@@ -292,6 +295,9 @@ function App() {
               onOsc1VolumeChange={(value) => updateMixer({ osc1Volume: value })}
               onOsc2VolumeChange={(value) => updateMixer({ osc2Volume: value })}
               onOsc3VolumeChange={(value) => updateMixer({ osc3Volume: value })}
+              onOsc1PanChange={(value) => handleOsc1Change("pan", value)}
+              onOsc2PanChange={(value) => handleOsc2Change("pan", value)}
+              onOsc3PanChange={(value) => handleOsc3Change("pan", value)}
               onNoiseVolumeChange={(value) =>
                 updateMixer({ noiseVolume: value })
               }

@@ -9,6 +9,13 @@
   overflow: hidden;
 }
 
+body {
+  font-family: var(--font-primary);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
 .section-title {
   font-size: 0.8rem;
   text-transform: uppercase;
