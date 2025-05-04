@@ -2,8 +2,8 @@ import React from "react";
 import Knob from "../Knob/Knob";
 import ADSR from "../ADSR/ADSR";
 import styles from "./Modifiers.module.css";
-import { WaveformType } from "../../synth/types";
 import { Square, Triangle, AudioWaveform, Activity } from "lucide-react";
+import { WaveformType, LFORouting } from "@/synth/types/index";
 
 type ModifiersProps = {
   cutoff: number;
@@ -16,6 +16,7 @@ type ModifiersProps = {
   lfoRate: number;
   lfoDepth: number;
   lfoWaveform: WaveformType;
+  lfoRouting: LFORouting;
   onCutoffChange: (value: number) => void;
   onResonanceChange: (value: number) => void;
   onContourAmountChange: (value: number) => void;
@@ -26,6 +27,7 @@ type ModifiersProps = {
   onLfoRateChange: (value: number) => void;
   onLfoDepthChange: (value: number) => void;
   onLfoWaveformChange: (waveform: WaveformType) => void;
+  onLfoRoutingChange: (routing: LFORouting) => void;
 };
 
 const waveformToValue = (waveform: WaveformType): number => {
@@ -44,6 +46,26 @@ const valueToWaveform = (value: number): WaveformType => {
   return waveforms[Math.max(0, Math.min(waveforms.length - 1, index))];
 };
 
+// Helper function to convert routing to a numeric value
+const routingToValue = (routing: LFORouting): number => {
+  let value = 0;
+  if (routing.filterCutoff) value += 1;
+  if (routing.filterResonance) value += 2;
+  if (routing.oscillatorPitch) value += 4;
+  if (routing.oscillatorVolume) value += 8;
+  return value;
+};
+
+// Helper function to convert numeric value to routing
+const valueToRouting = (value: number): LFORouting => {
+  return {
+    filterCutoff: (value & 1) !== 0,
+    filterResonance: (value & 2) !== 0,
+    oscillatorPitch: (value & 4) !== 0,
+    oscillatorVolume: (value & 8) !== 0,
+  };
+};
+
 const Modifiers: React.FC<ModifiersProps> = ({
   cutoff,
   resonance,
@@ -55,6 +77,7 @@ const Modifiers: React.FC<ModifiersProps> = ({
   lfoRate,
   lfoDepth,
   lfoWaveform,
+  lfoRouting,
   onCutoffChange,
   onResonanceChange,
   onContourAmountChange,
@@ -65,7 +88,27 @@ const Modifiers: React.FC<ModifiersProps> = ({
   onLfoRateChange,
   onLfoDepthChange,
   onLfoWaveformChange,
+  onLfoRoutingChange,
 }) => {
+  const routingLabels = [
+    "OFF",
+    "CUTOFF",
+    "RESONANCE",
+    "CUT+RES",
+    "PITCH",
+    "CUT+PITCH",
+    "RES+PITCH",
+    "CUT+RES +PITCH",
+    "VOLUME",
+    "CUT+VOL",
+    "RES+VOL",
+    "CUT+RES +VOL",
+    "PITCH+VOL",
+    "CUT+PITCH +VOL",
+    "RES+PITCH +VOL",
+    "ALL",
+  ];
+
   return (
     <div className="box">
       <div className={styles.modifiers}>
@@ -121,6 +164,15 @@ const Modifiers: React.FC<ModifiersProps> = ({
                 label="RATE"
                 unit="Hz"
                 onChange={onLfoRateChange}
+              />
+              <Knob
+                label="ROUTING"
+                value={routingToValue(lfoRouting)}
+                onChange={(value) => onLfoRoutingChange(valueToRouting(value))}
+                min={0}
+                max={15}
+                step={1}
+                valueLabels={routingLabels}
               />
               <Knob
                 value={lfoDepth}

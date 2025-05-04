@@ -10,7 +10,12 @@ export type NoteData = {
   noiseNode?: AudioNode;
   noiseGain?: GainNode;
   lfo: OscillatorNode;
-  lfoGain: GainNode;
+  lfoGains: {
+    filterCutoff: GainNode;
+    filterResonance: GainNode;
+    oscillatorPitch: GainNode;
+    oscillatorVolume: GainNode;
+  };
   filterEnvelope: GainNode;
   filterModGain: GainNode;
 };
@@ -38,6 +43,13 @@ export type NoiseGenerator = {
   type: NoiseType;
 };
 
+export type LFORouting = {
+  filterCutoff: boolean;
+  filterResonance: boolean;
+  oscillatorPitch: boolean;
+  oscillatorVolume: boolean;
+};
+
 export type SynthSettings = {
   tune: number;
   modMix: number;
@@ -62,6 +74,7 @@ export type SynthSettings = {
     rate: number;
     depth: number;
     waveform: WaveformType;
+    routing: LFORouting;
   };
   reverb: {
     amount: number;

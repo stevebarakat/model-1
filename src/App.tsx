@@ -9,7 +9,7 @@ import Effects from "./components/Effects/Effects";
 import SidePanel from "./components/SidePanel/SidePanel";
 import styles from "./styles/App.module.css";
 import "./styles/variables.css";
-import { OscillatorSettings, WaveformType } from "./synth/types";
+import { OscillatorSettings, WaveformType, LFORouting } from "./synth/types";
 
 type Note = string;
 
@@ -66,6 +66,12 @@ function App() {
   const [lfoRate, setLfoRate] = useState(5);
   const [lfoDepth, setLfoDepth] = useState(0.5);
   const [lfoWaveform, setLfoWaveform] = useState<WaveformType>("sine");
+  const [lfoRouting, setLfoRouting] = useState<LFORouting>({
+    filterCutoff: true,
+    filterResonance: false,
+    oscillatorPitch: false,
+    oscillatorVolume: false,
+  });
 
   // Reverb state
   const [reverbAmount, setReverbAmount] = useState(0);
@@ -203,6 +209,7 @@ function App() {
           rate: lfoRate,
           depth: lfoDepth,
           waveform: lfoWaveform,
+          routing: lfoRouting,
         },
       });
     }
@@ -229,6 +236,7 @@ function App() {
     lfoRate,
     lfoDepth,
     lfoWaveform,
+    lfoRouting,
     currentOctave,
   ]);
 
@@ -373,6 +381,7 @@ function App() {
               lfoRate={lfoRate}
               lfoDepth={lfoDepth}
               lfoWaveform={lfoWaveform}
+              lfoRouting={lfoRouting}
               onCutoffChange={setCutoff}
               onResonanceChange={setResonance}
               onContourAmountChange={setContourAmount}
@@ -383,6 +392,7 @@ function App() {
               onLfoRateChange={setLfoRate}
               onLfoDepthChange={setLfoDepth}
               onLfoWaveformChange={setLfoWaveform}
+              onLfoRoutingChange={setLfoRouting}
             />
             <div className={styles.indent}></div>
             <Effects

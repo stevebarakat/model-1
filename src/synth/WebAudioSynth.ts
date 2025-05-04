@@ -64,6 +64,12 @@ export async function createSynth() {
       rate: 0,
       depth: 0,
       waveform: "sine",
+      routing: {
+        filterCutoff: true,
+        filterResonance: false,
+        oscillatorPitch: false,
+        oscillatorVolume: false,
+      },
     },
     reverb: {
       amount: 0,
@@ -175,7 +181,8 @@ export async function createSynth() {
     if (
       newSettings.lfo?.waveform !== undefined ||
       newSettings.lfo?.rate !== undefined ||
-      newSettings.lfo?.depth !== undefined
+      newSettings.lfo?.depth !== undefined ||
+      newSettings.lfo?.routing !== undefined
     ) {
       activeNotes.forEach((noteData) => {
         if (noteData.lfo) {
@@ -186,8 +193,49 @@ export async function createSynth() {
             noteData.lfo.frequency.value = newSettings.lfo.rate;
           }
           if (newSettings.lfo?.depth !== undefined) {
-            noteData.lfoGain.gain.value =
-              newSettings.lfo.depth * settings.filter.cutoff;
+            const baseCutoff = Math.min(
+              Math.max(settings.filter.cutoff, 20),
+              20000
+            );
+            noteData.lfoGains.filterCutoff.gain.value =
+              newSettings.lfo.depth * baseCutoff;
+            noteData.lfoGains.filterResonance.gain.value =
+              newSettings.lfo.depth * 30;
+            noteData.lfoGains.oscillatorPitch.gain.value =
+              newSettings.lfo.depth * 100;
+            noteData.lfoGains.oscillatorVolume.gain.value =
+              newSettings.lfo.depth;
+          }
+          if (newSettings.lfo?.routing !== undefined) {
+            // Disconnect all LFO connections
+            noteData.lfoGains.filterCutoff.disconnect();
+            noteData.lfoGains.filterResonance.disconnect();
+            noteData.lfoGains.oscillatorPitch.disconnect();
+            noteData.lfoGains.oscillatorVolume.disconnect();
+
+            // Reconnect based on new routing settings
+            if (newSettings.lfo.routing.filterCutoff) {
+              noteData.lfoGains.filterCutoff.connect(
+                noteData.filterNode.frequency
+              );
+            }
+            if (newSettings.lfo.routing.filterResonance) {
+              noteData.lfoGains.filterResonance.connect(noteData.filterNode.Q);
+            }
+            if (newSettings.lfo.routing.oscillatorPitch) {
+              noteData.oscillators.forEach((osc) => {
+                if (osc) {
+                  noteData.lfoGains.oscillatorPitch.connect(osc.detune);
+                }
+              });
+            }
+            if (newSettings.lfo.routing.oscillatorVolume) {
+              noteData.oscillatorGains.forEach((gain) => {
+                if (gain) {
+                  noteData.lfoGains.oscillatorVolume.connect(gain.gain);
+                }
+              });
+            }
           }
         }
       });
@@ -255,7 +303,10 @@ export async function createSynth() {
 
         try {
           existingNote.lfo.stop();
-          existingNote.lfoGain.disconnect();
+          existingNote.lfoGains.filterCutoff.disconnect();
+          existingNote.lfoGains.filterResonance.disconnect();
+          existingNote.lfoGains.oscillatorPitch.disconnect();
+          existingNote.lfoGains.oscillatorVolume.disconnect();
         } catch (e) {
           console.warn("Error stopping LFO:", e);
         }
@@ -290,12 +341,28 @@ export async function createSynth() {
     lfo.type = settings.lfo.waveform;
     lfo.frequency.value = settings.lfo.rate;
 
-    // Create LFO gain with depth control
-    const lfoGain = createGainNode(context, settings.lfo.depth * baseCutoff);
+    // Create LFO gains for each routing destination
+    const lfoGains = {
+      filterCutoff: createGainNode(context, settings.lfo.depth * baseCutoff),
+      filterResonance: createGainNode(context, settings.lfo.depth * 30), // Max resonance is 30
+      oscillatorPitch: createGainNode(context, settings.lfo.depth * 100), // Max pitch modulation is 100 cents
+      oscillatorVolume: createGainNode(context, settings.lfo.depth),
+    };
 
-    // Connect LFO to filter frequency
-    lfo.connect(lfoGain);
-    lfoGain.connect(filter.frequency);
+    // Connect LFO to each destination based on routing settings
+    lfo.connect(lfoGains.filterCutoff);
+    lfo.connect(lfoGains.filterResonance);
+    lfo.connect(lfoGains.oscillatorPitch);
+    lfo.connect(lfoGains.oscillatorVolume);
+
+    // Connect each gain to its destination
+    if (settings.lfo.routing.filterCutoff) {
+      lfoGains.filterCutoff.connect(filter.frequency);
+    }
+    if (settings.lfo.routing.filterResonance) {
+      lfoGains.filterResonance.connect(filter.Q);
+    }
+
     lfo.start();
 
     const filterEnvelope = createGainNode(context, 0);
@@ -355,6 +422,14 @@ export async function createSynth() {
           );
         }
 
+        // Connect LFO to oscillator if routing is enabled
+        if (settings.lfo.routing.oscillatorPitch) {
+          lfoGains.oscillatorPitch.connect(osc.detune);
+        }
+        if (settings.lfo.routing.oscillatorVolume) {
+          lfoGains.oscillatorVolume.connect(gainNode.gain);
+        }
+
         oscillators.push(osc);
         oscillatorGains.push(gainNode);
       } else {
@@ -405,7 +480,7 @@ export async function createSynth() {
       noiseNode,
       noiseGain,
       lfo,
-      lfoGain,
+      lfoGains,
       filterEnvelope,
       filterModGain,
     });
@@ -437,7 +512,10 @@ export async function createSynth() {
     );
 
     noteData.lfo.stop();
-    noteData.lfoGain.disconnect();
+    noteData.lfoGains.filterCutoff.disconnect();
+    noteData.lfoGains.filterResonance.disconnect();
+    noteData.lfoGains.oscillatorPitch.disconnect();
+    noteData.lfoGains.oscillatorVolume.disconnect();
 
     setTimeout(() => {
       const currentState = noteStates.get(note);

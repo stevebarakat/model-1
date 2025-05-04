@@ -1,6 +1,6 @@
 import { create } from "zustand";
-import { Note, OscillatorType, RangeType, WaveformType } from "../synth/types";
 
+type OscillatorType = "sine" | "square" | "sawtooth" | "triangle";
 type RangeType = "32" | "16" | "8" | "4" | "2";
 type Note = string;
 
@@ -56,6 +56,12 @@ interface SynthState {
       rate: number;
       depth: number;
       waveform: OscillatorType;
+      routing: {
+        filterCutoff: boolean;
+        filterResonance: boolean;
+        oscillatorPitch: boolean;
+        oscillatorVolume: boolean;
+      };
     };
   };
 
@@ -131,6 +137,12 @@ const initialState: Omit<
       rate: 5,
       depth: 0.5,
       waveform: "sine",
+      routing: {
+        filterCutoff: true,
+        filterResonance: false,
+        oscillatorPitch: false,
+        oscillatorVolume: false,
+      },
     },
   },
   effects: {
