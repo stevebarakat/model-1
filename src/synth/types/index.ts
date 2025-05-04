@@ -2,6 +2,7 @@ export type Note = string;
 export type OscillatorType = "sine" | "square" | "sawtooth" | "triangle";
 export type NoiseType = "white" | "pink";
 export type RangeType = "32" | "16" | "8" | "4" | "2";
+export type FilterType = BiquadFilterType;
 export type NoteData = {
   oscillators: OscillatorNode[];
   oscillatorGains: GainNode[];
@@ -63,6 +64,7 @@ export type SynthSettings = {
     cutoff: number;
     resonance: number;
     contourAmount: number;
+    type: FilterType;
   };
   envelope: {
     attack: number;

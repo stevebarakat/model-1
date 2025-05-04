@@ -53,6 +53,7 @@ export async function createSynth() {
       cutoff: 2000,
       resonance: 0,
       contourAmount: 0,
+      type: "lowpass" as const,
     },
     envelope: {
       attack: 0.01,
@@ -147,8 +148,26 @@ export async function createSynth() {
       });
 
       if (noteData.filterNode) {
-        noteData.filterNode.frequency.value = settings.filter.cutoff;
-        noteData.filterNode.Q.value = settings.filter.resonance * 30;
+        if (
+          newSettings.filter?.cutoff !== undefined ||
+          newSettings.filter?.resonance !== undefined ||
+          newSettings.filter?.contourAmount !== undefined ||
+          newSettings.filter?.type !== undefined
+        ) {
+          if (newSettings.filter?.cutoff !== undefined) {
+            noteData.filterNode.frequency.value = newSettings.filter.cutoff;
+          }
+          if (newSettings.filter?.resonance !== undefined) {
+            noteData.filterNode.Q.value = newSettings.filter.resonance * 30;
+          }
+          if (newSettings.filter?.type !== undefined) {
+            noteData.filterNode.type = newSettings.filter.type;
+          }
+          if (newSettings.filter?.contourAmount !== undefined) {
+            noteData.filterModGain.gain.value =
+              newSettings.filter.contourAmount;
+          }
+        }
       }
 
       if (settings.noise.volume > 0) {
@@ -330,11 +349,18 @@ export async function createSynth() {
     const targetFrequency = noteToFrequency(note, settings.tune);
     const noteGain = createGainNode(context, 0);
     const filter = context.createBiquadFilter();
-    filter.type = "lowpass";
-
     const baseCutoff = Math.min(Math.max(settings.filter.cutoff, 20), 20000);
+    filter.type = settings.filter.type;
     filter.frequency.value = baseCutoff;
     filter.Q.value = settings.filter.resonance * 30;
+
+    // Add gain boost for bandpass filter
+    const filterGain = createGainNode(
+      context,
+      settings.filter.type === "bandpass" ? 4 : 1
+    );
+    filter.connect(filterGain);
+    filterGain.connect(masterGain);
 
     // Create LFO
     const lfo = context.createOscillator();

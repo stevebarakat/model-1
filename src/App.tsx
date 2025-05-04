@@ -9,7 +9,12 @@ import Effects from "./components/Effects/Effects";
 import SidePanel from "./components/SidePanel/SidePanel";
 import styles from "./styles/App.module.css";
 import "./styles/variables.css";
-import { OscillatorSettings, WaveformType, LFORouting } from "./synth/types";
+import {
+  OscillatorSettings,
+  WaveformType,
+  LFORouting,
+  FilterType,
+} from "./synth/types";
 
 type Note = string;
 
@@ -59,6 +64,7 @@ function App() {
   const [cutoff, setCutoff] = useState(2000);
   const [resonance, setResonance] = useState(0);
   const [contourAmount, setContourAmount] = useState(0);
+  const [filterType, setFilterType] = useState<FilterType>("lowpass");
   const [attackTime, setAttackTime] = useState(0.1);
   const [decayTime, setDecayTime] = useState(0.1);
   const [sustainLevel, setSustainLevel] = useState(0.7);
@@ -197,6 +203,7 @@ function App() {
           cutoff,
           resonance,
           contourAmount,
+          type: filterType,
         },
         noise: {
           type: noiseType,
@@ -238,6 +245,7 @@ function App() {
     lfoWaveform,
     lfoRouting,
     currentOctave,
+    filterType,
   ]);
 
   // Update synth settings when reverb controls change
@@ -374,6 +382,7 @@ function App() {
               cutoff={cutoff}
               resonance={resonance}
               contourAmount={contourAmount}
+              filterType={filterType}
               attackTime={attackTime}
               decayTime={decayTime}
               sustainLevel={sustainLevel}
@@ -385,6 +394,7 @@ function App() {
               onCutoffChange={setCutoff}
               onResonanceChange={setResonance}
               onContourAmountChange={setContourAmount}
+              onFilterTypeChange={setFilterType}
               onAttackTimeChange={setAttackTime}
               onDecayTimeChange={setDecayTime}
               onSustainLevelChange={setSustainLevel}

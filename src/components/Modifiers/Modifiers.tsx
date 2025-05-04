@@ -2,13 +2,20 @@ import React from "react";
 import Knob from "../Knob/Knob";
 import ADSR from "../ADSR/ADSR";
 import styles from "./Modifiers.module.css";
-import { Square, Triangle, AudioWaveform, Activity } from "lucide-react";
-import { WaveformType, LFORouting } from "@/synth/types/index";
+import {
+  Square,
+  Triangle,
+  AudioWaveform,
+  Activity,
+  Filter,
+} from "lucide-react";
+import { WaveformType, LFORouting, FilterType } from "@/synth/types/index";
 
 type ModifiersProps = {
   cutoff: number;
   resonance: number;
   contourAmount: number;
+  filterType: FilterType;
   attackTime: number;
   decayTime: number;
   sustainLevel: number;
@@ -20,6 +27,7 @@ type ModifiersProps = {
   onCutoffChange: (value: number) => void;
   onResonanceChange: (value: number) => void;
   onContourAmountChange: (value: number) => void;
+  onFilterTypeChange: (type: FilterType) => void;
   onAttackTimeChange: (value: number) => void;
   onDecayTimeChange: (value: number) => void;
   onSustainLevelChange: (value: number) => void;
@@ -66,10 +74,27 @@ const valueToRouting = (value: number): LFORouting => {
   };
 };
 
+const filterTypeToValue = (type: FilterType): number => {
+  const typeMap: Record<FilterType, number> = {
+    lowpass: 0,
+    highpass: 1,
+    bandpass: 2,
+    notch: 3,
+  };
+  return typeMap[type];
+};
+
+const valueToFilterType = (value: number): FilterType => {
+  const types: FilterType[] = ["lowpass", "highpass", "bandpass", "notch"];
+  const index = Math.round(value);
+  return types[Math.max(0, Math.min(types.length - 1, index))];
+};
+
 const Modifiers: React.FC<ModifiersProps> = ({
   cutoff,
   resonance,
   contourAmount,
+  filterType,
   attackTime,
   decayTime,
   sustainLevel,
@@ -81,6 +106,7 @@ const Modifiers: React.FC<ModifiersProps> = ({
   onCutoffChange,
   onResonanceChange,
   onContourAmountChange,
+  onFilterTypeChange,
   onAttackTimeChange,
   onDecayTimeChange,
   onSustainLevelChange,
@@ -128,9 +154,25 @@ const Modifiers: React.FC<ModifiersProps> = ({
           <div className={styles.filterSection}>
             <div className={styles.controls}>
               <Knob
+                value={filterTypeToValue(filterType)}
+                min={0}
+                max={3}
+                step={1}
+                label="TYPE"
+                valueLabels={{
+                  0: "LPF",
+                  1: "HPF",
+                  2: "BPF",
+                  3: "NOTCH",
+                }}
+                onChange={(value) =>
+                  onFilterTypeChange(valueToFilterType(value))
+                }
+              />
+              <Knob
                 value={cutoff}
-                min={20}
-                max={20000}
+                min={filterType === "bandpass" ? 300 : 20}
+                max={filterType === "bandpass" ? 3000 : 20000}
                 step={1}
                 label="CUTOFF"
                 unit="Hz"
