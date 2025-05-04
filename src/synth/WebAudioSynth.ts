@@ -21,6 +21,7 @@ export async function createSynth() {
   let settings: SynthSettings = {
     tune: 0,
     modMix: 0,
+    modWheel: 50,
     glide: 0,
     oscillators: [
       {
@@ -85,6 +86,81 @@ export async function createSynth() {
 
   function updateSettings(newSettings: Partial<typeof settings>) {
     settings = { ...settings, ...newSettings };
+
+    // Update modulation based on mod wheel and mod mix
+    if (
+      newSettings.modMix !== undefined ||
+      newSettings.modWheel !== undefined
+    ) {
+      const modAmount = (settings.modWheel / 100) * settings.modMix;
+
+      activeNotes.forEach((noteData) => {
+        if (noteData.lfo) {
+          // Scale LFO depth by mod amount
+          const baseCutoff = Math.min(
+            Math.max(settings.filter.cutoff, 20),
+            20000
+          );
+
+          // Disconnect all LFO connections if modAmount is 0
+          if (modAmount === 0) {
+            noteData.lfoGains.filterCutoff.disconnect();
+            noteData.lfoGains.filterResonance.disconnect();
+            noteData.lfoGains.oscillatorPitch.disconnect();
+            noteData.lfoGains.oscillatorVolume.disconnect();
+          } else {
+            // Reconnect LFO based on routing settings
+            if (settings.lfo.routing.filterCutoff) {
+              noteData.lfoGains.filterCutoff.connect(
+                noteData.filterNode.frequency
+              );
+            }
+            if (settings.lfo.routing.filterResonance) {
+              noteData.lfoGains.filterResonance.connect(noteData.filterNode.Q);
+            }
+            if (settings.lfo.routing.oscillatorPitch) {
+              noteData.oscillators.forEach((osc) => {
+                if (osc) {
+                  noteData.lfoGains.oscillatorPitch.connect(osc.detune);
+                }
+              });
+            }
+            if (settings.lfo.routing.oscillatorVolume) {
+              noteData.oscillatorGains.forEach((gain) => {
+                if (gain) {
+                  noteData.lfoGains.oscillatorVolume.connect(gain.gain);
+                }
+              });
+            }
+          }
+
+          const currentTime = context.currentTime;
+          const smoothingTime = 0.01; // 10ms smoothing
+
+          // Update gain values with smoothing
+          noteData.lfoGains.filterCutoff.gain.setTargetAtTime(
+            modAmount * settings.lfo.depth * baseCutoff,
+            currentTime,
+            smoothingTime
+          );
+          noteData.lfoGains.filterResonance.gain.setTargetAtTime(
+            modAmount * settings.lfo.depth * 30,
+            currentTime,
+            smoothingTime
+          );
+          noteData.lfoGains.oscillatorPitch.gain.setTargetAtTime(
+            modAmount * settings.lfo.depth * 100,
+            currentTime,
+            smoothingTime
+          );
+          noteData.lfoGains.oscillatorVolume.gain.setTargetAtTime(
+            modAmount * settings.lfo.depth,
+            currentTime,
+            smoothingTime
+          );
+        }
+      });
+    }
 
     if (newSettings.distortion) {
       if (newSettings.distortion.outputGain !== undefined) {
@@ -232,14 +308,28 @@ export async function createSynth() {
               Math.max(settings.filter.cutoff, 20),
               20000
             );
-            noteData.lfoGains.filterCutoff.gain.value =
-              newSettings.lfo.depth * baseCutoff;
-            noteData.lfoGains.filterResonance.gain.value =
-              newSettings.lfo.depth * 30;
-            noteData.lfoGains.oscillatorPitch.gain.value =
-              newSettings.lfo.depth * 100;
-            noteData.lfoGains.oscillatorVolume.gain.value =
-              newSettings.lfo.depth;
+            const currentTime = context.currentTime;
+            const smoothingTime = 0.01; // 10ms smoothing
+            noteData.lfoGains.filterCutoff.gain.setTargetAtTime(
+              newSettings.lfo.depth * baseCutoff,
+              currentTime,
+              smoothingTime
+            );
+            noteData.lfoGains.filterResonance.gain.setTargetAtTime(
+              newSettings.lfo.depth * 30,
+              currentTime,
+              smoothingTime
+            );
+            noteData.lfoGains.oscillatorPitch.gain.setTargetAtTime(
+              newSettings.lfo.depth * 100,
+              currentTime,
+              smoothingTime
+            );
+            noteData.lfoGains.oscillatorVolume.gain.setTargetAtTime(
+              newSettings.lfo.depth,
+              currentTime,
+              smoothingTime
+            );
           }
           if (newSettings.lfo?.routing !== undefined) {
             // Disconnect all LFO connections
@@ -396,19 +486,19 @@ export async function createSynth() {
 
     // Create LFO gains for each routing destination
     const lfoGains = {
-      filterCutoff: createGainNode(context, settings.lfo.depth * baseCutoff),
-      filterResonance: createGainNode(context, settings.lfo.depth * 30), // Max resonance is 30
-      oscillatorPitch: createGainNode(context, settings.lfo.depth * 100), // Max pitch modulation is 100 cents
-      oscillatorVolume: createGainNode(context, settings.lfo.depth),
+      filterCutoff: createGainNode(context, 0),
+      filterResonance: createGainNode(context, 0),
+      oscillatorPitch: createGainNode(context, 0),
+      oscillatorVolume: createGainNode(context, 0),
     };
 
-    // Connect LFO to each destination based on routing settings
+    // Connect LFO to each gain node
     lfo.connect(lfoGains.filterCutoff);
     lfo.connect(lfoGains.filterResonance);
     lfo.connect(lfoGains.oscillatorPitch);
     lfo.connect(lfoGains.oscillatorVolume);
 
-    // Connect each gain to its destination
+    // Connect each gain to its destination based on routing settings
     if (settings.lfo.routing.filterCutoff) {
       lfoGains.filterCutoff.connect(filter.frequency);
     }
@@ -417,6 +507,32 @@ export async function createSynth() {
     }
 
     lfo.start();
+
+    // Update LFO gains based on mod wheel and mod mix
+    const modAmount = (settings.modWheel / 100) * settings.modMix;
+    const currentTime = context.currentTime;
+    const smoothingTime = 0.01; // 10ms smoothing
+
+    lfoGains.filterCutoff.gain.setTargetAtTime(
+      modAmount * settings.lfo.depth * baseCutoff,
+      currentTime,
+      smoothingTime
+    );
+    lfoGains.filterResonance.gain.setTargetAtTime(
+      modAmount * settings.lfo.depth * 30,
+      currentTime,
+      smoothingTime
+    );
+    lfoGains.oscillatorPitch.gain.setTargetAtTime(
+      modAmount * settings.lfo.depth * 100,
+      currentTime,
+      smoothingTime
+    );
+    lfoGains.oscillatorVolume.gain.setTargetAtTime(
+      modAmount * settings.lfo.depth,
+      currentTime,
+      smoothingTime
+    );
 
     const filterEnvelope = createGainNode(context, 0);
     const filterModGain = createGainNode(

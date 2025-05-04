@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { OscillatorSettings } from "@/synth/types";
+import { OscillatorSettings, FilterType } from "@/synth/types";
 
 type OscillatorType = "sine" | "square" | "sawtooth" | "triangle";
 type Note = string;
@@ -18,6 +18,8 @@ type SynthState = {
   modWheel: number;
   tune: number;
   modMix: number;
+  currentOctave: number;
+  glide: number;
 
   // Oscillator state
   oscillators: {
@@ -33,6 +35,7 @@ type SynthState = {
     osc3Volume: number;
     noiseVolume: number;
     noiseType: "white" | "pink";
+    modMix: number;
   };
 
   // Modifier state
@@ -40,6 +43,7 @@ type SynthState = {
     cutoff: number;
     resonance: number;
     contourAmount: number;
+    filterType: FilterType;
     envelope: {
       attack: number;
       decay: number;
@@ -67,7 +71,7 @@ type SynthState = {
   };
 
   // Actions
-  setActiveKeys: (keys: Set<Note>) => void;
+  setActiveKeys: (keys: Set<Note> | ((prev: Set<Note>) => Set<Note>)) => void;
   setKeyboardRef: (ref: {
     synth: Awaited<
       ReturnType<typeof import("../synth/WebAudioSynth").createSynth>
@@ -77,10 +81,13 @@ type SynthState = {
   setModWheel: (value: number) => void;
   setTune: (value: number) => void;
   setModMix: (value: number) => void;
+  setCurrentOctave: (value: number) => void;
+  setGlide: (value: number) => void;
   updateOscillator: (
     id: 1 | 2 | 3,
     settings: Partial<OscillatorSettings>
   ) => void;
+  setOscillator: (id: 1 | 2 | 3, settings: OscillatorSettings) => void;
   updateMixer: (settings: Partial<SynthState["mixer"]>) => void;
   updateModifiers: (settings: Partial<SynthState["modifiers"]>) => void;
   updateEffects: (settings: Partial<SynthState["effects"]>) => void;
@@ -94,7 +101,10 @@ const initialState: Omit<
   | "setModWheel"
   | "setTune"
   | "setModMix"
+  | "setCurrentOctave"
+  | "setGlide"
   | "updateOscillator"
+  | "setOscillator"
   | "updateMixer"
   | "updateModifiers"
   | "updateEffects"
@@ -105,6 +115,8 @@ const initialState: Omit<
   modWheel: 50,
   tune: 0,
   modMix: 0,
+  currentOctave: 4,
+  glide: 0,
   oscillators: {
     osc1: { frequency: 0, waveform: "triangle", range: "8", detune: 0 },
     osc2: { frequency: 0, waveform: "triangle", range: "8", detune: 0 },
@@ -116,11 +128,13 @@ const initialState: Omit<
     osc3Volume: 0.7,
     noiseVolume: 0,
     noiseType: "white",
+    modMix: 0,
   },
   modifiers: {
     cutoff: 2000,
     resonance: 0,
     contourAmount: 0,
+    filterType: "lowpass",
     envelope: {
       attack: 0.1,
       decay: 0.1,
@@ -148,7 +162,10 @@ const initialState: Omit<
 
 export const useSynthStore = create<SynthState>((set) => ({
   ...initialState,
-  setActiveKeys: (keys: Set<Note>) => set({ activeKeys: keys }),
+  setActiveKeys: (keys: Set<Note> | ((prev: Set<Note>) => Set<Note>)) =>
+    set((state) => ({
+      activeKeys: typeof keys === "function" ? keys(state.activeKeys) : keys,
+    })),
   setKeyboardRef: (ref: {
     synth: Awaited<
       ReturnType<typeof import("../synth/WebAudioSynth").createSynth>
@@ -158,11 +175,20 @@ export const useSynthStore = create<SynthState>((set) => ({
   setModWheel: (value: number) => set({ modWheel: value }),
   setTune: (value: number) => set({ tune: value }),
   setModMix: (value: number) => set({ modMix: value }),
+  setCurrentOctave: (value: number) => set({ currentOctave: value }),
+  setGlide: (value: number) => set({ glide: value }),
   updateOscillator: (id: 1 | 2 | 3, settings: Partial<OscillatorSettings>) =>
     set((state: SynthState) => ({
       oscillators: {
         ...state.oscillators,
         [`osc${id}`]: { ...state.oscillators[`osc${id}`], ...settings },
+      },
+    })),
+  setOscillator: (id: 1 | 2 | 3, settings: OscillatorSettings) =>
+    set((state: SynthState) => ({
+      oscillators: {
+        ...state.oscillators,
+        [`osc${id}`]: settings,
       },
     })),
   updateMixer: (settings: Partial<SynthState["mixer"]>) =>

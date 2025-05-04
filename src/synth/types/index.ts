@@ -54,6 +54,7 @@ export type LFORouting = {
 export type SynthSettings = {
   tune: number;
   modMix: number;
+  modWheel: number;
   glide: number;
   oscillators: OscillatorSettings[];
   noise: {
