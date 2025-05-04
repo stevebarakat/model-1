@@ -18,7 +18,7 @@ type Props = {
 function Keyboard(
   {
     activeKeys = [],
-    octaveRange = { min: 3, max: 5 },
+    octaveRange = { min: 3, max: 6 },
     onKeyDown = () => {},
     onKeyUp = () => {},
   }: Props,

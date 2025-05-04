@@ -1,7 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { createSynth } from "./synth/WebAudioSynth";
 import Keyboard from "./components/Keyboard";
-import Controllers from "./components/Controllers/Controllers";
 import OscillatorBank from "./components/OscillatorBank/OscillatorBank";
 import Mixer from "./components/Mixer/Mixer";
 import Modifiers from "./components/Modifiers/Modifiers";
@@ -411,7 +410,6 @@ function App() {
               onDelayAmountChange={setDelayAmount}
               onDistortionAmountChange={setDistortionOutputGain}
             />
-            <div className={styles.indent}></div>
           </div>
           <div className={styles.horizontalIndent}></div>
         </div>
