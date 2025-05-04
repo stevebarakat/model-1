@@ -47,14 +47,14 @@ function Knob({
     if (!isDragging) return;
 
     function handleMouseMove(e: MouseEvent) {
-      const sensitivity = 0.5;
+      const sensitivity = 0.1; // Reduced sensitivity for cents
       const deltaY = (startY - e.clientY) * sensitivity;
       const range = max - min;
       const newValue = Math.min(
         max,
         Math.max(min, startValue + (deltaY / 100) * range)
       );
-      onChange(Number(newValue.toFixed(2)));
+      onChange(Number(newValue.toFixed(1))); // One decimal place for cents
     }
 
     function handleMouseUp() {

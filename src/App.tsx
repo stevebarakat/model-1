@@ -217,7 +217,7 @@ function App() {
           type: mixer.noiseType,
           volume: mixer.noiseVolume,
         },
-        tune: ((pitchWheel - 50) / 50) * 12,
+        tune: ((pitchWheel - 50) / 50) * 100,
         modMix: mixer.modMix,
         modWheel,
         glide,
