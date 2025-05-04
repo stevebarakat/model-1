@@ -1,37 +1,31 @@
 import React from "react";
 import Knob from "../Knob/Knob";
 import styles from "./Controllers.module.css";
+import OctaveControls from "../OctaveControls/OctaveControls";
 
 type ControllersProps = {
-  tune: number;
   modMix: number;
   glide: number;
-  onTuneChange: (value: number) => void;
   onModMixChange: (value: number) => void;
   onGlideChange: (value: number) => void;
+  currentOctave: number;
+  onOctaveChange: (value: number) => void;
+  onOctaveChangeStart: () => void;
 };
 
 const Controllers: React.FC<ControllersProps> = ({
-  tune,
   modMix,
   glide,
-  onTuneChange,
   onModMixChange,
   onGlideChange,
+  currentOctave,
+  onOctaveChange,
+  onOctaveChangeStart,
 }) => {
   return (
     <div className="box">
       <div className={styles.controllers}>
         <div className={styles.knobs}>
-          <Knob
-            value={tune}
-            min={-12}
-            max={12}
-            step={0.1}
-            label="Tune"
-            unit="st"
-            onChange={onTuneChange}
-          />
           <Knob
             value={glide}
             min={0}
@@ -48,6 +42,13 @@ const Controllers: React.FC<ControllersProps> = ({
             label="Mod Mix"
             onChange={onModMixChange}
           />
+          <div className={styles.octaveControlsRow}>
+            <OctaveControls
+              currentOctave={currentOctave}
+              onOctaveChange={onOctaveChange}
+              onOctaveChangeStart={onOctaveChangeStart}
+            />
+          </div>
         </div>
         <span className="section-title">Control</span>
       </div>

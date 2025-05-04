@@ -158,10 +158,26 @@ export async function createSynth() {
             noteData.filterNode.frequency.value = newSettings.filter.cutoff;
           }
           if (newSettings.filter?.resonance !== undefined) {
-            noteData.filterNode.Q.value = newSettings.filter.resonance * 30;
+            const baseQ = newSettings.filter.resonance * 30;
+            if (newSettings.filter?.type === "notch") {
+              noteData.filterNode.Q.value = baseQ * 2;
+            } else if (newSettings.filter?.type === "bandpass") {
+              noteData.filterNode.Q.value = baseQ * 1.5;
+            } else {
+              noteData.filterNode.Q.value = baseQ;
+            }
           }
           if (newSettings.filter?.type !== undefined) {
             noteData.filterNode.type = newSettings.filter.type;
+            // Update Q value when filter type changes
+            const baseQ = settings.filter.resonance * 30;
+            if (newSettings.filter.type === "notch") {
+              noteData.filterNode.Q.value = baseQ * 2;
+            } else if (newSettings.filter.type === "bandpass") {
+              noteData.filterNode.Q.value = baseQ * 1.5;
+            } else {
+              noteData.filterNode.Q.value = baseQ;
+            }
           }
           if (newSettings.filter?.contourAmount !== undefined) {
             noteData.filterModGain.gain.value =
@@ -352,7 +368,18 @@ export async function createSynth() {
     const baseCutoff = Math.min(Math.max(settings.filter.cutoff, 20), 20000);
     filter.type = settings.filter.type;
     filter.frequency.value = baseCutoff;
-    filter.Q.value = settings.filter.resonance * 30;
+
+    // Adjust Q value based on filter type
+    const baseQ = settings.filter.resonance * 30;
+    if (settings.filter.type === "notch") {
+      // Make notch filter more pronounced
+      filter.Q.value = baseQ * 2;
+    } else if (settings.filter.type === "bandpass") {
+      // Make bandpass filter more focused
+      filter.Q.value = baseQ * 1.5;
+    } else {
+      filter.Q.value = baseQ;
+    }
 
     // Add gain boost for bandpass filter
     const filterGain = createGainNode(

@@ -1,38 +1,24 @@
 import React from "react";
 import ModWheel from "../ModWheel/ModWheel";
-import OctaveControls from "../OctaveControls/OctaveControls";
 import styles from "./SidePanel.module.css";
 
 interface SidePanelProps {
   pitchWheel: number;
   modWheel: number;
-  currentOctave: number;
   onPitchWheelChange: (value: number) => void;
   onModWheelChange: (value: number) => void;
   onPitchWheelReset: () => void;
-  onOctaveChange: (octave: number) => void;
-  onOctaveChangeStart: () => void;
 }
 
 const SidePanel: React.FC<SidePanelProps> = ({
   pitchWheel,
   modWheel,
-  currentOctave,
   onPitchWheelChange,
   onModWheelChange,
   onPitchWheelReset,
-  onOctaveChange,
-  onOctaveChangeStart,
 }) => {
   return (
     <div className={styles.sidePanel}>
-      <div className={styles.octaveControlsRow}>
-        <OctaveControls
-          currentOctave={currentOctave}
-          onOctaveChange={onOctaveChange}
-          onOctaveChangeStart={onOctaveChangeStart}
-        />
-      </div>
       <div className={styles.modWheels}>
         <div className={styles.modWheelwell}>
           <ModWheel
@@ -41,7 +27,7 @@ const SidePanel: React.FC<SidePanelProps> = ({
             max={100}
             onChange={onPitchWheelChange}
             onMouseUp={onPitchWheelReset}
-            label="PITCH"
+            label="Pitch"
           />
         </div>
         <div className={styles.modWheelwell}>
@@ -50,7 +36,7 @@ const SidePanel: React.FC<SidePanelProps> = ({
             min={0}
             max={100}
             onChange={onModWheelChange}
-            label="MOD"
+            label="Mod"
           />
         </div>
       </div>

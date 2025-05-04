@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect } from "react";
 import { createSynth } from "./synth/WebAudioSynth";
 import Keyboard from "./components/Keyboard";
 import Controllers from "./components/Controllers/Controllers";
@@ -26,10 +26,9 @@ function App() {
 
   // Replace slider value state with pitch and mod wheel states
   const [pitchWheel, setPitchWheel] = useState(50);
-  const [modWheel, setModWheel] = useState(0);
+  const [modWheel, setModWheel] = useState(50);
 
   // Controllers state
-  const [tune, setTune] = useState(0);
   const [modMix, setModMix] = useState(0.5);
   const [glide, setGlide] = useState(0);
 
@@ -209,7 +208,7 @@ function App() {
           type: noiseType,
           volume: noiseVolume,
         },
-        tune,
+        tune: ((pitchWheel - 50) / 50) * 12,
         modMix,
         glide,
         lfo: {
@@ -237,7 +236,7 @@ function App() {
     noiseType,
     noiseVolume,
     releaseTime,
-    tune,
+    pitchWheel,
     modMix,
     glide,
     lfoRate,
@@ -342,16 +341,19 @@ function App() {
           <div className={styles.backPanel}></div>
           <div className={styles.innerControlsContainer}>
             <Controllers
-              tune={tune}
               modMix={modMix}
               glide={glide}
-              onTuneChange={setTune}
               onModMixChange={(value) => {
                 setModMix(value);
-                // Convert 0-1 range to 0-100 range
-                setModWheel(value * 100);
+                setModWheel(value * 100); // Convert 0-1 range to 0-100 range;
               }}
               onGlideChange={setGlide}
+              currentOctave={currentOctave}
+              onOctaveChange={setCurrentOctave}
+              onOctaveChangeStart={() => {
+                // Release all active notes before changing octave
+                activeKeys.forEach((note) => handleKeyUp(note));
+              }}
             />
             <div className={styles.indent}></div>
             <div className="box">
@@ -392,13 +394,15 @@ function App() {
               lfoWaveform={lfoWaveform}
               lfoRouting={lfoRouting}
               onCutoffChange={setCutoff}
-              onResonanceChange={setResonance}
-              onContourAmountChange={setContourAmount}
-              onFilterTypeChange={setFilterType}
-              onAttackTimeChange={setAttackTime}
-              onDecayTimeChange={setDecayTime}
-              onSustainLevelChange={setSustainLevel}
-              onReleaseTimeChange={setReleaseTime}
+              onResonanceChange={(value) => setResonance(value)}
+              onContourAmountChange={(value) => setContourAmount(value)}
+              onFilterTypeChange={(type: BiquadFilterType) =>
+                setFilterType(type as FilterType)
+              }
+              onAttackTimeChange={(value) => setAttackTime(value)}
+              onDecayTimeChange={(value) => setDecayTime(value)}
+              onSustainLevelChange={(value) => setSustainLevel(value)}
+              onReleaseTimeChange={(value) => setReleaseTime(value)}
               onLfoRateChange={setLfoRate}
               onLfoDepthChange={setLfoDepth}
               onLfoWaveformChange={setLfoWaveform}
@@ -421,26 +425,14 @@ function App() {
           <SidePanel
             pitchWheel={pitchWheel}
             modWheel={modWheel}
-            currentOctave={currentOctave}
             onPitchWheelChange={(value) => {
               setPitchWheel(value);
-              // Convert 0-100 range to -12 to +12 semitones
-              const semitones = ((value - 50) / 50) * 12;
-              setTune(semitones);
             }}
             onModWheelChange={(value) => {
               setModWheel(value);
-              // Convert 0-100 range to 0-1 range
-              setModMix(value / 100);
             }}
             onPitchWheelReset={() => {
               setPitchWheel(50);
-              setTune(0);
-            }}
-            onOctaveChange={setCurrentOctave}
-            onOctaveChangeStart={() => {
-              // Release all active notes before changing octave
-              activeKeys.forEach((note) => handleKeyUp(note));
             }}
           />
 

@@ -108,7 +108,7 @@ const initialState: Omit<
   activeKeys: new Set(),
   keyboardRef: { synth: null },
   pitchWheel: 50,
-  modWheel: 0,
+  modWheel: 50,
   tune: 0,
   modMix: 0,
   oscillators: {

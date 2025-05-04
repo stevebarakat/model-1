@@ -171,8 +171,14 @@ const Modifiers: React.FC<ModifiersProps> = ({
               />
               <Knob
                 value={cutoff}
-                min={filterType === "bandpass" ? 300 : 20}
-                max={filterType === "bandpass" ? 3000 : 20000}
+                min={
+                  filterType === "bandpass" || filterType === "notch" ? 300 : 20
+                }
+                max={
+                  filterType === "bandpass" || filterType === "notch"
+                    ? 3000
+                    : 20000
+                }
                 step={1}
                 label="CUTOFF"
                 unit="Hz"
@@ -183,7 +189,7 @@ const Modifiers: React.FC<ModifiersProps> = ({
                 min={0}
                 max={1}
                 step={0.01}
-                label="EMPHASIS"
+                label="RES"
                 onChange={onResonanceChange}
               />
               <Knob
