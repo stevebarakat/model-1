@@ -342,17 +342,9 @@ function App() {
           <div className={styles.innerControlsContainer}>
             <Controllers
               modMix={modMix}
-              glide={glide}
               onModMixChange={(value) => {
                 setModMix(value);
                 setModWheel(value * 100); // Convert 0-1 range to 0-100 range;
-              }}
-              onGlideChange={setGlide}
-              currentOctave={currentOctave}
-              onOctaveChange={setCurrentOctave}
-              onOctaveChangeStart={() => {
-                // Release all active notes before changing octave
-                activeKeys.forEach((note) => handleKeyUp(note));
               }}
             />
             <div className={styles.indent}></div>
@@ -433,6 +425,14 @@ function App() {
             }}
             onPitchWheelReset={() => {
               setPitchWheel(50);
+            }}
+            glide={glide}
+            onGlideChange={setGlide}
+            currentOctave={currentOctave}
+            onOctaveChange={setCurrentOctave}
+            onOctaveChangeStart={() => {
+              // Release all active notes before changing octave
+              activeKeys.forEach((note) => handleKeyUp(note));
             }}
           />
 

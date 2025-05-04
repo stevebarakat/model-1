@@ -26,3 +26,12 @@
   display: flex;
   justify-content: center;
 }
+
+.topControls {
+  display: flex;
+  flex-direction: row;
+  gap: 1rem;
+  align-items: center;
+  justify-content: center;
+  margin-top: 1rem;
+}
