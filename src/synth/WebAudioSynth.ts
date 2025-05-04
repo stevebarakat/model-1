@@ -556,12 +556,15 @@ export async function createSynth() {
     const currentFilterGain = noteData.filterEnvelope.gain.value;
 
     noteData.gainNode.gain.setValueAtTime(currentGain, now);
-    noteData.gainNode.gain.exponentialRampToValueAtTime(0.001, now + 0.01);
+    noteData.gainNode.gain.exponentialRampToValueAtTime(
+      0.001,
+      now + settings.envelope.release
+    );
 
     noteData.filterEnvelope.gain.setValueAtTime(currentFilterGain, now);
     noteData.filterEnvelope.gain.exponentialRampToValueAtTime(
       0.001,
-      now + 0.01
+      now + settings.envelope.release
     );
 
     noteData.lfo.stop();
@@ -623,7 +626,7 @@ export async function createSynth() {
         activeNotes.delete(note);
         noteStates.delete(note);
       }
-    }, 20);
+    }, settings.envelope.release * 1000); // Convert release time to milliseconds
   }
 
   function handleNoteTransition(fromNote: Note | null, toNote: Note) {

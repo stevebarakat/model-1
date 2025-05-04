@@ -55,7 +55,7 @@ const ADSR: React.FC<ADSRProps> = ({
         <Knob
           value={release}
           min={0}
-          max={2}
+          max={4}
           step={0.01}
           label="RELEASE"
           unit="s"

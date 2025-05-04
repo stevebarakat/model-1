@@ -2,13 +2,7 @@ import React from "react";
 import Knob from "../Knob/Knob";
 import ADSR from "../ADSR/ADSR";
 import styles from "./Modifiers.module.css";
-import {
-  Square,
-  Triangle,
-  AudioWaveform,
-  Activity,
-  Filter,
-} from "lucide-react";
+import { Square, Triangle, AudioWaveform, Activity } from "lucide-react";
 import { WaveformType, LFORouting, FilterType } from "@/synth/types/index";
 
 type ModifiersProps = {
@@ -38,59 +32,84 @@ type ModifiersProps = {
   onLfoRoutingChange: (routing: LFORouting) => void;
 };
 
-const waveformToValue = (waveform: WaveformType): number => {
-  const waveformMap: Record<WaveformType, number> = {
-    triangle: 0,
-    sawtooth: 1,
-    square: 2,
-    sine: 3,
-  };
-  return waveformMap[waveform];
+const WAVEFORM_MAP: Record<WaveformType, number> = {
+  triangle: 0,
+  sawtooth: 1,
+  square: 2,
+  sine: 3,
 };
 
-const valueToWaveform = (value: number): WaveformType => {
-  const waveforms: WaveformType[] = ["triangle", "sawtooth", "square", "sine"];
+const WAVEFORMS: WaveformType[] = ["triangle", "sawtooth", "square", "sine"];
+
+const FILTER_TYPE_MAP: Record<FilterType, number> = {
+  lowpass: 0,
+  highpass: 1,
+  bandpass: 2,
+  notch: 3,
+  allpass: 0,
+  highshelf: 0,
+  lowshelf: 0,
+  peaking: 0,
+};
+
+const FILTER_TYPES: FilterType[] = ["lowpass", "highpass", "bandpass", "notch"];
+
+const ROUTING_LABELS = [
+  "OFF",
+  "CUTOFF",
+  "RESONANCE",
+  "CUT+RES",
+  "PITCH",
+  "CUT+PITCH",
+  "RES+PITCH",
+  "CUT+RES +PITCH",
+  "VOLUME",
+  "CUT+VOL",
+  "RES+VOL",
+  "CUT+RES +VOL",
+  "PITCH+VOL",
+  "CUT+PITCH +VOL",
+  "RES+PITCH +VOL",
+  "ALL",
+];
+
+function waveformToValue(waveform: WaveformType): number {
+  return WAVEFORM_MAP[waveform];
+}
+
+function valueToWaveform(value: number): WaveformType {
   const index = Math.round(value);
-  return waveforms[Math.max(0, Math.min(waveforms.length - 1, index))];
-};
+  return WAVEFORMS[Math.max(0, Math.min(WAVEFORMS.length - 1, index))];
+}
 
-// Helper function to convert routing to a numeric value
-const routingToValue = (routing: LFORouting): number => {
+function routingToValue(routing: LFORouting): number {
   let value = 0;
   if (routing.filterCutoff) value += 1;
   if (routing.filterResonance) value += 2;
   if (routing.oscillatorPitch) value += 4;
   if (routing.oscillatorVolume) value += 8;
   return value;
-};
+}
 
-// Helper function to convert numeric value to routing
-const valueToRouting = (value: number): LFORouting => {
+function valueToRouting(value: number): LFORouting {
   return {
     filterCutoff: (value & 1) !== 0,
     filterResonance: (value & 2) !== 0,
     oscillatorPitch: (value & 4) !== 0,
     oscillatorVolume: (value & 8) !== 0,
   };
-};
+}
 
-const filterTypeToValue = (type: FilterType): number => {
-  const typeMap: Record<FilterType, number> = {
-    lowpass: 0,
-    highpass: 1,
-    bandpass: 2,
-    notch: 3,
-  };
-  return typeMap[type];
-};
+function filterTypeToValue(type: FilterType): number {
+  return FILTER_TYPE_MAP[type];
+}
 
-const valueToFilterType = (value: number): FilterType => {
-  const types: FilterType[] = ["lowpass", "highpass", "bandpass", "notch"];
+function valueToFilterType(value: number): FilterType {
   const index = Math.round(value);
-  return types[Math.max(0, Math.min(types.length - 1, index))];
-};
+  return FILTER_TYPES[Math.max(0, Math.min(FILTER_TYPES.length - 1, index))];
+}
 
-const Modifiers: React.FC<ModifiersProps> = ({
+function Modifiers({
   cutoff,
   resonance,
   contourAmount,
@@ -115,41 +134,28 @@ const Modifiers: React.FC<ModifiersProps> = ({
   onLfoDepthChange,
   onLfoWaveformChange,
   onLfoRoutingChange,
-}) => {
-  const routingLabels = [
-    "OFF",
-    "CUTOFF",
-    "RESONANCE",
-    "CUT+RES",
-    "PITCH",
-    "CUT+PITCH",
-    "RES+PITCH",
-    "CUT+RES +PITCH",
-    "VOLUME",
-    "CUT+VOL",
-    "RES+VOL",
-    "CUT+RES +VOL",
-    "PITCH+VOL",
-    "CUT+PITCH +VOL",
-    "RES+PITCH +VOL",
-    "ALL",
-  ];
+}: ModifiersProps) {
+  const isBandpassOrNotch = filterType === "bandpass" || filterType === "notch";
+  const cutoffMin = isBandpassOrNotch ? 300 : 20;
+  const cutoffMax = isBandpassOrNotch ? 3000 : 20000;
 
   return (
     <div className="box">
       <div className={styles.modifiers}>
         <div className={styles.sections}>
           <div className={styles.envelopeSection}>
-            <ADSR
-              attack={attackTime}
-              decay={decayTime}
-              sustain={sustainLevel}
-              release={releaseTime}
-              onAttackChange={onAttackTimeChange}
-              onDecayChange={onDecayTimeChange}
-              onSustainChange={onSustainLevelChange}
-              onReleaseChange={onReleaseTimeChange}
-            />
+            <div className={styles.controls}>
+              <ADSR
+                attack={attackTime}
+                decay={decayTime}
+                sustain={sustainLevel}
+                release={releaseTime}
+                onAttackChange={onAttackTimeChange}
+                onDecayChange={onDecayTimeChange}
+                onSustainChange={onSustainLevelChange}
+                onReleaseChange={onReleaseTimeChange}
+              />
+            </div>
           </div>
           <div className={styles.filterSection}>
             <div className={styles.controls}>
@@ -171,14 +177,8 @@ const Modifiers: React.FC<ModifiersProps> = ({
               />
               <Knob
                 value={cutoff}
-                min={
-                  filterType === "bandpass" || filterType === "notch" ? 300 : 20
-                }
-                max={
-                  filterType === "bandpass" || filterType === "notch"
-                    ? 3000
-                    : 20000
-                }
+                min={cutoffMin}
+                max={cutoffMax}
                 step={1}
                 label="CUTOFF"
                 unit="Hz"
@@ -220,7 +220,7 @@ const Modifiers: React.FC<ModifiersProps> = ({
                 min={0}
                 max={15}
                 step={1}
-                valueLabels={routingLabels}
+                valueLabels={ROUTING_LABELS}
               />
               <Knob
                 value={lfoDepth}
@@ -249,10 +249,10 @@ const Modifiers: React.FC<ModifiersProps> = ({
             </div>
           </div>
         </div>
-        <span className="section-title">Modifiers</span>
+        <span className="section-title">Envelope | Filter | LFO</span>
       </div>
     </div>
   );
-};
+}
 
 export default Modifiers;

@@ -2,13 +2,12 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 6px;
-  min-width: 120px; /* Ensure enough width for rotated wheels */
+  padding: 0 0.5rem;
 }
 
 .modWheels {
   display: flex;
-  flex-direction: row; /* Lay out wheels horizontally */
+  flex-direction: row;
   justify-content: center;
   width: 100%;
 }
@@ -17,7 +16,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 36px;
+  width: 50px;
 }
 
 .octaveControlsRow {
@@ -30,7 +29,7 @@
 .topControls {
   display: flex;
   flex-direction: row;
-  gap: 1rem;
+  gap: 0.5rem;
   align-items: center;
   justify-content: center;
   margin-top: 1rem;

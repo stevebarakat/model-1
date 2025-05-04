@@ -68,7 +68,6 @@ const ModWheel: React.FC<RangeSliderProps> = ({
 
   return (
     <div className={styles.modWheelContainer}>
-      <div className={styles.modLabel}>{label}</div>
       <div
         ref={sliderRef}
         className={`${styles.slider} ${disabled ? styles.disabled : ""}`}
@@ -78,6 +77,7 @@ const ModWheel: React.FC<RangeSliderProps> = ({
         <div className={styles.track}></div>
         <div className={styles.thumb} />
       </div>
+      <div className={styles.modLabel}>{label}</div>
     </div>
   );
 };
