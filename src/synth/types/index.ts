@@ -6,6 +6,7 @@ export type FilterType = BiquadFilterType;
 export type NoteData = {
   oscillators: OscillatorNode[];
   oscillatorGains: GainNode[];
+  oscillatorPanners: StereoPannerNode[];
   gainNode: GainNode;
   filterNode: BiquadFilterNode;
   noiseNode?: AudioNode;
@@ -35,6 +36,7 @@ export type OscillatorSettings = {
   detune: number;
   volume?: number;
   type?: OscillatorType;
+  pan?: number; // -1 (left) to 1 (right)
 };
 
 export type NoiseGenerator = {

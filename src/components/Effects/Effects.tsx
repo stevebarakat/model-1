@@ -31,7 +31,7 @@ const Effects = ({
             onAmountChange={onDistortionAmountChange}
           />
         </div>
-        <span className="section-title">Effects</span>
+        <span className="section-title">FX</span>
       </div>
     </div>
   );

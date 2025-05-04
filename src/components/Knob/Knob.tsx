@@ -131,7 +131,7 @@ function Knob({
         aria-label={label}
         aria-valuetext={ariaValueText}
       />
-      <div className={styles.knobShadow}></div>
+      <div className={styles.knobGradient}></div>
     </div>
   );
 }

@@ -365,6 +365,23 @@ export async function createSynth() {
         }
       });
     }
+
+    if (newSettings.oscillators && Array.isArray(newSettings.oscillators)) {
+      const oscillators = newSettings.oscillators;
+      activeNotes.forEach((noteData) => {
+        noteData.oscillators.forEach((osc, index) => {
+          if (osc && index < oscillators.length) {
+            const oscSettings = oscillators[index];
+            if (
+              oscSettings.pan !== undefined &&
+              noteData.oscillatorPanners[index]
+            ) {
+              noteData.oscillatorPanners[index].pan.value = oscSettings.pan;
+            }
+          }
+        });
+      });
+    }
   }
 
   function triggerAttack(note: Note) {
@@ -550,6 +567,7 @@ export async function createSynth() {
 
     const oscillators: OscillatorNode[] = [];
     const oscillatorGains: GainNode[] = [];
+    const oscillatorPanners: StereoPannerNode[] = [];
 
     const startTime = now;
 
@@ -578,8 +596,12 @@ export async function createSynth() {
         );
 
         const gainNode = createGainNode(context, volume);
+        const panner = context.createStereoPanner();
+        panner.pan.value = oscSettings.pan ?? 0;
+
         osc.connect(gainNode);
-        gainNode.connect(noteGain);
+        gainNode.connect(panner);
+        panner.connect(noteGain);
         osc.start(startTime);
 
         // Apply glide if enabled
@@ -601,9 +623,11 @@ export async function createSynth() {
 
         oscillators.push(osc);
         oscillatorGains.push(gainNode);
+        oscillatorPanners.push(panner);
       } else {
         oscillators.push(null as unknown as OscillatorNode);
         oscillatorGains.push(null as unknown as GainNode);
+        oscillatorPanners.push(null as unknown as StereoPannerNode);
       }
     });
 
@@ -644,6 +668,7 @@ export async function createSynth() {
     activeNotes.set(note, {
       oscillators,
       oscillatorGains,
+      oscillatorPanners,
       gainNode: noteGain,
       filterNode: filter,
       noiseNode,
