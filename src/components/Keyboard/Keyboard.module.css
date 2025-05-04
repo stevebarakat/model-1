@@ -20,9 +20,9 @@
     background: linear-gradient(180deg, hsl(217, 50%, 20%), hsl(217, 10%, 5%));
     display: flex;
     position: relative;
-    width: calc(100% + 160px);
+    width: calc(100% + 190px);
     height: 12px;
-    left: -129px;
+    left: -155px;
     z-index: 5000;
   }
 }

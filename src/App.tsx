@@ -34,6 +34,8 @@ function App() {
     updateMixer,
     modifiers,
     updateModifiers,
+    tune,
+    setTune,
   } = useSynthStore();
 
   const keyboardRef = useRef<{
@@ -217,7 +219,7 @@ function App() {
           type: mixer.noiseType,
           volume: mixer.noiseVolume,
         },
-        tune: ((pitchWheel - 50) / 50) * 100,
+        tune: tune + ((pitchWheel - 50) / 50) * 100, // Combine tune and pitch wheel
         modMix: mixer.modMix,
         modWheel,
         glide,
@@ -237,6 +239,7 @@ function App() {
     pitchWheel,
     modWheel,
     glide,
+    tune,
   ]);
 
   const handleOsc1Change = (
@@ -386,7 +389,10 @@ function App() {
             pitchWheel={pitchWheel}
             modWheel={modWheel}
             onPitchWheelChange={setPitchWheel}
-            onModWheelChange={setModWheel}
+            onModWheelChange={(value) => {
+              setModWheel(value);
+              updateMixer({ modMix: value / 100 }); // Convert 0-100 range to 0-1 range
+            }}
             onPitchWheelReset={() => setPitchWheel(50)}
             glide={glide}
             onGlideChange={setGlide}
@@ -396,6 +402,8 @@ function App() {
               // Release all active notes before changing octave
               activeKeys.forEach((note) => handleKeyUp(note));
             }}
+            tune={tune}
+            onTuneChange={setTune}
           />
 
           <Keyboard

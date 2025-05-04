@@ -15,6 +15,8 @@ interface SidePanelProps {
   currentOctave: number;
   onOctaveChange: (value: number) => void;
   onOctaveChangeStart: () => void;
+  tune: number;
+  onTuneChange: (value: number) => void;
 }
 
 const SidePanel: React.FC<SidePanelProps> = ({
@@ -28,10 +30,21 @@ const SidePanel: React.FC<SidePanelProps> = ({
   currentOctave,
   onOctaveChange,
   onOctaveChangeStart,
+  tune,
+  onTuneChange,
 }) => {
   return (
     <div className={styles.sidePanel}>
       <div className={styles.topControls}>
+        <Knob
+          value={tune}
+          min={-50}
+          max={50}
+          step={1}
+          label="Tune"
+          unit="ct"
+          onChange={onTuneChange}
+        />
         <Knob
           value={glide}
           min={0}
