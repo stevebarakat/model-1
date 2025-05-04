@@ -15,4 +15,10 @@
   letter-spacing: 0.1em;
   text-align: center;
   margin-top: 0.5rem;
+  user-select: none;
+}
+
+.controls {
+  display: flex;
+  gap: 0.5rem;
 }

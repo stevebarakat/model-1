@@ -7,11 +7,6 @@
   height: 100%;
 }
 
-.controls {
-  display: flex;
-  gap: 0.5rem;
-}
-
 .volumeContainer {
   display: flex;
   flex-direction: column;

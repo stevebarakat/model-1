@@ -37,7 +37,7 @@ const Mixer: React.FC<MixerProps> = ({
   return (
     <div className="box">
       <div className={styles.mixer}>
-        <div className={styles.controls}>
+        <div className="controls">
           <div className={styles.volumeContainer}>
             <div className={styles.mixerColumn}>
               <Knob

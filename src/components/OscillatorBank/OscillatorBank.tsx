@@ -64,7 +64,7 @@ const OscillatorBank: React.FC<OscillatorBankProps> = ({
     ) => void
   ) => (
     <>
-      <div className={styles.controls}>
+      <div className="controls">
         <Knob
           value={rangeToValue(osc.range)}
           min={0}

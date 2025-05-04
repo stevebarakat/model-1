@@ -144,7 +144,7 @@ function Modifiers({
       <div className={styles.modifiers}>
         <div className={styles.sections}>
           <div className={styles.envelopeSection}>
-            <div className={styles.controls}>
+            <div className="controls">
               <ADSR
                 attack={attackTime}
                 decay={decayTime}
@@ -158,7 +158,7 @@ function Modifiers({
             </div>
           </div>
           <div className={styles.filterSection}>
-            <div className={styles.controls}>
+            <div className="controls">
               <Knob
                 value={filterTypeToValue(filterType)}
                 min={0}
@@ -203,7 +203,7 @@ function Modifiers({
             </div>
           </div>
           <div className={styles.lfoSection}>
-            <div className={styles.controls}>
+            <div className="controls">
               <Knob
                 value={lfoRate}
                 min={0.1}
