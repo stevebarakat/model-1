@@ -164,7 +164,7 @@ function Modifiers({
                 min={0}
                 max={3}
                 step={1}
-                label="TYPE"
+                label="Type"
                 valueLabels={{
                   0: "LPF",
                   1: "HPF",
@@ -180,7 +180,7 @@ function Modifiers({
                 min={cutoffMin}
                 max={cutoffMax}
                 step={1}
-                label="CUTOFF"
+                label="Cutoff"
                 unit="Hz"
                 onChange={onCutoffChange}
               />
@@ -189,7 +189,7 @@ function Modifiers({
                 min={0}
                 max={1}
                 step={0.01}
-                label="RES"
+                label="Resonance"
                 onChange={onResonanceChange}
               />
               <Knob
@@ -197,7 +197,7 @@ function Modifiers({
                 min={0}
                 max={1}
                 step={0.01}
-                label="CONTOUR"
+                label="Contour"
                 onChange={onContourAmountChange}
               />
             </div>
@@ -209,12 +209,12 @@ function Modifiers({
                 min={0.1}
                 max={20}
                 step={0.1}
-                label="RATE"
+                label="Rate"
                 unit="Hz"
                 onChange={onLfoRateChange}
               />
               <Knob
-                label="ROUTING"
+                label="Routing"
                 value={routingToValue(lfoRouting)}
                 onChange={(value) => onLfoRoutingChange(valueToRouting(value))}
                 min={0}
@@ -227,7 +227,7 @@ function Modifiers({
                 min={0}
                 max={1}
                 step={0.01}
-                label="DEPTH"
+                label="Depth"
                 onChange={onLfoDepthChange}
               />
               <Knob
@@ -235,7 +235,7 @@ function Modifiers({
                 min={0}
                 max={3}
                 step={1}
-                label="WAVE"
+                label="Wave"
                 valueLabels={{
                   0: <Triangle size={14} strokeWidth={2} />,
                   1: <Activity size={14} strokeWidth={2} />,

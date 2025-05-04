@@ -108,7 +108,9 @@ const ModWheel: React.FC<RangeSliderProps> = ({
         aria-valuenow={value}
         aria-label={label}
       >
-        <div className={styles.track}></div>
+        <div className={styles.track}>
+          <div className={styles.modWheelShadow}></div>
+        </div>
         <div className={styles.thumb} />
       </div>
       <div className={styles.modLabel}>{label}</div>
