@@ -8,29 +8,37 @@
   --control-bg: hsl(217, 32%, 3%);
   --knob-size: 45px;
   --section-spacing: 0.75rem;
+  --spacing-md: 12px;
+  --spacing-sm: 0.5rem;
+  --color-background: hsl(0, 0%, 10%);
+  --synth-gradient-start: hsl(217, 39%, 25%);
+  --synth-gradient-end: hsl(217, 39%, 15%);
+  --synth-border: hsl(218, 33%, 25%);
+  --color-text-primary: hsl(220, 13%, 90%);
+  --transition-fast: all 0.2s ease;
 }
 
 .synthSides {
   position: relative;
-  padding: 0 12px;
+  padding: 0 var(--spacing-md);
   width: fit-content;
   margin: 25% auto 0;
-  border-radius: 4px;
+  border-radius: var(--border-radius-md);
   background: linear-gradient(
     180deg,
-    hsl(0, 0%, 10%) 0%,
-    hsl(217, 39%, 25%) 3%,
-    hsl(217, 39%, 15%) 99%,
-    hsl(0, 0%, 10%) 100%
+    var(--color-background) 0%,
+    var(--synth-gradient-start) 3%,
+    var(--synth-gradient-end) 99%,
+    var(--color-background) 100%
   );
-  border-left: 2px solid hsl(218, 33%, 25%);
-  border-right: 2px solid hsl(218, 33%, 25%);
+  border-left: 2px solid var(--synth-border);
+  border-right: 2px solid var(--synth-border);
   &:before {
     content: "";
     position: absolute;
     top: 0;
     left: 0;
-    width: 12px;
+    width: var(--spacing-md);
     height: 100%;
     background: linear-gradient(
       90deg,
@@ -42,14 +50,14 @@
       hsl(217 25% 0% / 0.1) 99% 100%
     );
     filter: blur(2px);
-    border-radius: 4px;
+    border-radius: var(--border-radius-md);
   }
   &:after {
     content: "";
     position: absolute;
     top: 0;
     right: 0;
-    width: 12px;
+    width: var(--spacing-md);
     height: 100%;
     background: linear-gradient(
       90deg,
@@ -61,7 +69,7 @@
       hsl(217 25% 0% / 0.1) 99% 100%
     );
     filter: blur(3px);
-    border-radius: 4px;
+    border-radius: var(--border-radius-md);
   }
 }
 
@@ -69,12 +77,12 @@
   height: 16px;
   background: linear-gradient(
     0deg,
-    hsl(217, 32%, 5%) 0 1px,
+    var(--synth-bg) 0 1px,
     hsl(217, 45%, 15%) 1px 2px,
     hsl(217, 30%, 20%) 4px,
     hsl(217, 25%, 10%)
   );
-  border-bottom: 1px solid hsl(0, 0%, 0%);
+  border-bottom: 1px solid var(--color-background);
 }
 
 .synth {
@@ -82,9 +90,9 @@
   flex-direction: column;
   margin: 0 auto;
   width: 930px;
-  background-color: hsl(217, 39%, 15%);
-  border-left: 2px solid hsl(0, 0%, 0%);
-  border-right: 2px solid hsl(0, 0%, 0%);
+  background-color: var(--synth-gradient-end);
+  border-left: 2px solid var(--color-background);
+  border-right: 2px solid var(--color-background);
 }
 
 .sequencerControls {
@@ -96,6 +104,7 @@
   display: flex;
   flex-direction: column;
 }
+
 .innerControlsContainer {
   display: flex;
   width: 100%;
@@ -179,30 +188,31 @@ input:checked + .toggleSlider:before {
     hsl(217, 50%, 8%) 100%
   );
 }
+
 .effectsContainer {
-  padding: 0.5rem;
+  padding: var(--spacing-sm);
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: var(--spacing-sm);
 }
 
 .octaveControls {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: var(--spacing-sm);
 }
 
 .octaveButton {
   background: var(--control-bg);
   border: 1px solid var(--control-border);
-  border-radius: 4px;
-  padding: 0.5rem;
+  border-radius: var(--border-radius-sm);
+  padding: var(--spacing-sm);
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--text-color);
-  transition: all 0.2s ease;
+  color: var(--color-text-primary);
+  transition: var(--transition-fast);
 }
 
 .octaveButton:hover {
