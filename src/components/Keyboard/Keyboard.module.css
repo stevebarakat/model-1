@@ -129,11 +129,11 @@
     #f8f8f8 75%,
     #f0f0f0 85%,
     #e8e8e8 90%,
-    #ddd 100%
+    #ddd 95%
   );
   box-shadow: 0 1px 2px rgb(0 0 0 / 10%), inset 0 1px 1px hsl(217deg 70% 90%);
-  border-bottom: 1px solid hsl(0deg 0% 35%);
-  border-radius: 0 0 3px 3px;
+  border-bottom: 2px solid hsl(0deg 0% 35%);
+  border-radius: 0 0 4px 4px;
   transform: translateY(2px);
 }
 
@@ -163,7 +163,7 @@
       hsl(217deg 13% 18%),
       hsl(217deg 13% 12%)
     );
-    border-radius: 0 0 5px 5px;
+    border-radius: 0 0 var(--border-radius-md) var(--border-radius-md);
     box-shadow: inset 0 0 12px 0 hsl(0deg 0% 100% / 10%);
     transform: rotateX(-10deg);
     content: "";
@@ -175,12 +175,17 @@
   background: linear-gradient(
     to bottom,
     hsl(217deg 13% 18%),
-    hsl(217deg 13% 12%)
+    hsl(217deg 13% 0%)
   );
 
   &::after {
     transform: translateY(2px);
     transform-origin: top center;
+    background: linear-gradient(
+      180deg,
+      hsl(217deg 13% 18%),
+      hsl(217deg 13% 14%)
+    );
   }
 }
 
