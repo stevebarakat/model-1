@@ -18,11 +18,15 @@
   &::before {
     position: relative;
     left: -175px;
-    z-index: 5000;
+    z-index: 50;
     display: flex;
     width: calc(100% + 200px);
     height: 12px;
-    background: linear-gradient(180deg, hsl(217deg 50% 20%), hsl(217deg 10% 5%));
+    background: linear-gradient(
+      180deg,
+      hsl(217deg 50% 20%),
+      hsl(217deg 10% 5%)
+    );
     content: "";
   }
 }
@@ -115,7 +119,8 @@
   );
   border-top: 2px solid hsl(217deg 13% 15%);
   border-radius: 0 0 5px 5px;
-  box-shadow: 0 4px 6px hsl(0deg 0% 0% / 30%), inset 0 1px 1px hsl(217deg 13% 18%);
+  box-shadow: 0 4px 6px hsl(0deg 0% 0% / 30%),
+    inset 0 1px 1px hsl(217deg 13% 18%);
   cursor: pointer;
   transform: translateY(-2px);
   transition: all 0.15s ease;
@@ -125,7 +130,11 @@
     inset: 0 4px 15px;
     overflow: hidden;
     overflow: clip;
-    background: linear-gradient(180deg, hsl(217deg 13% 18%), hsl(217deg 13% 12%));
+    background: linear-gradient(
+      180deg,
+      hsl(217deg 13% 18%),
+      hsl(217deg 13% 12%)
+    );
     border-radius: 0 0 5px 5px;
     box-shadow: inset 0 0 12px 0 hsl(0deg 0% 100% / 10%);
     transform: rotateX(-10deg);

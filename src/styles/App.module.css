@@ -95,12 +95,13 @@
   height: 8px;
   background: linear-gradient(
     0deg,
-    hsl(217deg 20% 10%),
+    hsl(217deg 20% 25% / 0.5),
     hsl(217deg 40% 25%),
     hsl(217deg 10% 5%),
     hsl(217deg 30% 20%),
     hsl(217deg 50% 25%)
   );
+  margin-bottom: -2px;
 }
 
 .keyRow {
