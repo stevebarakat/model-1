@@ -121,13 +121,15 @@ function OscillatorBank({
   onOsc3Change,
 }: OscillatorBankProps) {
   return (
-    <div className={styles.oscillatorBank}>
-      <div className={styles.oscillators}>
-        <OscillatorControls osc={osc1} onChange={onOsc1Change} />
-        <OscillatorControls osc={osc2} onChange={onOsc2Change} />
-        <OscillatorControls osc={osc3} onChange={onOsc3Change} />
+    <div className="box">
+      <div className={styles.oscillatorBank}>
+        <div className={styles.oscillators}>
+          <OscillatorControls osc={osc1} onChange={onOsc1Change} />
+          <OscillatorControls osc={osc2} onChange={onOsc2Change} />
+          <OscillatorControls osc={osc3} onChange={onOsc3Change} />
+        </div>
+        <span className="section-title">Oscillator Bank</span>
       </div>
-      <span className="section-title">Oscillator Bank</span>
     </div>
   );
 }

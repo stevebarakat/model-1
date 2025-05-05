@@ -1,20 +1,14 @@
-import { useRef, useEffect, useCallback, useState } from "react";
+import { useRef, useEffect } from "react";
 import { createSynth } from "./synth/WebAudioSynth";
 import Keyboard from "./components/Keyboard";
-import OscillatorBank from "./components/OscillatorBank/OscillatorBank";
-import Mixer from "./components/Mixer/Mixer";
-import Modifiers from "./components/Modifiers/Modifiers";
-import Effects from "./components/Effects/Effects";
 import SidePanel from "./components/SidePanel/SidePanel";
 import styles from "./styles/App.module.css";
 import "./styles/variables.css";
 import { useSynthStore } from "./store/synthStore";
-import { OscillatorSettings, FilterType } from "./synth/types";
-
-type Note = string;
+import { useKeyboardHandling } from "./hooks/useKeyboardHandling";
+import { SynthControls } from "./components/SynthControls/SynthControls";
 
 function App() {
-  // Get all needed state from Zustand store
   const {
     activeKeys,
     setActiveKeys,
@@ -42,133 +36,14 @@ function App() {
     synth: Awaited<ReturnType<typeof createSynth>> | null;
   }>({ synth: null });
 
-  // Add state for tracking glissando
-  const [lastPlayedNote, setLastPlayedNote] = useState<string | null>(null);
-  const [isMouseDown, setIsMouseDown] = useState(false);
-
-  const handleKeyDown = useCallback(
-    (note: Note) => {
-      // Store the original note for visual state
-      setActiveKeys((prev: Set<Note>) => {
-        const newSet = new Set(prev);
-        newSet.add(note);
-        return newSet;
-      });
-
-      // During glissando, use handleNoteTransition
-      if (isMouseDown && lastPlayedNote && lastPlayedNote !== note) {
-        keyboardRef.current.synth?.handleNoteTransition(lastPlayedNote, note);
-      } else {
-        // For regular key press or first note in glissando
-        keyboardRef.current.synth?.triggerAttack(note);
-      }
-      setLastPlayedNote(note);
-    },
-    [setActiveKeys, isMouseDown, lastPlayedNote]
-  );
-
-  const handleKeyUp = useCallback(
-    (note: Note) => {
-      // Remove the original note from visual state
-      setActiveKeys((prev: Set<Note>) => {
-        const newSet = new Set(prev);
-        newSet.delete(note);
-        return newSet;
-      });
-
-      // Only release if we're not in a glissando or if this is the last played note
-      if (!isMouseDown || note === lastPlayedNote) {
-        keyboardRef.current.synth?.triggerRelease(note);
-        if (note === lastPlayedNote) {
-          setLastPlayedNote(null);
-        }
-      }
-    },
-    [setActiveKeys, isMouseDown, lastPlayedNote]
-  );
-
-  // Add mouse state handlers
-  const handleMouseDown = useCallback(() => {
-    setIsMouseDown(true);
-  }, []);
-
-  const handleMouseUp = useCallback(() => {
-    setIsMouseDown(false);
-    // Release all active notes when mouse is released
-    activeKeys.forEach((note) => {
-      keyboardRef.current.synth?.triggerRelease(note);
+  const { handleKeyDown, handleKeyUp, handleMouseDown, handleMouseUp } =
+    useKeyboardHandling({
+      keyboardRef,
+      activeKeys,
+      setActiveKeys,
+      currentOctave,
+      setCurrentOctave,
     });
-    setLastPlayedNote(null);
-  }, [activeKeys]);
-
-  // Add keyboard event listeners
-  useEffect(() => {
-    // Base keyboard mapping (without octave)
-    const baseKeyboardMap: { [key: string]: string } = {
-      a: "C",
-      w: "C#",
-      s: "D",
-      e: "D#",
-      d: "E",
-      f: "F",
-      t: "F#",
-      g: "G",
-      y: "G#",
-      h: "A",
-      u: "A#",
-      j: "B",
-      k: "C+1", // Special marker for next octave
-    };
-    const handleKeyboardDown = (e: KeyboardEvent) => {
-      if (!e.key) return;
-
-      // Handle octave changes
-      if (e.key === "+" || e.key === "=") {
-        // Release all active notes before changing octave
-        activeKeys.forEach((note) => handleKeyUp(note));
-        setCurrentOctave(Math.min(currentOctave + 1, 7)); // Limit to 7th octave
-        return;
-      }
-      if (e.key === "-" || e.key === "_") {
-        // Release all active notes before changing octave
-        activeKeys.forEach((note) => handleKeyUp(note));
-        setCurrentOctave(Math.max(currentOctave - 1, 1)); // Limit to 1st octave
-        return;
-      }
-
-      const baseNote = baseKeyboardMap[e.key.toLowerCase()];
-      if (baseNote && !e.repeat) {
-        // Handle special case for K key (next octave)
-        const note =
-          baseNote === "C+1"
-            ? `C${currentOctave + 1}`
-            : `${baseNote}${currentOctave}`;
-        handleKeyDown(note);
-      }
-    };
-
-    const handleKeyboardUp = (e: KeyboardEvent) => {
-      if (!e.key) return;
-
-      const baseNote = baseKeyboardMap[e.key.toLowerCase()];
-      if (baseNote) {
-        // Handle special case for K key (next octave)
-        const note =
-          baseNote === "C+1"
-            ? `C${currentOctave + 1}`
-            : `${baseNote}${currentOctave}`;
-        handleKeyUp(note);
-      }
-    };
-
-    window.addEventListener("keydown", handleKeyboardDown);
-    window.addEventListener("keyup", handleKeyboardUp);
-
-    return () => {
-      window.removeEventListener("keydown", handleKeyboardDown);
-      window.removeEventListener("keyup", handleKeyboardUp);
-    };
-  }, [currentOctave, activeKeys, setCurrentOctave, handleKeyUp, handleKeyDown]);
 
   // Initialize synth
   useEffect(() => {
@@ -219,7 +94,7 @@ function App() {
           type: mixer.noiseType,
           volume: mixer.noiseVolume,
         },
-        tune: tune + ((pitchWheel - 50) / 50) * 100, // Combine tune and pitch wheel
+        tune: tune + ((pitchWheel - 50) / 50) * 100,
         modMix: mixer.modMix,
         modWheel,
         glide,
@@ -242,149 +117,21 @@ function App() {
     tune,
   ]);
 
-  const handleOsc1Change = (
-    param: keyof OscillatorSettings,
-    value: OscillatorSettings[keyof OscillatorSettings]
-  ) => {
-    setOscillator(1, {
-      ...oscillators.osc1,
-      [param]: value,
-    });
-  };
-
-  const handleOsc2Change = (
-    param: keyof OscillatorSettings,
-    value: OscillatorSettings[keyof OscillatorSettings]
-  ) => {
-    setOscillator(2, {
-      ...oscillators.osc2,
-      [param]: value,
-    });
-  };
-
-  const handleOsc3Change = (
-    param: keyof OscillatorSettings,
-    value: OscillatorSettings[keyof OscillatorSettings]
-  ) => {
-    setOscillator(3, {
-      ...oscillators.osc3,
-      [param]: value,
-    });
-  };
-
   return (
     <div className={styles.synthSides}>
       <div className={styles.synth}>
         <div className={styles.controlsContainer}>
           <div className={styles.backPanel}></div>
           <div className={styles.innerControlsContainer}>
-            <Mixer
-              osc1Volume={mixer.osc1Volume}
-              osc2Volume={mixer.osc2Volume}
-              osc3Volume={mixer.osc3Volume}
-              osc1Pan={oscillators.osc1.pan ?? 0}
-              osc2Pan={oscillators.osc2.pan ?? 0}
-              osc3Pan={oscillators.osc3.pan ?? 0}
-              noiseVolume={mixer.noiseVolume}
-              noiseType={mixer.noiseType}
-              modMix={mixer.modMix}
-              onModMixChange={(value) => {
-                updateMixer({ modMix: value });
-                setModWheel(value * 100); // Convert 0-1 range to 0-100 range
-              }}
-              onOsc1VolumeChange={(value) => updateMixer({ osc1Volume: value })}
-              onOsc2VolumeChange={(value) => updateMixer({ osc2Volume: value })}
-              onOsc3VolumeChange={(value) => updateMixer({ osc3Volume: value })}
-              onOsc1PanChange={(value) => handleOsc1Change("pan", value)}
-              onOsc2PanChange={(value) => handleOsc2Change("pan", value)}
-              onOsc3PanChange={(value) => handleOsc3Change("pan", value)}
-              onNoiseVolumeChange={(value) =>
-                updateMixer({ noiseVolume: value })
-              }
-              onNoiseTypeChange={(value) => updateMixer({ noiseType: value })}
-            />
-            <div className={styles.indent}></div>
-            <div className="box">
-              <OscillatorBank
-                osc1={oscillators.osc1}
-                osc2={oscillators.osc2}
-                osc3={oscillators.osc3}
-                onOsc1Change={handleOsc1Change}
-                onOsc2Change={handleOsc2Change}
-                onOsc3Change={handleOsc3Change}
-              />
-            </div>
-            <div className={styles.indent}></div>
-            <Modifiers
-              cutoff={modifiers.cutoff}
-              resonance={modifiers.resonance}
-              contourAmount={modifiers.contourAmount}
-              filterType={modifiers.filterType}
-              attackTime={modifiers.envelope.attack}
-              decayTime={modifiers.envelope.decay}
-              sustainLevel={modifiers.envelope.sustain}
-              releaseTime={modifiers.envelope.release}
-              lfoRate={modifiers.lfo.rate}
-              lfoDepth={modifiers.lfo.depth}
-              lfoWaveform={modifiers.lfo.waveform}
-              lfoRouting={modifiers.lfo.routing}
-              onCutoffChange={(value) => updateModifiers({ cutoff: value })}
-              onResonanceChange={(value) =>
-                updateModifiers({ resonance: value })
-              }
-              onContourAmountChange={(value) =>
-                updateModifiers({ contourAmount: value })
-              }
-              onFilterTypeChange={(type: BiquadFilterType) =>
-                updateModifiers({ filterType: type as FilterType })
-              }
-              onAttackTimeChange={(value) =>
-                updateModifiers({
-                  envelope: { ...modifiers.envelope, attack: value },
-                })
-              }
-              onDecayTimeChange={(value) =>
-                updateModifiers({
-                  envelope: { ...modifiers.envelope, decay: value },
-                })
-              }
-              onSustainLevelChange={(value) =>
-                updateModifiers({
-                  envelope: { ...modifiers.envelope, sustain: value },
-                })
-              }
-              onReleaseTimeChange={(value) =>
-                updateModifiers({
-                  envelope: { ...modifiers.envelope, release: value },
-                })
-              }
-              onLfoRateChange={(value) =>
-                updateModifiers({ lfo: { ...modifiers.lfo, rate: value } })
-              }
-              onLfoDepthChange={(value) =>
-                updateModifiers({ lfo: { ...modifiers.lfo, depth: value } })
-              }
-              onLfoWaveformChange={(value) =>
-                updateModifiers({ lfo: { ...modifiers.lfo, waveform: value } })
-              }
-              onLfoRoutingChange={(value) =>
-                updateModifiers({ lfo: { ...modifiers.lfo, routing: value } })
-              }
-            />
-            <div className={styles.indent}></div>
-            <Effects
-              reverbAmount={effects.reverb.amount}
-              delayAmount={effects.delay.amount}
-              distortionAmount={effects.distortion.outputGain}
-              onReverbAmountChange={(value) =>
-                updateEffects({ reverb: { amount: value } })
-              }
-              onDelayAmountChange={(value) =>
-                updateEffects({ delay: { amount: value } })
-              }
-              onDistortionAmountChange={(value) =>
-                updateEffects({ distortion: { outputGain: value } })
-              }
+            <SynthControls
+              oscillators={oscillators}
+              mixer={mixer}
+              modifiers={modifiers}
+              effects={effects}
+              onOscillatorChange={setOscillator}
+              onMixerChange={updateMixer}
+              onModifiersChange={updateModifiers}
+              onEffectsChange={updateEffects}
             />
           </div>
           <div className={styles.horizontalIndent}></div>
@@ -396,7 +143,7 @@ function App() {
             onPitchWheelChange={setPitchWheel}
             onModWheelChange={(value) => {
               setModWheel(value);
-              updateMixer({ modMix: value / 100 }); // Convert 0-100 range to 0-1 range
+              updateMixer({ modMix: value / 100 });
             }}
             onPitchWheelReset={() => setPitchWheel(50)}
             glide={glide}
@@ -404,7 +151,6 @@ function App() {
             currentOctave={currentOctave}
             onOctaveChange={setCurrentOctave}
             onOctaveChangeStart={() => {
-              // Release all active notes before changing octave
               activeKeys.forEach((note) => handleKeyUp(note));
             }}
             tune={tune}

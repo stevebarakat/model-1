@@ -102,18 +102,6 @@
   overflow: hidden;
 }
 
-.indent {
-  width: 8px;
-  background: linear-gradient(
-    90deg,
-    hsl(217, 20%, 10%),
-    hsl(217, 40%, 25%),
-    hsl(217, 10%, 5%),
-    hsl(217, 30%, 20%),
-    hsl(217, 50%, 25%)
-  );
-}
-
 .horizontalIndent {
   align-self: flex-end;
   width: 100%;
