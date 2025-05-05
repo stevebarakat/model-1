@@ -7,13 +7,28 @@
     position: absolute;
     bottom: 1px;
     left: 12px;
-    width: 2%;
+    width: 1.5%;
     height: 100%;
     height: 210px;
     background: linear-gradient(
       270deg,
-      hsl(217deg 50% 20% / 0%) 0%,
-      hsl(217deg 10% 5% / 20%) 80%,
+      hsl(217deg 50% 0% / 0%) 0%,
+      hsl(217deg 10% 5% / 25%) 80%,
+      hsl(217deg 10% 5% / 50%) 100%
+    );
+  }
+  &::after {
+    content: "";
+    position: absolute;
+    bottom: 1px;
+    right: 12px;
+    width: 1.5%;
+    height: 100%;
+    height: 210px;
+    background: linear-gradient(
+      90deg,
+      hsl(217deg 50% 0% / 0%) 0%,
+      hsl(217deg 10% 5% / 50%) 80%,
       hsl(217deg 10% 5% / 50%) 100%
     );
   }
