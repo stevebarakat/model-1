@@ -1,20 +1,21 @@
 .synthSides {
   position: relative;
-  background: hsl(217, 39%, 15%);
+  margin: 25% auto 0;
   padding: 0 12px;
   width: fit-content;
-  margin: 25% auto 0;
-  border-radius: 4px;
+  background: hsl(217deg 39% 15%);
   background: linear-gradient(
     180deg,
-    hsl(0, 0%, 10%) 0%,
-    hsl(217, 39%, 35%) 3%,
-    hsl(217, 39%, 15%) 99%,
-    hsl(0, 0%, 10%) 100%
+    hsl(0deg 0% 10%) 0%,
+    hsl(217deg 39% 35%) 3%,
+    hsl(217deg 39% 15%) 99%,
+    hsl(0deg 0% 10%) 100%
   );
+  border-radius: 4px;
+
   /* border-left: 2px solid hsl(218, 33%, 25%);
   border-right: 2px solid hsl(218, 33%, 25%); */
-  &:before {
+  &::before {
     content: "";
     position: absolute;
     top: 0;
@@ -23,17 +24,18 @@
     height: 100%;
     background: linear-gradient(
       90deg,
-      hsl(217 25% 0% / 0.1) 0 1%,
-      hsl(217, 30%, 20%) 1% 2%,
-      hsl(217, 45%, 15%) 4%,
-      hsl(217, 45%, 15%) 96%,
-      hsl(217, 30%, 20%) 98% 99%,
-      hsl(217 25% 0% / 0.1) 99% 100%
+      hsl(217deg 25% 0% / 10%) 0 1%,
+      hsl(217deg 30% 20%) 1% 2%,
+      hsl(217deg 45% 15%) 4%,
+      hsl(217deg 45% 15%) 96%,
+      hsl(217deg 30% 20%) 98% 99%,
+      hsl(217deg 25% 0% / 10%) 99% 100%
     );
     filter: blur(3px);
     border-radius: 4px;
   }
-  &:after {
+
+  &::after {
     content: "";
     position: absolute;
     top: 0;
@@ -42,12 +44,12 @@
     height: 100%;
     background: linear-gradient(
       90deg,
-      hsl(217 25% 0% / 0.1) 0 1%,
-      hsl(217, 30%, 20%) 1% 2%,
-      hsl(217, 45%, 15%) 4%,
-      hsl(217, 45%, 15%) 96%,
-      hsl(217, 30%, 20%) 98% 99%,
-      hsl(217 25% 0% / 0.1) 99% 100%
+      hsl(217deg 25% 0% / 10%) 0 1%,
+      hsl(217deg 30% 20%) 1% 2%,
+      hsl(217deg 45% 15%) 4%,
+      hsl(217deg 45% 15%) 96%,
+      hsl(217deg 30% 20%) 98% 99%,
+      hsl(217deg 25% 0% / 10%) 99% 100%
     );
     filter: blur(3px);
     border-radius: 4px;
@@ -59,9 +61,9 @@
   background: linear-gradient(
     0deg,
     var(--synth-bg) 0 1px,
-    hsl(217, 45%, 15%) 1px 2px,
-    hsl(217, 30%, 20%) 4px,
-    hsl(217, 25%, 10%)
+    hsl(217deg 45% 15%) 1px 2px,
+    hsl(217deg 30% 20%) 4px,
+    hsl(217deg 25% 10%)
   );
   border-bottom: 1px solid var(--synth-bg);
 }
@@ -72,8 +74,8 @@
   margin: 0 auto;
   width: 930px;
   background-color: var(--synth-gradient-end);
-  border-left: 2px solid var(--synth-bg);
   border-right: 2px solid var(--synth-bg);
+  border-left: 2px solid var(--synth-bg);
 }
 
 .controlsContainer {
@@ -93,11 +95,11 @@
   height: 8px;
   background: linear-gradient(
     0deg,
-    hsl(217, 20%, 10%),
-    hsl(217, 40%, 25%),
-    hsl(217, 10%, 5%),
-    hsl(217, 30%, 20%),
-    hsl(217, 50%, 25%)
+    hsl(217deg 20% 10%),
+    hsl(217deg 40% 25%),
+    hsl(217deg 10% 5%),
+    hsl(217deg 30% 20%),
+    hsl(217deg 50% 25%)
   );
 }
 
@@ -106,7 +108,7 @@
   overflow: clip;
   background: linear-gradient(
     180deg,
-    hsl(217, 50%, 20%) 98%,
-    hsl(217, 50%, 8%) 100%
+    hsl(217deg 50% 20%) 98%,
+    hsl(217deg 50% 8%) 100%
   );
 }

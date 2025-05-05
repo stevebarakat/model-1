@@ -10,55 +10,56 @@
 .track {
   position: relative;
   top: 50%;
-  left: 0;
   right: 0;
-  background: linear-gradient(90deg, hsl(217, 30%, 20%), hsl(217, 40%, 25%));
-  transform: translateY(-50%);
-  --base-texture: linear-gradient(
-    270deg,
-    hsl(217, 25%, 10%),
-    hsl(0, 0%, 100%) 28%,
-    hsl(217, 25%, 10%)
-  );
+  left: 0;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  height: 14px;
   width: 105px;
+  height: 14px;
+  background: linear-gradient(90deg, hsl(217deg 30% 20%), hsl(217deg 40% 25%));
   background: var(--base-texture);
+  box-shadow: 0 1px 2px hsl(217deg 40% 3% / 95%),
+    0 2px 4px hsl(217deg 40% 3% / 95%);
   cursor: pointer;
-  box-shadow: 0px 1px 2px hsl(217 40% 3% / 0.95),
-    0px 2px 4px hsl(217 40% 3% / 0.95);
+  transform: translateY(-50%);
+
+  --base-texture: linear-gradient(
+    270deg,
+    hsl(217deg 25% 10%),
+    hsl(0deg 0% 100%) 28%,
+    hsl(217deg 25% 10%)
+  );
 }
 
 .thumb {
   position: absolute;
+  top: 0;
+  left: clamp(4.5px, calc(var(--thumb-position, 0%)), calc(100% - 4.5px));
   display: flex;
   width: 9px;
   height: 16px;
-  top: 0px;
-  left: clamp(4.5px, calc(var(--thumb-position, 0%)), calc(100% - 4.5px));
-  transform: translateX(-50%);
   background: linear-gradient(
     270deg,
-    hsl(0, 0%, 25%) 0%,
-    hsl(0, 0%, 75%) 37.5%,
-    hsl(0, 0%, 85%) 62.5%,
-    hsl(0, 0%, 25%) 100%
+    hsl(0deg 0% 25%) 0%,
+    hsl(0deg 0% 75%) 37.5%,
+    hsl(0deg 0% 85%) 62.5%,
+    hsl(0deg 0% 25%) 100%
   );
-  border-top: 1.5px solid hsl(0, 0%, 25%);
-  border-bottom: 1.5px solid hsl(0, 0%, 25%);
+  border-top: 1.5px solid hsl(0deg 0% 25%);
+  border-bottom: 1.5px solid hsl(0deg 0% 25%);
+  transform: translateX(-50%);
 }
 
 .modLabel {
-  text-align: center;
-  font-size: var(--font-size-sm);
-  color: var(--color-text-secondary);
-  user-select: none;
-  text-transform: uppercase;
   position: relative;
   top: 100px;
   left: 1px;
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-sm);
+  text-align: center;
+  text-transform: uppercase;
+  user-select: none;
   letter-spacing: 0.08em;
 }
 
@@ -70,8 +71,8 @@
   height: 100%;
   background: linear-gradient(
     90deg,
-    hsl(217 30% 0% / 0.5),
-    hsl(217 40% 5% / 0)
+    hsl(217deg 30% 0% / 50%),
+    hsl(217deg 40% 5% / 0%)
   );
   filter: blur(6px);
   transform: translateY(-50%);

@@ -6,9 +6,9 @@ body {
 }
 
 .section {
-  padding: var(--spacing-md);
   display: flex;
   flex-direction: column;
+  padding: var(--spacing-md);
 }
 
 .column {
@@ -23,19 +23,19 @@ body {
 }
 
 .section-title {
+  margin-top: var(--spacing-sm);
+  color: var(--color-text-secondary);
   font-size: var(--font-size-lg);
+  text-align: center;
   text-transform: uppercase;
   letter-spacing: 0.1em;
-  text-align: center;
-  margin-top: var(--spacing-sm);
   user-select: none;
-  color: var(--color-text-secondary);
 }
 
 .box {
-  height: fit-content;
   margin: var(--spacing-xs);
+  height: fit-content;
+  overflow: hidden;
   border: 2px solid var(--synth-border);
   border-radius: var(--border-radius-sm);
-  overflow: hidden;
 }

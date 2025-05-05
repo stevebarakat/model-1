@@ -21,17 +21,17 @@
 }
 
 .octaveControlsRow {
-  margin: var(--spacing-lg) 0 0;
-  width: 100%;
   display: flex;
   justify-content: center;
+  margin: var(--spacing-lg) 0 0;
+  width: 100%;
 }
 
 .topControls {
   display: flex;
   flex-direction: row;
-  gap: var(--spacing-sm);
-  align-items: center;
   justify-content: center;
+  align-items: center;
+  gap: var(--spacing-sm);
   margin-top: var(--spacing-lg);
 }

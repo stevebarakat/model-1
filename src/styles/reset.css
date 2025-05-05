@@ -1,15 +1,15 @@
 body {
+  margin: 0;
+  font: inherit;
+  font-size: 100%;
   line-height: 1;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  margin: 0;
-  font-size: 100%;
-  font: inherit;
   vertical-align: baseline;
 }
 
 *,
-:before,
-:after {
+::before,
+::after {
   box-sizing: border-box;
 }
