@@ -1,6 +1,6 @@
-import * as Switch from "@radix-ui/react-switch";
 import Knob from "../Knob/Knob";
 import styles from "./Mixer.module.css";
+import Switch from "../Switch";
 
 type NoiseType = "white" | "pink";
 
@@ -85,21 +85,14 @@ function NoiseControls({
         label="Noise"
         onChange={onVolumeChange}
       />
-      <div className={styles.noiseSwitch}>
-        <div className={styles.switchContainer}>
-          <label className={styles.switchLabel}>
-            {type === "white" ? "White" : "Pink"}
-          </label>
-          <Switch.Root
-            className={styles.switchRoot}
-            checked={type === "pink"}
-            onCheckedChange={(checked) =>
-              onTypeChange(checked ? "pink" : "white")
-            }
-          >
-            <Switch.Thumb className={styles.switchThumb} />
-          </Switch.Root>
-        </div>
+      <div className={styles.switchContainer}>
+        <Switch
+          checked={type === "pink"}
+          onCheckedChange={(checked) =>
+            onTypeChange(checked ? "pink" : "white")
+          }
+          label={type === "white" ? "White" : "Pink"}
+        />
       </div>
     </>
   );
@@ -129,7 +122,7 @@ function Mixer({
     <div className="box">
       <div className={styles.mixer}>
         <div className="controls">
-          <div className={styles.volumeContainer}>
+          <div>
             <OscillatorControls
               volume={osc1Volume}
               pan={osc1Pan}

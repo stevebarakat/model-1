@@ -1,5 +1,5 @@
 .mixer {
-  padding: var(--spacing-sm);
+  padding: var(--spacing-md);
   display: flex;
   flex-direction: column;
   align-items: space-between;
@@ -7,71 +7,19 @@
   height: 100%;
 }
 
+/* .volumeContainer {
+  gap: var(--spacing-sm);
+  display: flex;
+  flex-direction: column;
+} */
+
 .mixerColumn {
   display: flex;
   flex-direction: column;
-  align-items: center;
   gap: var(--spacing-sm);
 }
 
 .mixerRow {
   display: flex;
-  flex-direction: row;
-  align-items: center;
   gap: var(--spacing-sm);
-}
-
-.switchContainer {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.switchLabel {
-  padding-bottom: var(--spacing-sm);
-  font-size: var(--font-size-xs);
-  color: var(--color-text-secondary);
-  text-align: center;
-  user-select: none;
-  white-space: nowrap;
-  text-transform: uppercase;
-  font-weight: 500;
-}
-
-.switchRoot {
-  width: 32px;
-  height: 17px;
-  background: var(--synth-bg);
-  position: relative;
-  border: none;
-  rotate: 90deg;
-  display: flex;
-  align-items: center;
-  justify-content: flex-start;
-  border-radius: var(--border-radius-sm);
-  margin-bottom: var(--spacing-sm);
-}
-
-.switchThumb {
-  display: block;
-  width: 15px;
-  height: 15px;
-  background: linear-gradient(
-    to left,
-    var(--key-white),
-    var(--key-white-hover)
-  );
-  position: absolute;
-  left: 1px;
-  top: 1px;
-  will-change: transform;
-  border-radius: var(--border-radius-sm);
-  border: 1px solid rgba(0, 0, 0, 0.1);
-  transition: var(--transition-fast);
-}
-
-.switchThumb[data-state="checked"] {
-  background: var(--color-primary);
-  transform: translateX(15px);
-  transition: var(--transition-fast);
 }

@@ -1,5 +1,5 @@
 .modifiers {
-  padding: var(--spacing-sm);
+  padding: var(--spacing-md);
   color: var(--color-text-primary);
   display: flex;
   flex-direction: column;
