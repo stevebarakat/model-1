@@ -37,7 +37,9 @@
 
 .thumb {
   position: absolute;
-  display: flex;
+  top: 0;
+  left: clamp(4.5px, calc(var(--thumb-position, 0%)), calc(100% - 4.5px));
+  transform: translateX(-50%);
   width: 9px;
   height: 16px;
   background: linear-gradient(
@@ -47,11 +49,8 @@
     var(--key-white) 62.5%,
     var(--key-black) 100%
   );
-  top: 2px;
   border-top: 1.5px solid var(--key-black);
   border-bottom: 1.5px solid var(--key-black);
-  transform: translateX(-50%);
-  left: clamp(4.5px, calc(var(--thumb-position, 0%)), calc(100% - 4.5px));
 }
 
 .modLabel {

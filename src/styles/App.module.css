@@ -94,11 +94,6 @@
   border-right: 2px solid var(--color-background);
 }
 
-.sequencerControls {
-  display: flex;
-  gap: 0.5rem;
-}
-
 .controlsContainer {
   display: flex;
   flex-direction: column;
@@ -124,12 +119,18 @@
   );
 }
 
+.keyRow {
+  display: flex;
+  overflow: clip;
+  background: linear-gradient(
+    180deg,
+    hsl(217, 50%, 20%) 98%,
+    hsl(217, 50%, 8%) 100%
+  );
+}
+
 @media (max-width: 1200px) {
   .controlsContainer {
-    grid-template-columns: 1fr;
-  }
-
-  .effectsPanel {
     grid-template-columns: 1fr;
   }
 }
@@ -144,80 +145,4 @@
   :root {
     --knob-size: 30px;
   }
-}
-
-.toggleSlider {
-  position: absolute;
-  cursor: pointer;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: hsl(220, 13%, 30%);
-  transition: 0.4s;
-  border-radius: 20px;
-}
-
-.toggleSlider:before {
-  position: absolute;
-  content: "";
-  height: 16px;
-  width: 16px;
-  left: 2px;
-  bottom: 2px;
-  background-color: hsl(220, 13%, 90%);
-  transition: 0.4s;
-  border-radius: 50%;
-}
-
-input:checked + .toggleSlider {
-  background-color: hsl(220, 70%, 55%);
-}
-
-input:checked + .toggleSlider:before {
-  transform: translateX(20px);
-}
-
-.keyRow {
-  display: flex;
-  overflow: clip;
-  background: linear-gradient(
-    180deg,
-    hsl(217, 50%, 20%) 98%,
-    hsl(217, 50%, 8%) 100%
-  );
-}
-
-.effectsContainer {
-  padding: var(--spacing-sm);
-  display: flex;
-  flex-direction: column;
-  gap: var(--spacing-sm);
-}
-
-.octaveControls {
-  display: flex;
-  flex-direction: column;
-  gap: var(--spacing-sm);
-}
-
-.octaveButton {
-  background: var(--control-bg);
-  border: 1px solid var(--control-border);
-  border-radius: var(--border-radius-sm);
-  padding: var(--spacing-sm);
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--color-text-primary);
-  transition: var(--transition-fast);
-}
-
-.octaveButton:hover {
-  background: var(--control-hover);
-}
-
-.octaveButton:active {
-  background: var(--control-active);
 }
