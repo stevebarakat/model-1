@@ -25,7 +25,7 @@
     position: relative;
     width: calc(100% + 190px);
     height: var(--spacing-md);
-    left: -155px;
+    left: -170px;
     z-index: 5000;
   }
 }
