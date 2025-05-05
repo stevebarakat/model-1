@@ -1,7 +1,7 @@
 import React from "react";
 import ModWheel from "../ModWheel/ModWheel";
 import styles from "./SidePanel.module.css";
-import OctaveControls from "../OctaveControls/OctaveControls";
+import OctaveControls from "../OctaveControls";
 import Knob from "../Knob/Knob";
 
 interface SidePanelProps {
