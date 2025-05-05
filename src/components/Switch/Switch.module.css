@@ -5,6 +5,7 @@
 }
 
 .switchLabel {
+  margin-top: 1px;
   padding-bottom: var(--spacing-lg);
   color: var(--color-text-secondary);
   font-size: var(--font-size-md);
@@ -20,11 +21,11 @@
   justify-content: flex-start;
   align-items: center;
   margin-bottom: var(--spacing-sm);
-  width: 32px;
-  height: 17px;
+  width: 36px;
+  height: 21px;
   background: var(--synth-bg);
-  border: none;
-  border-radius: var(--border-radius-sm);
+  border: 2px solid var(--synth-border);
+  border-radius: 3px;
   cursor: pointer;
   rotate: 90deg;
 }
@@ -38,12 +39,12 @@
   height: 15px;
   background: linear-gradient(to left, hsl(0deg 0% 90%), hsl(0deg 0% 70%));
   border: 1px solid rgb(0 0 0 / 10%);
-  border-radius: var(--border-radius-sm);
+  border-radius: 2px;
   transition: var(--transition-fast);
   will-change: transform;
 }
 
 .switchThumb.checked {
-  background: var(--color-primary);
+  background: hotpink;
   transform: translateX(15px);
 }
