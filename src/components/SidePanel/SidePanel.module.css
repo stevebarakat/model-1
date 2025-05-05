@@ -3,7 +3,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 0 0.5rem;
+  padding: 0 var(--spacing-sm);
 }
 
 .modWheels {
@@ -21,7 +21,7 @@
 }
 
 .octaveControlsRow {
-  margin: 16px 0 0;
+  margin: var(--spacing-lg) 0 0;
   width: 100%;
   display: flex;
   justify-content: center;
@@ -30,8 +30,8 @@
 .topControls {
   display: flex;
   flex-direction: row;
-  gap: 0.5rem;
+  gap: var(--spacing-sm);
   align-items: center;
   justify-content: center;
-  margin-top: 1rem;
+  margin-top: var(--spacing-lg);
 }

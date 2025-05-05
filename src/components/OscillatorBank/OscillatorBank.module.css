@@ -1,6 +1,6 @@
 .oscillatorBank {
-  padding: 0.5rem;
-  color: white;
+  padding: var(--spacing-sm);
+  color: var(--color-text-primary);
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -10,16 +10,16 @@
 .oscillators {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: var(--spacing-sm);
 }
 
 .rangeSwitch select,
 .waveformSwitch select {
-  background: #333;
-  color: white;
-  border: 1px solid #666;
-  padding: 0.3rem;
-  border-radius: 3px;
+  background: var(--synth-bg);
+  color: var(--color-text-primary);
+  border: 1px solid var(--control-border);
+  padding: var(--spacing-xs);
+  border-radius: var(--border-radius-sm);
   font-family: monospace;
   cursor: pointer;
 }
@@ -27,5 +27,5 @@
 .rangeSwitch select:focus,
 .waveformSwitch select:focus {
   outline: none;
-  border-color: #999;
+  border-color: var(--color-text-secondary);
 }

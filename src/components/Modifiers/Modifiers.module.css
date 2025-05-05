@@ -1,6 +1,6 @@
 .modifiers {
-  padding: 0.5rem;
-  color: white;
+  padding: var(--spacing-sm);
+  color: var(--color-text-primary);
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -10,7 +10,7 @@
 .sections {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: var(--spacing-sm);
 }
 
 .filterSection,

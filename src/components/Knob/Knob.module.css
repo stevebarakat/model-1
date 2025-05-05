@@ -3,24 +3,24 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-top: 1rem;
+  margin-top: var(--spacing-lg);
 }
 
 .knob {
-  width: 40px;
-  height: 40px;
+  width: var(--knob-size);
+  height: var(--knob-size);
   border-radius: 50%;
   background: radial-gradient(
     ellipse at center,
-    hsl(0, 0%, 85%) 0,
-    hsl(0, 0%, 75%) 8px,
-    hsl(0, 0%, 80%) 9px,
-    hsl(0, 0%, 0%) 10px,
-    hsl(0, 0%, 5%) 16px
+    var(--key-white) 0,
+    var(--key-white-hover) 8px,
+    var(--key-white) 9px,
+    var(--key-black) 10px,
+    var(--synth-bg) 16px
   );
   position: relative;
   cursor: pointer;
-  transition: transform 0.1s ease;
+  transition: var(--transition-fast);
   z-index: 1;
 }
 
@@ -31,8 +31,12 @@
   left: 50%;
   width: 2px;
   height: 8px;
-  background: linear-gradient(to bottom, hsl(220 13% 75%), hsl(220 13% 85%));
-  border-radius: 2px 2px 0 0;
+  background: linear-gradient(
+    to bottom,
+    var(--color-text-secondary),
+    var(--color-text-primary)
+  );
+  border-radius: var(--border-radius-sm) var(--border-radius-sm) 0 0;
   transform: translate(-50%, -100%);
   transform-origin: bottom center;
   z-index: 5;
@@ -54,9 +58,10 @@
   filter: blur(1px);
   pointer-events: none;
 }
+
 .knobLabel {
-  font-size: 0.68rem;
-  color: hsl(220, 13%, 70%);
+  font-size: var(--font-size-xs);
+  color: var(--color-text-secondary);
   text-align: center;
   user-select: none;
   white-space: nowrap;
@@ -69,8 +74,8 @@
 }
 
 .knobValue {
-  font-size: 0.68rem;
-  color: hsl(220, 13%, 90%);
+  font-size: var(--font-size-xs);
+  color: var(--color-text-primary);
   user-select: none;
   white-space: nowrap;
   position: absolute;
@@ -80,5 +85,5 @@
 }
 
 .knobValue span {
-  font-size: 0.48rem;
+  font-size: var(--font-size-xs);
 }
