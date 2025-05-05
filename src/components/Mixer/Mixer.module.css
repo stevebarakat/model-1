@@ -2,24 +2,15 @@
   padding: var(--spacing-md);
   display: flex;
   flex-direction: column;
-  align-items: space-between;
-  justify-content: space-between;
-  height: 100%;
-}
-
-/* .volumeContainer {
-  gap: var(--spacing-sm);
-  display: flex;
-  flex-direction: column;
-} */
-
-.mixerColumn {
-  display: flex;
-  flex-direction: column;
-  gap: var(--spacing-sm);
 }
 
 .mixerRow {
   display: flex;
+  gap: var(--spacing-md);
+}
+
+.mixerColumn {
+  display: flex;
+  flex-direction: column;
   gap: var(--spacing-sm);
 }

@@ -1,12 +1,11 @@
 .effectsContainer {
+  padding: var(--spacing-md);
   display: flex;
   flex-direction: column;
-  padding: var(--spacing-md);
 }
 
 .effects {
   display: flex;
   flex-direction: column;
   gap: var(--spacing-sm);
-  position: relative;
 }
