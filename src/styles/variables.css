@@ -4,12 +4,11 @@
   --color-background: hsl(0deg 0% 10%);
   --color-text-primary: hsl(220deg 13% 90%);
   --color-text-secondary: hsl(220deg 13% 70%);
+  --color-off-black: hsl(217deg 32% 5%);
 
   /* Synth UI Colors */
-  --synth-bg: hsl(217deg 32% 5%);
   --synth-border: hsl(217deg 30% 40% / 40%);
-  --synth-gradient-start: hsl(217deg 39% 25%);
-  --synth-gradient-end: hsl(217deg 39% 15%);
+  --synth-bg: hsl(217deg 39% 15%);
 
   /* Control Colors */
   --control-bg: hsl(217deg 32% 3%);

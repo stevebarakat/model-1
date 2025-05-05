@@ -23,7 +23,7 @@
   margin-bottom: var(--spacing-md);
   width: 34px;
   height: 19px;
-  background: var(--synth-bg);
+  background: var(--color-off-black);
   border: 1px solid var(--synth-border);
   border-radius: 3px;
   cursor: pointer;
