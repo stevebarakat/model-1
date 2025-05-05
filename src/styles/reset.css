@@ -1,8 +1,11 @@
 body {
-  margin: 0;
-  line-height: 1.5;
+  line-height: 1;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  margin: 0;
+  font-size: 100%;
+  font: inherit;
+  vertical-align: baseline;
 }
 
 *,

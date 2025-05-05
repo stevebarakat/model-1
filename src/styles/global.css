@@ -2,6 +2,7 @@ body {
   background-color: var(--color-background);
   color: var(--color-text-primary);
   font-family: var(--font-primary);
+  font-weight: 600;
 }
 
 .section {
@@ -22,21 +23,19 @@ body {
 }
 
 .section-title {
-  font-size: 0.8rem;
+  font-size: var(--font-size-lg);
   text-transform: uppercase;
   letter-spacing: 0.1em;
   text-align: center;
-  margin-top: 0.5rem;
+  margin-top: var(--spacing-sm);
   user-select: none;
+  color: var(--color-text-secondary);
 }
 
 .box {
-  position: relative;
-  height: calc(var(--row-height) - 8px);
   height: fit-content;
-  margin: 4px;
-  border: 2px solid hsla(217, 30%, 40%, 0.4);
-  border-radius: 2px;
-  background: hsl(217, 40%, 15%);
+  margin: var(--spacing-xs);
+  border: 2px solid var(--synth-border);
+  border-radius: var(--border-radius-sm);
   overflow: hidden;
 }

@@ -12,17 +12,13 @@
   top: 50%;
   left: 0;
   right: 0;
-  background: linear-gradient(
-    90deg,
-    var(--synth-gradient-start),
-    var(--synth-gradient-end)
-  );
+  background: linear-gradient(90deg, hsl(217, 30%, 20%), hsl(217, 40%, 25%));
   transform: translateY(-50%);
   --base-texture: linear-gradient(
     270deg,
-    var(--synth-bg),
-    var(--key-white) 28%,
-    var(--synth-bg)
+    hsl(217, 25%, 10%),
+    hsl(0, 0%, 100%) 28%,
+    hsl(217, 25%, 10%)
   );
   display: flex;
   flex-direction: column;
@@ -37,33 +33,33 @@
 
 .thumb {
   position: absolute;
-  top: 0;
-  left: clamp(4.5px, calc(var(--thumb-position, 0%)), calc(100% - 4.5px));
-  transform: translateX(-50%);
+  display: flex;
   width: 9px;
   height: 16px;
+  top: 0px;
+  left: clamp(4.5px, calc(var(--thumb-position, 0%)), calc(100% - 4.5px));
+  transform: translateX(-50%);
   background: linear-gradient(
     270deg,
-    var(--key-black) 0%,
-    var(--key-white-hover) 37.5%,
-    var(--key-white) 62.5%,
-    var(--key-black) 100%
+    hsl(0, 0%, 25%) 0%,
+    hsl(0, 0%, 75%) 37.5%,
+    hsl(0, 0%, 85%) 62.5%,
+    hsl(0, 0%, 25%) 100%
   );
-  border-top: 1.5px solid var(--key-black);
-  border-bottom: 1.5px solid var(--key-black);
+  border-top: 1.5px solid hsl(0, 0%, 25%);
+  border-bottom: 1.5px solid hsl(0, 0%, 25%);
 }
 
 .modLabel {
   text-align: center;
-  font-size: var(--font-size-xs);
-  font-weight: 500;
+  font-size: var(--font-size-sm);
   color: var(--color-text-secondary);
-  letter-spacing: 0.08em;
   user-select: none;
   text-transform: uppercase;
   position: relative;
   top: 100px;
   left: 1px;
+  letter-spacing: 0.08em;
 }
 
 .modWheelShadow {

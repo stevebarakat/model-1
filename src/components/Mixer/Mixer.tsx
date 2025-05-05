@@ -117,7 +117,7 @@ function Mixer({
     <div className="box">
       <div className="section">
         <div className="row">
-          <div>
+          <div className="column">
             <OscillatorControls
               volume={osc1Volume}
               pan={osc1Pan}

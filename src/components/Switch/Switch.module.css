@@ -5,14 +5,14 @@
 }
 
 .switchLabel {
-  padding-bottom: var(--spacing-sm);
-  font-size: var(--font-size-xs);
-  color: var(--color-text-secondary);
   text-align: center;
+  font-size: var(--font-size-md);
+  color: var(--color-text-secondary);
+  padding-bottom: var(--spacing-lg);
   user-select: none;
   white-space: nowrap;
+  text-align: center;
   text-transform: uppercase;
-  font-weight: 500;
 }
 
 .switchRoot {

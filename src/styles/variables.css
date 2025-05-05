@@ -3,24 +3,13 @@
   --color-primary: hsl(51, 100%, 50%);
   --color-background: hsl(0, 0%, 10%);
   --color-text-primary: hsl(220, 13%, 90%);
-  --color-text-secondary: hsl(220, 13%, 65%);
+  --color-text-secondary: hsl(220, 13%, 70%);
 
   /* Synth UI Colors */
   --synth-bg: hsl(217, 32%, 5%);
-  --synth-control-bg: hsl(217, 32%, 3%);
-  --synth-border: hsl(217, 33%, 25%);
+  --synth-border: hsla(217, 30%, 40%, 0.4);
   --synth-gradient-start: hsl(217, 39%, 25%);
   --synth-gradient-end: hsl(217, 39%, 15%);
-
-  /* Keyboard Colors */
-  --keyboard-bg: hsl(220, 13%, 15%);
-  --keyboard-border: hsl(220, 13%, 25%);
-  --key-white: hsl(0, 0%, 100%);
-  --key-white-hover: hsl(220, 10%, 95%);
-  --key-white-active: hsl(220, 70%, 85%);
-  --key-black: hsl(220, 13%, 18%);
-  --key-black-hover: hsl(220, 13%, 25%);
-  --key-black-active: hsl(220, 70%, 30%);
 
   /* Control Colors */
   --control-bg: hsl(217, 32%, 3%);
@@ -30,23 +19,23 @@
 
   /* Spacing System */
   --spacing-xs: 0.25rem;
-  --spacing-sm: 0.5rem;
+  --spacing-sm: 0.6rem;
   --spacing-md: 0.75rem;
   --spacing-lg: 1rem;
   --spacing-xl: 1.5rem;
 
   /* Component Sizes */
-  --knob-size: 45px;
+  --knob-size: 40px;
   --border-radius-sm: 2px;
   --border-radius-md: 4px;
   --border-radius-lg: 8px;
 
   /* Typography */
-  --font-size-xs: 0.75rem;
-  --font-size-sm: 0.875rem;
-  --font-size-md: 1rem;
-  --font-size-lg: 1.125rem;
-  --font-size-xl: 1.25rem;
+  --font-size-xs: 0.5rem;
+  --font-size-sm: 0.65rem;
+  --font-size-md: 0.75rem;
+  --font-size-lg: 0.875rem;
+  --font-size-xl: 1rem;
 
   /* Transitions */
   --transition-fast: 0.2s ease;
