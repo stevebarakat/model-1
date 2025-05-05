@@ -1,7 +1,7 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState, useCallback } from "react";
 import styles from "./Knob.module.css";
 
-interface KnobProps {
+type KnobProps = {
   value: number;
   min: number;
   max: number;
@@ -10,6 +10,28 @@ interface KnobProps {
   unit?: string;
   onChange: (value: number) => void;
   valueLabels?: Record<number, string | React.ReactElement>;
+};
+
+type MousePosition = {
+  clientY: number;
+};
+
+function getRotation(value: number, min: number, max: number): number {
+  const range = max - min;
+  const percentage = (value - min) / range;
+  return percentage * 300 - 150; // -150 to +150 degrees
+}
+
+function getDisplayValue(
+  value: number,
+  step: number,
+  unit: string,
+  valueLabels?: Record<number, string | React.ReactElement>
+): string | React.ReactElement {
+  return (
+    valueLabels?.[Math.round(value)] ??
+    value.toFixed(step >= 1 ? 0 : 2) + (unit ? ` ${unit}` : "")
+  );
 }
 
 function Knob({
@@ -21,58 +43,43 @@ function Knob({
   unit = "",
   onChange,
   valueLabels,
-}: KnobProps) {
+}: KnobProps): React.ReactElement {
   const knobRef = useRef<HTMLDivElement>(null);
   const [isDragging, setIsDragging] = useState(false);
+  const [isKeyboardActive, setIsKeyboardActive] = useState(false);
   const [startY, setStartY] = useState(0);
   const [startValue, setStartValue] = useState(0);
   const hasLabel = label !== "";
 
-  // Convert value to rotation degrees (0-300 degrees)
-  function getRotation(val: number) {
-    const range = max - min;
-    const percentage = (val - min) / range;
-    return percentage * 300 - 150; // -150 to +150 degrees
-  }
+  const rotation = getRotation(value, min, max);
+  const displayValue = getDisplayValue(value, step, unit, valueLabels);
+  const ariaValueText =
+    typeof displayValue === "string"
+      ? displayValue
+      : value.toFixed(step >= 1 ? 0 : 2) + (unit ? ` ${unit}` : "");
 
-  const rotation = getRotation(value);
-
-  function handleMouseDown(e: React.MouseEvent) {
+  function handleMouseDown(e: React.MouseEvent): void {
     setIsDragging(true);
     setStartY(e.clientY);
     setStartValue(value);
   }
 
-  useEffect(() => {
-    if (!isDragging) return;
-
-    function handleMouseMove(e: MouseEvent) {
-      const sensitivity = 1.0; // Further increased sensitivity for more responsive control
+  const handleMouseMove = useCallback(
+    (e: MousePosition): void => {
+      const sensitivity = 1.0;
       const deltaY = (startY - e.clientY) * sensitivity;
       const range = max - min;
       const newValue = Math.min(
         max,
         Math.max(min, startValue + (deltaY / 100) * range)
       );
-      onChange(Number(newValue.toFixed(1))); // One decimal place for cents
-    }
+      onChange(Number(newValue.toFixed(1)));
+    },
+    [min, max, startY, startValue, onChange]
+  );
 
-    function handleMouseUp() {
-      setIsDragging(false);
-    }
-
-    document.addEventListener("mousemove", handleMouseMove);
-    document.addEventListener("mouseup", handleMouseUp);
-
-    return () => {
-      document.removeEventListener("mousemove", handleMouseMove);
-      document.removeEventListener("mouseup", handleMouseUp);
-    };
-  }, [isDragging, min, max, startY, startValue, onChange]);
-
-  // Add keyboard event handling
-  useEffect(() => {
-    function handleKeyDown(e: KeyboardEvent) {
+  const handleKeyDown = useCallback(
+    (e: KeyboardEvent): void => {
       if (!knobRef.current?.contains(document.activeElement)) return;
 
       const isShiftPressed = e.shiftKey;
@@ -94,26 +101,42 @@ function Knob({
           return;
       }
 
+      setIsKeyboardActive(true);
       onChange(Number(newValue.toFixed(2)));
+    },
+    [value, min, max, step, onChange]
+  );
+
+  useEffect(() => {
+    if (!isDragging) return;
+
+    function handleMouseUp(): void {
+      setIsDragging(false);
     }
 
+    document.addEventListener("mousemove", handleMouseMove);
+    document.addEventListener("mouseup", handleMouseUp);
+
+    return () => {
+      document.removeEventListener("mousemove", handleMouseMove);
+      document.removeEventListener("mouseup", handleMouseUp);
+    };
+  }, [isDragging, min, max, startY, startValue, onChange, handleMouseMove]);
+
+  useEffect(() => {
     document.addEventListener("keydown", handleKeyDown);
     return () => document.removeEventListener("keydown", handleKeyDown);
-  }, [value, min, max, step, onChange]);
+  }, [value, min, max, step, onChange, handleKeyDown]);
 
-  const displayValue =
-    valueLabels?.[Math.round(value)] ??
-    value.toFixed(step >= 1 ? 0 : 2) + (unit ? ` ${unit}` : "");
-
-  // Convert displayValue to string for aria-valuetext
-  const ariaValueText =
-    typeof displayValue === "string"
-      ? displayValue
-      : value.toFixed(step >= 1 ? 0 : 2) + (unit ? ` ${unit}` : "");
+  useEffect(() => {
+    if (!isKeyboardActive) return;
+    const timer = setTimeout(() => setIsKeyboardActive(false), 1000);
+    return () => clearTimeout(timer);
+  }, [isKeyboardActive, value]);
 
   return (
     <div className={styles.knobContainer}>
-      {isDragging ? (
+      {isDragging || isKeyboardActive ? (
         <div className={styles.knobValue}>{displayValue}</div>
       ) : (
         hasLabel && <div className={styles.knobLabel}>{label}</div>
@@ -123,7 +146,7 @@ function Knob({
         className={styles.knob}
         style={{ transform: `rotate(${rotation}deg)` }}
         onMouseDown={handleMouseDown}
-        tabIndex={0} // Make the knob focusable
+        tabIndex={0}
         role="slider"
         aria-valuemin={min}
         aria-valuemax={max}
@@ -131,7 +154,7 @@ function Knob({
         aria-label={label}
         aria-valuetext={ariaValueText}
       />
-      <div className={styles.knobGradient}></div>
+      <div className={styles.knobGradient} />
     </div>
   );
 }

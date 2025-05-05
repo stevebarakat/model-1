@@ -1,14 +1,18 @@
-import {
+import React, {
   useState,
   useEffect,
   useImperativeHandle,
   forwardRef,
-  useCallback,
 } from "react";
 import { createSynth } from "../../synth/WebAudioSynth";
 import styles from "./Keyboard.module.css";
 
-type Props = {
+type Note = {
+  note: string;
+  isSharp: boolean;
+};
+
+type KeyboardProps = {
   activeKeys?: string[];
   octaveRange?: { min: number; max: number };
   onKeyDown?: (note: string) => void;
@@ -16,6 +20,38 @@ type Props = {
   onMouseDown?: () => void;
   onMouseUp?: () => void;
 };
+
+type KeyboardRef = {
+  synth: Awaited<ReturnType<typeof createSynth>> | null;
+};
+
+const OCTAVE_NOTES: Note[] = [
+  { note: "C", isSharp: false },
+  { note: "C#", isSharp: true },
+  { note: "D", isSharp: false },
+  { note: "D#", isSharp: true },
+  { note: "E", isSharp: false },
+  { note: "F", isSharp: false },
+  { note: "F#", isSharp: true },
+  { note: "G", isSharp: false },
+  { note: "G#", isSharp: true },
+  { note: "A", isSharp: false },
+  { note: "A#", isSharp: true },
+  { note: "B", isSharp: false },
+];
+
+function generateKeyboardKeys(octaveRange: {
+  min: number;
+  max: number;
+}): Note[] {
+  const keys: Note[] = [];
+  for (let octave = octaveRange.min; octave <= octaveRange.max; octave++) {
+    OCTAVE_NOTES.forEach((key) => {
+      keys.push({ note: `${key.note}${octave}`, isSharp: key.isSharp });
+    });
+  }
+  return keys;
+}
 
 function Keyboard(
   {
@@ -25,87 +61,52 @@ function Keyboard(
     onKeyUp = () => {},
     onMouseDown = () => {},
     onMouseUp = () => {},
-  }: Props,
-  ref: React.ForwardedRef<{
-    synth: Awaited<ReturnType<typeof createSynth>> | null;
-  }>
+  }: KeyboardProps,
+  ref: React.ForwardedRef<KeyboardRef>
 ) {
   const [isLoaded, setIsLoaded] = useState(false);
   const [synth, setSynth] = useState<Awaited<
     ReturnType<typeof createSynth>
   > | null>(null);
-
-  // Track mouse state for glissando
   const [isMouseDown, setIsMouseDown] = useState(false);
 
-  // Define notes for one octave in order (important for layout)
-  const octave = [
-    { note: "C", isSharp: false },
-    { note: "C#", isSharp: true },
-    { note: "D", isSharp: false },
-    { note: "D#", isSharp: true },
-    { note: "E", isSharp: false },
-    { note: "F", isSharp: false },
-    { note: "F#", isSharp: true },
-    { note: "G", isSharp: false },
-    { note: "G#", isSharp: true },
-    { note: "A", isSharp: false },
-    { note: "A#", isSharp: true },
-    { note: "B", isSharp: false },
-  ];
+  const keys = generateKeyboardKeys(octaveRange);
 
-  // Create a keyboard with the specified octave range
-  const keys: { note: string; isSharp: boolean }[] = [];
-  for (let o = octaveRange.min; o <= octaveRange.max; o++) {
-    octave.forEach((key) => {
-      const note = `${key.note}${o}`;
-      keys.push({ note, isSharp: key.isSharp });
-    });
+  function handleKeyPress(note: string): void {
+    if (!isLoaded) return;
+    onKeyDown(note);
   }
 
-  // Handle key press
-  const handleKeyPress = useCallback(
-    (note: string) => {
-      if (!isLoaded) return;
-      onKeyDown(note);
-    },
-    [isLoaded, onKeyDown]
-  );
+  function handleKeyRelease(note: string): void {
+    if (!isLoaded) return;
+    onKeyUp(note);
+  }
 
-  // Handle key release
-  const handleKeyRelease = useCallback(
-    (note: string) => {
-      if (!isLoaded) return;
-      onKeyUp(note);
-    },
-    [isLoaded, onKeyUp]
-  );
-
-  // Handle mouse down on keyboard
-  const handleMouseDown = useCallback(() => {
+  function handleMouseDown(): void {
     setIsMouseDown(true);
     onMouseDown();
-  }, [onMouseDown]);
+  }
 
-  // Handle mouse up on keyboard
-  const handleMouseUp = useCallback(() => {
+  function handleMouseUp(): void {
     setIsMouseDown(false);
-    // Release all active keys
     activeKeys.forEach(onKeyUp);
     onMouseUp();
-  }, [activeKeys, onKeyUp, onMouseUp]);
+  }
 
-  // Handle mouse leave from keyboard
-  const handleMouseLeave = useCallback(() => {
+  function handleMouseLeave(): void {
     if (isMouseDown) {
       setIsMouseDown(false);
-      // Release all active keys
       activeKeys.forEach(onKeyUp);
       onMouseUp();
     }
-  }, [isMouseDown, activeKeys, onKeyUp, onMouseUp]);
+  }
 
-  // Expose the synth to parent components via ref
+  function handleKeyInteraction(note: string): void {
+    if (isMouseDown) {
+      handleKeyPress(note);
+    }
+  }
+
   useImperativeHandle(
     ref,
     () => ({
@@ -114,11 +115,10 @@ function Keyboard(
     [synth]
   );
 
-  // Initialize the synth
   useEffect(() => {
     let currentSynth: Awaited<ReturnType<typeof createSynth>> | null = null;
 
-    async function initializeSynth() {
+    async function initializeSynth(): Promise<void> {
       try {
         currentSynth = await createSynth();
         setSynth(currentSynth);
@@ -137,7 +137,6 @@ function Keyboard(
     };
   }, []);
 
-  // Render white keys
   function renderWhiteKeys() {
     return keys
       .filter((key) => !key.isSharp)
@@ -149,39 +148,29 @@ function Keyboard(
             key={`white-${key.note}-${index}`}
             className={`${styles.whiteKey} ${
               isActive ? styles.whiteKeyActive : ""
-            } `}
+            }`}
             onPointerDown={() => {
               handleMouseDown();
               handleKeyPress(key.note);
             }}
             onPointerUp={() => handleKeyRelease(key.note)}
-            onPointerEnter={() => {
-              if (isMouseDown) {
-                handleKeyPress(key.note);
-              }
-            }}
+            onPointerEnter={() => handleKeyInteraction(key.note)}
           />
         );
       });
   }
 
-  // Render black keys
   function renderBlackKeys() {
-    // Calculate positions for black keys
-    const whiteKeyWidth = 100 / keys.filter((key) => !key.isSharp).length; // percentage width
+    const whiteKeyWidth = 100 / keys.filter((key) => !key.isSharp).length;
 
     return keys
       .filter((key) => key.isSharp)
       .map((key, index) => {
         const isActive = activeKeys.includes(key.note);
-
-        // Find the index of this black key in the full keys array
         const keyIndex = keys.findIndex((k) => k.note === key.note);
-        // Calculate how many white keys came before this black key
         const whiteKeysBefore = keys
           .slice(0, keyIndex)
           .filter((k) => !k.isSharp).length;
-        // Position is based on white keys
         const position = (whiteKeysBefore - 0.3) * whiteKeyWidth;
 
         return (
@@ -196,11 +185,7 @@ function Keyboard(
               handleKeyPress(key.note);
             }}
             onPointerUp={() => handleKeyRelease(key.note)}
-            onPointerEnter={() => {
-              if (isMouseDown) {
-                handleKeyPress(key.note);
-              }
-            }}
+            onPointerEnter={() => handleKeyInteraction(key.note)}
           />
         );
       });
@@ -214,9 +199,9 @@ function Keyboard(
     >
       <div className={styles.keyboard}>
         <div className={styles.pianoKeys}>
-          {<div className={styles.leftShadow} />}
+          <div className={styles.leftShadow} />
           {renderWhiteKeys()}
-          {<div className={styles.rightShadow} />}
+          <div className={styles.rightShadow} />
           {renderBlackKeys()}
         </div>
       </div>
