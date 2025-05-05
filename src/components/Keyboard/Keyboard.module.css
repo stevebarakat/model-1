@@ -181,7 +181,7 @@
   &::after {
     transform: translateY(2px);
     transform-origin: top center;
-    border-radius: 0 0 3px 3px;
+    border-radius: 2px 2px 3px 3px;
     background: linear-gradient(
       180deg,
       hsl(217deg 13% 18%),
