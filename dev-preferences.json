@@ -19,5 +19,13 @@
   },
   "ui": {
     "iconLibrary": "lucide"
+  },
+  "principles": {
+    "singleResponsibility": {
+      "enforceComponentSeparation": true,
+      "maxComponentLines": 200,
+      "maxFunctionLines": 50,
+      "preferPureFunctions": true
+    }
   }
 }

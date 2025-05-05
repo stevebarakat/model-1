@@ -1,4 +1,3 @@
-import React from "react";
 import * as Switch from "@radix-ui/react-switch";
 import Knob from "../Knob/Knob";
 import styles from "./Mixer.module.css";
@@ -26,7 +25,87 @@ type MixerProps = {
   onNoiseTypeChange: (type: NoiseType) => void;
 };
 
-const Mixer: React.FC<MixerProps> = ({
+type OscillatorControlsProps = {
+  volume: number;
+  pan: number;
+  label: string;
+  onVolumeChange: (value: number) => void;
+  onPanChange: (value: number) => void;
+};
+
+function OscillatorControls({
+  volume,
+  pan,
+  label,
+  onVolumeChange,
+  onPanChange,
+}: OscillatorControlsProps) {
+  return (
+    <div className={styles.mixerRow}>
+      <Knob
+        value={volume}
+        min={0}
+        max={1}
+        step={0.01}
+        label={label}
+        onChange={onVolumeChange}
+      />
+      <Knob
+        value={pan}
+        min={-1}
+        max={1}
+        step={0.01}
+        label="Pan"
+        onChange={onPanChange}
+      />
+    </div>
+  );
+}
+
+type NoiseControlsProps = {
+  volume: number;
+  type: NoiseType;
+  onVolumeChange: (value: number) => void;
+  onTypeChange: (type: NoiseType) => void;
+};
+
+function NoiseControls({
+  volume,
+  type,
+  onVolumeChange,
+  onTypeChange,
+}: NoiseControlsProps) {
+  return (
+    <>
+      <Knob
+        value={volume}
+        min={0}
+        max={1}
+        step={0.01}
+        label="Noise"
+        onChange={onVolumeChange}
+      />
+      <div className={styles.noiseSwitch}>
+        <div className={styles.switchContainer}>
+          <label className={styles.switchLabel}>
+            {type === "white" ? "White" : "Pink"}
+          </label>
+          <Switch.Root
+            className={styles.switchRoot}
+            checked={type === "pink"}
+            onCheckedChange={(checked) =>
+              onTypeChange(checked ? "pink" : "white")
+            }
+          >
+            <Switch.Thumb className={styles.switchThumb} />
+          </Switch.Root>
+        </div>
+      </div>
+    </>
+  );
+}
+
+function Mixer({
   osc1Volume,
   osc2Volume,
   osc3Volume,
@@ -45,92 +124,41 @@ const Mixer: React.FC<MixerProps> = ({
   onOsc3PanChange,
   onNoiseVolumeChange,
   onNoiseTypeChange,
-}) => {
+}: MixerProps) {
   return (
     <div className="box">
       <div className={styles.mixer}>
         <div className="controls">
           <div className={styles.volumeContainer}>
-            <div className={styles.mixerRow}>
-              <Knob
-                value={osc1Volume}
-                min={0}
-                max={1}
-                step={0.01}
-                label="Osc 1"
-                onChange={onOsc1VolumeChange}
-              />
-              <Knob
-                value={osc1Pan}
-                min={-1}
-                max={1}
-                step={0.01}
-                label="Pan"
-                onChange={onOsc1PanChange}
-              />
-            </div>
-            <div className={styles.mixerRow}>
-              <Knob
-                value={osc2Volume}
-                min={0}
-                max={1}
-                step={0.01}
-                label="Osc 2"
-                onChange={onOsc2VolumeChange}
-              />
-              <Knob
-                value={osc2Pan}
-                min={-1}
-                max={1}
-                step={0.01}
-                label="Pan"
-                onChange={onOsc2PanChange}
-              />
-            </div>
-            <div className={styles.mixerRow}>
-              <Knob
-                value={osc3Volume}
-                min={0}
-                max={1}
-                step={0.01}
-                label="Osc 3"
-                onChange={onOsc3VolumeChange}
-              />
-              <Knob
-                value={osc3Pan}
-                min={-1}
-                max={1}
-                step={0.01}
-                label="Pan"
-                onChange={onOsc3PanChange}
-              />
-            </div>
+            <OscillatorControls
+              volume={osc1Volume}
+              pan={osc1Pan}
+              label="Osc 1"
+              onVolumeChange={onOsc1VolumeChange}
+              onPanChange={onOsc1PanChange}
+            />
+            <OscillatorControls
+              volume={osc2Volume}
+              pan={osc2Pan}
+              label="Osc 2"
+              onVolumeChange={onOsc2VolumeChange}
+              onPanChange={onOsc2PanChange}
+            />
+            <OscillatorControls
+              volume={osc3Volume}
+              pan={osc3Pan}
+              label="Osc 3"
+              onVolumeChange={onOsc3VolumeChange}
+              onPanChange={onOsc3PanChange}
+            />
           </div>
           <div className={styles.mixerColumn}>
-            <Knob
-              value={noiseVolume}
-              min={0}
-              max={1}
-              step={0.01}
-              label="Noise"
-              onChange={onNoiseVolumeChange}
+            <NoiseControls
+              volume={noiseVolume}
+              type={noiseType}
+              onVolumeChange={onNoiseVolumeChange}
+              onTypeChange={onNoiseTypeChange}
             />
-            <div className={styles.noiseSwitch}>
-              <div className={styles.switchContainer}>
-                <label className={styles.switchLabel}>
-                  {noiseType === "white" ? "White" : "Pink"}
-                </label>
-                <Switch.Root
-                  className={styles.switchRoot}
-                  checked={noiseType === "pink"}
-                  onCheckedChange={(checked) =>
-                    onNoiseTypeChange(checked ? "pink" : "white")
-                  }
-                >
-                  <Switch.Thumb className={styles.switchThumb} />
-                </Switch.Root>
-              </div>
-            </div>
             <Knob
               value={modMix}
               min={0}
@@ -145,6 +173,6 @@ const Mixer: React.FC<MixerProps> = ({
       </div>
     </div>
   );
-};
+}
 
 export default Mixer;

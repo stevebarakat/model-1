@@ -20,7 +20,7 @@ const ModWheel: React.FC<RangeSliderProps> = ({
   onChange,
   onMouseUp,
   disabled = false,
-  label = "MOD",
+  label = "Mod",
 }) => {
   const sliderRef = useRef<HTMLDivElement>(null);
   const [isDragging, setIsDragging] = useState(false);

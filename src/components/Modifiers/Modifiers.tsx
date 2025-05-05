@@ -1,9 +1,16 @@
-import React from "react";
 import Knob from "../Knob/Knob";
 import ADSR from "../ADSR/ADSR";
 import styles from "./Modifiers.module.css";
-import { Square, Triangle, AudioWaveform, Activity } from "lucide-react";
 import { WaveformType, LFORouting, FilterType } from "@/synth/types/index";
+import { WAVEFORM_ICONS, ROUTING_LABELS } from "./constants.tsx";
+import {
+  waveformToValue,
+  valueToWaveform,
+  routingToValue,
+  valueToRouting,
+  filterTypeToValue,
+  valueToFilterType,
+} from "./utils";
 
 type ModifiersProps = {
   cutoff: number;
@@ -31,83 +38,6 @@ type ModifiersProps = {
   onLfoWaveformChange: (waveform: WaveformType) => void;
   onLfoRoutingChange: (routing: LFORouting) => void;
 };
-
-const WAVEFORM_MAP: Record<WaveformType, number> = {
-  triangle: 0,
-  sawtooth: 1,
-  square: 2,
-  sine: 3,
-};
-
-const WAVEFORMS: WaveformType[] = ["triangle", "sawtooth", "square", "sine"];
-
-const FILTER_TYPE_MAP: Record<FilterType, number> = {
-  lowpass: 0,
-  highpass: 1,
-  bandpass: 2,
-  notch: 3,
-  allpass: 0,
-  highshelf: 0,
-  lowshelf: 0,
-  peaking: 0,
-};
-
-const FILTER_TYPES: FilterType[] = ["lowpass", "highpass", "bandpass", "notch"];
-
-const ROUTING_LABELS = [
-  <span>OFF</span>,
-  <span>CUTOFF</span>,
-  <span>RESONANCE</span>,
-  <span>CUT+RES</span>,
-  <span>PITCH</span>,
-  <span>CUT+PITCH</span>,
-  <span>RES+PITCH</span>,
-  <span>CUT+RES+PITCH</span>,
-  <span>VOLUME</span>,
-  <span>CUT+VOL</span>,
-  <span>RES+VOL</span>,
-  <span>CUT+RES+VOL</span>,
-  <span>PITCH+VOL</span>,
-  <span>CUT+PITCH+VOL</span>,
-  <span>RES+PITCH+VOL</span>,
-  <span>ALL</span>,
-];
-
-function waveformToValue(waveform: WaveformType): number {
-  return WAVEFORM_MAP[waveform];
-}
-
-function valueToWaveform(value: number): WaveformType {
-  const index = Math.round(value);
-  return WAVEFORMS[Math.max(0, Math.min(WAVEFORMS.length - 1, index))];
-}
-
-function routingToValue(routing: LFORouting): number {
-  let value = 0;
-  if (routing.filterCutoff) value += 1;
-  if (routing.filterResonance) value += 2;
-  if (routing.oscillatorPitch) value += 4;
-  if (routing.oscillatorVolume) value += 8;
-  return value;
-}
-
-function valueToRouting(value: number): LFORouting {
-  return {
-    filterCutoff: (value & 1) !== 0,
-    filterResonance: (value & 2) !== 0,
-    oscillatorPitch: (value & 4) !== 0,
-    oscillatorVolume: (value & 8) !== 0,
-  };
-}
-
-function filterTypeToValue(type: FilterType): number {
-  return FILTER_TYPE_MAP[type];
-}
-
-function valueToFilterType(value: number): FilterType {
-  const index = Math.round(value);
-  return FILTER_TYPES[Math.max(0, Math.min(FILTER_TYPES.length - 1, index))];
-}
 
 function Modifiers({
   cutoff,
@@ -236,12 +166,7 @@ function Modifiers({
                 max={3}
                 step={1}
                 label="Wave"
-                valueLabels={{
-                  0: <Triangle size={14} strokeWidth={2} />,
-                  1: <Activity size={14} strokeWidth={2} />,
-                  2: <Square size={14} strokeWidth={2} />,
-                  3: <AudioWaveform size={14} strokeWidth={2} />,
-                }}
+                valueLabels={WAVEFORM_ICONS}
                 onChange={(value) =>
                   onLfoWaveformChange(valueToWaveform(value))
                 }
