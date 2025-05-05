@@ -1,11 +1,11 @@
 import Knob from "../Knob/Knob";
 
-interface DelayProps {
+type DelayProps = {
   amount: number;
   onAmountChange: (value: number) => void;
-}
+};
 
-const Delay = ({ amount, onAmountChange }: DelayProps) => {
+function Delay({ amount, onAmountChange }: DelayProps) {
   return (
     <Knob
       value={amount}
@@ -16,6 +16,6 @@ const Delay = ({ amount, onAmountChange }: DelayProps) => {
       onChange={onAmountChange}
     />
   );
-};
+}
 
 export default Delay;

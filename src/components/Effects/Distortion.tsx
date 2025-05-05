@@ -1,12 +1,11 @@
-import React from "react";
-import Knob from "../Knob/Knob";
+import Knob from "../Knob";
 
-interface DistortionProps {
+type DistortionProps = {
   amount: number;
   onAmountChange: (value: number) => void;
-}
+};
 
-const Distortion: React.FC<DistortionProps> = ({ amount, onAmountChange }) => {
+function Distortion({ amount, onAmountChange }: DistortionProps) {
   return (
     <Knob
       value={amount}
@@ -17,6 +16,6 @@ const Distortion: React.FC<DistortionProps> = ({ amount, onAmountChange }) => {
       onChange={onAmountChange}
     />
   );
-};
+}
 
 export default Distortion;

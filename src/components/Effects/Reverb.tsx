@@ -1,11 +1,11 @@
-import Knob from "../Knob/Knob";
+import Knob from "../Knob";
 
-interface ReverbProps {
+type ReverbProps = {
   amount: number;
   onAmountChange: (value: number) => void;
-}
+};
 
-const Reverb = ({ amount, onAmountChange }: ReverbProps) => {
+function Reverb({ amount, onAmountChange }: ReverbProps) {
   return (
     <Knob
       value={amount}
@@ -16,6 +16,6 @@ const Reverb = ({ amount, onAmountChange }: ReverbProps) => {
       onChange={onAmountChange}
     />
   );
-};
+}
 
 export default Reverb;

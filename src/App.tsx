@@ -304,7 +304,6 @@ function App() {
               onNoiseTypeChange={(value) => updateMixer({ noiseType: value })}
             />
             <div className={styles.indent}></div>
-            <div className={styles.indent}></div>
             <div className="box">
               <OscillatorBank
                 osc1={oscillators.osc1}

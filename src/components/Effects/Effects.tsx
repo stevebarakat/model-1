@@ -1,25 +1,26 @@
+import React from "react";
 import Reverb from "./Reverb";
 import Delay from "./Delay";
 import Distortion from "./Distortion";
 import styles from "./Effects.module.css";
 
-interface EffectsProps {
+type EffectsProps = {
   reverbAmount: number;
   delayAmount: number;
   distortionAmount: number;
   onReverbAmountChange: (amount: number) => void;
   onDelayAmountChange: (amount: number) => void;
   onDistortionAmountChange: (amount: number) => void;
-}
+};
 
-const Effects = ({
+function Effects({
   reverbAmount,
   delayAmount,
   distortionAmount,
   onReverbAmountChange,
   onDelayAmountChange,
   onDistortionAmountChange,
-}: EffectsProps) => {
+}: EffectsProps): React.ReactElement {
   return (
     <div className="box">
       <div className={styles.effectsContainer}>
@@ -35,6 +36,6 @@ const Effects = ({
       </div>
     </div>
   );
-};
+}
 
 export default Effects;
