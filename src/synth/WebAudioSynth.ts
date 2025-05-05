@@ -200,7 +200,7 @@ function updateLFOGains(
 }
 
 // Factory function to create a synth
-export async function createSynth() {
+export default async function createSynth() {
   const synthContext = createSynthContext();
   await synthContext.context.audioWorklet.addModule("pink-noise-processor.js");
   const state = createInitialState();

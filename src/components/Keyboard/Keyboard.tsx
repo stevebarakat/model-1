@@ -4,7 +4,6 @@ import React, {
   useImperativeHandle,
   forwardRef,
 } from "react";
-import { createSynth } from "../../synth/WebAudioSynth";
 import styles from "./Keyboard.module.css";
 
 type Note = {
@@ -19,10 +18,15 @@ type KeyboardProps = {
   onKeyUp?: (note: string) => void;
   onMouseDown?: () => void;
   onMouseUp?: () => void;
+  synth: Awaited<
+    ReturnType<typeof import("../../synth/WebAudioSynth").default>
+  > | null;
 };
 
 type KeyboardRef = {
-  synth: Awaited<ReturnType<typeof createSynth>> | null;
+  synth: Awaited<
+    ReturnType<typeof import("../../synth/WebAudioSynth").default>
+  > | null;
 };
 
 const OCTAVE_NOTES: Note[] = [
@@ -61,13 +65,11 @@ function Keyboard(
     onKeyUp = () => {},
     onMouseDown = () => {},
     onMouseUp = () => {},
+    synth,
   }: KeyboardProps,
   ref: React.ForwardedRef<KeyboardRef>
 ) {
   const [isLoaded, setIsLoaded] = useState(false);
-  const [synth, setSynth] = useState<Awaited<
-    ReturnType<typeof createSynth>
-  > | null>(null);
   const [isMouseDown, setIsMouseDown] = useState(false);
 
   const keys = generateKeyboardKeys(octaveRange);
@@ -107,6 +109,12 @@ function Keyboard(
     }
   }
 
+  useEffect(() => {
+    if (synth) {
+      setIsLoaded(true);
+    }
+  }, [synth]);
+
   useImperativeHandle(
     ref,
     () => ({
@@ -114,28 +122,6 @@ function Keyboard(
     }),
     [synth]
   );
-
-  useEffect(() => {
-    let currentSynth: Awaited<ReturnType<typeof createSynth>> | null = null;
-
-    async function initializeSynth(): Promise<void> {
-      try {
-        currentSynth = await createSynth();
-        setSynth(currentSynth);
-        setIsLoaded(true);
-      } catch (error) {
-        console.error("Failed to initialize synth:", error);
-      }
-    }
-
-    initializeSynth();
-
-    return () => {
-      if (currentSynth) {
-        currentSynth.dispose();
-      }
-    };
-  }, []);
 
   function renderWhiteKeys() {
     return keys

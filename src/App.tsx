@@ -1,12 +1,12 @@
 import { useRef, useEffect } from "react";
-import { createSynth } from "./synth/WebAudioSynth";
+import { useKeyboardHandling } from "./hooks";
+import createSynth from "./synth/WebAudioSynth";
+import SynthControls from "./components/SynthControls";
 import Keyboard from "./components/Keyboard";
-import SidePanel from "./components/SidePanel/SidePanel";
+import SidePanel from "./components/SidePanel";
+import { useSynthStore } from "./store/synthStore";
 import styles from "./styles/App.module.css";
 import "./styles/variables.css";
-import { useSynthStore } from "./store/synthStore";
-import { useKeyboardHandling } from "./hooks/useKeyboardHandling";
-import { SynthControls } from "./components/SynthControls/SynthControls";
 
 function App() {
   const {
@@ -165,6 +165,7 @@ function App() {
             onMouseDown={handleMouseDown}
             onMouseUp={handleMouseUp}
             octaveRange={{ min: currentOctave, max: currentOctave + 2 }}
+            synth={keyboardRef.current.synth}
           />
         </div>
       </div>

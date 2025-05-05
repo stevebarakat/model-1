@@ -11,7 +11,7 @@ import Modifiers from "../Modifiers/Modifiers";
 import Effects from "../Effects/Effects";
 import styles from "./SynthControls.module.css";
 
-interface SynthControlsProps {
+type SynthControlsProps = {
   oscillators: {
     osc1: OscillatorSettings;
     osc2: OscillatorSettings;
@@ -54,9 +54,9 @@ interface SynthControlsProps {
     settings: Partial<SynthControlsProps["modifiers"]>
   ) => void;
   onEffectsChange: (settings: Partial<SynthControlsProps["effects"]>) => void;
-}
+};
 
-export function SynthControls({
+function SynthControls({
   oscillators,
   mixer,
   modifiers,
@@ -200,3 +200,5 @@ export function SynthControls({
     </>
   );
 }
+
+export default SynthControls;
