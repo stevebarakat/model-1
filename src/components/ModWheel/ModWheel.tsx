@@ -1,7 +1,7 @@
-import React, { useCallback, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import styles from "./ModWheel.module.css";
 
-interface RangeSliderProps {
+type ModWheelProps = {
   value: number;
   min: number;
   max: number;
@@ -10,9 +10,26 @@ interface RangeSliderProps {
   onMouseUp?: () => void;
   disabled?: boolean;
   label?: string;
+};
+
+function calculatePercentage(value: number, min: number, max: number): number {
+  return ((value - min) / (max - min)) * 100;
 }
 
-const ModWheel: React.FC<RangeSliderProps> = ({
+function calculateNewValue(
+  y: number,
+  rectHeight: number,
+  min: number,
+  max: number,
+  step: number
+): number {
+  const percentage = Math.max(0, Math.min(100, (1 - y / rectHeight) * 100));
+  const newValue = min + ((max - min) * percentage) / 100;
+  const steppedValue = Math.round(newValue / step) * step;
+  return Math.max(min, Math.min(max, steppedValue));
+}
+
+function ModWheel({
   value,
   min,
   max,
@@ -21,39 +38,31 @@ const ModWheel: React.FC<RangeSliderProps> = ({
   onMouseUp,
   disabled = false,
   label = "Mod",
-}) => {
+}: ModWheelProps) {
   const sliderRef = useRef<HTMLDivElement>(null);
   const [isDragging, setIsDragging] = useState(false);
+  const percentage = calculatePercentage(value, min, max);
 
-  const percentage = ((value - min) / (max - min)) * 100;
-
-  const handleMouseDown = (e: React.MouseEvent) => {
+  function handleMouseDown(e: React.MouseEvent): void {
     if (disabled) return;
     setIsDragging(true);
     handleMouseMove(e);
-  };
+  }
 
   const handleMouseMove = useCallback(
-    (e: React.MouseEvent | MouseEvent) => {
+    (e: React.MouseEvent | MouseEvent): void => {
       if (!isDragging || !sliderRef.current) return;
 
       const rect = sliderRef.current.getBoundingClientRect();
-      // Calculate position from bottom to top since we're rotated 270 degrees
       const y = e.clientY - rect.top;
-      const percentage = Math.max(
-        0,
-        Math.min(100, (1 - y / rect.height) * 100)
-      );
-      const newValue = min + ((max - min) * percentage) / 100;
-      const steppedValue = Math.round(newValue / step) * step;
-      onChange(Math.max(min, Math.min(max, steppedValue)));
+      const newValue = calculateNewValue(y, rect.height, min, max, step);
+      onChange(newValue);
     },
     [isDragging, min, max, onChange, step]
   );
 
-  // Add keyboard event handling
   const handleKeyDown = useCallback(
-    (e: React.KeyboardEvent) => {
+    (e: React.KeyboardEvent): void => {
       if (disabled) return;
 
       const isShiftPressed = e.shiftKey;
@@ -78,15 +87,17 @@ const ModWheel: React.FC<RangeSliderProps> = ({
     [disabled, max, min, onChange, step, value]
   );
 
-  React.useEffect(() => {
-    const handleMouseUp = () => {
+  useEffect(() => {
+    function handleMouseUp(): void {
       setIsDragging(false);
       onMouseUp?.();
-    };
+    }
+
     if (isDragging) {
       document.addEventListener("mousemove", handleMouseMove);
       document.addEventListener("mouseup", handleMouseUp);
     }
+
     return () => {
       document.removeEventListener("mousemove", handleMouseMove);
       document.removeEventListener("mouseup", handleMouseUp);
@@ -109,13 +120,13 @@ const ModWheel: React.FC<RangeSliderProps> = ({
         aria-label={label}
       >
         <div className={styles.track}>
-          <div className={styles.modWheelShadow}></div>
+          <div className={styles.modWheelShadow} />
         </div>
         <div className={styles.thumb} />
       </div>
       <div className={styles.modLabel}>{label}</div>
     </div>
   );
-};
+}
 
 export default ModWheel;
