@@ -2,7 +2,6 @@ import React from "react";
 import Reverb from "./Reverb";
 import Delay from "./Delay";
 import Distortion from "./Distortion";
-import styles from "./Effects.module.css";
 
 type EffectsProps = {
   reverbAmount: number;
@@ -24,7 +23,7 @@ function Effects({
   return (
     <div className="box">
       <div className="section">
-        <div className={styles.column}>
+        <div className="column">
           <Reverb amount={reverbAmount} onAmountChange={onReverbAmountChange} />
           <Delay amount={delayAmount} onAmountChange={onDelayAmountChange} />
           <Distortion

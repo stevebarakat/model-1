@@ -1,6 +1,5 @@
 import Knob from "../Knob";
 import ADSR from "../ADSR";
-import styles from "./Modifiers.module.css";
 import { WaveformType, LFORouting, FilterType } from "@/synth/types/index";
 import { WAVEFORM_ICONS, ROUTING_LABELS } from "./constants.tsx";
 import {
@@ -72,7 +71,7 @@ function Modifiers({
   return (
     <div className="box">
       <div className="section">
-        <div className={styles.column}>
+        <div className="column">
           <div className="row">
             <ADSR
               attack={attackTime}

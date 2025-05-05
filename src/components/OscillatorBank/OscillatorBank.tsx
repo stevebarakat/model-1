@@ -6,7 +6,6 @@ import {
   OscillatorType,
   OscillatorBankProps,
 } from "../../synth/types";
-import styles from "./OscillatorBank.module.css";
 
 // Constants for mapping values
 const RANGE_MAP: Record<RangeType, number> = {
@@ -123,7 +122,7 @@ function OscillatorBank({
   return (
     <div className="box">
       <div className="section">
-        <div className={styles.column}>
+        <div className="column">
           <OscillatorControls osc={osc1} onChange={onOsc1Change} />
           <OscillatorControls osc={osc2} onChange={onOsc2Change} />
           <OscillatorControls osc={osc3} onChange={onOsc3Change} />

@@ -1,5 +1,4 @@
 import Knob from "../Knob/Knob";
-import styles from "./Mixer.module.css";
 import Switch from "../Switch";
 
 type NoiseType = "white" | "pink";
@@ -41,7 +40,7 @@ function OscillatorControls({
   onPanChange,
 }: OscillatorControlsProps) {
   return (
-    <div className={styles.row}>
+    <div className="row">
       <Knob
         value={volume}
         min={0}
@@ -85,15 +84,11 @@ function NoiseControls({
         label="Noise"
         onChange={onVolumeChange}
       />
-      <div className={styles.switchContainer}>
-        <Switch
-          checked={type === "pink"}
-          onCheckedChange={(checked) =>
-            onTypeChange(checked ? "pink" : "white")
-          }
-          label={type === "white" ? "White" : "Pink"}
-        />
-      </div>
+      <Switch
+        checked={type === "pink"}
+        onCheckedChange={(checked) => onTypeChange(checked ? "pink" : "white")}
+        label={type === "white" ? "White" : "Pink"}
+      />
     </>
   );
 }
@@ -145,7 +140,7 @@ function Mixer({
               onPanChange={onOsc3PanChange}
             />
           </div>
-          <div className={styles.column}>
+          <div className="column">
             <NoiseControls
               volume={noiseVolume}
               type={noiseType}
