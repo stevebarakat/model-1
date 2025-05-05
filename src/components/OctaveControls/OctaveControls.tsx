@@ -1,16 +1,35 @@
 import Knob from "../Knob";
 
+type OctaveRange = {
+  readonly [key: number]: string;
+};
+
+const OCTAVE_RANGES: OctaveRange = {
+  1: "0 - 2",
+  2: "1 - 3",
+  3: "2 - 4",
+  4: "3 - 5",
+  5: "4 - 6",
+  6: "5 - 7",
+  7: "6 - 8",
+} as const;
+
 interface OctaveControlsProps {
-  currentOctave: number;
-  onOctaveChange: (newOctave: number) => void;
-  onOctaveChangeStart: () => void;
+  readonly currentOctave: number;
+  readonly onOctaveChange: (newOctave: number) => void;
+  readonly onOctaveChangeStart: () => void;
 }
 
-const OctaveControls = ({
+function OctaveControls({
   currentOctave,
   onOctaveChange,
   onOctaveChangeStart,
-}: OctaveControlsProps) => {
+}: OctaveControlsProps) {
+  const handleOctaveChange = (newValue: number): void => {
+    onOctaveChangeStart();
+    onOctaveChange(Math.round(newValue));
+  };
+
   return (
     <Knob
       value={currentOctave}
@@ -18,21 +37,10 @@ const OctaveControls = ({
       max={7}
       step={1}
       label="Octave"
-      onChange={(newValue: number) => {
-        onOctaveChangeStart();
-        onOctaveChange(Math.round(newValue));
-      }}
-      valueLabels={{
-        1: "0 - 2",
-        2: "1 - 3",
-        3: "2 - 4",
-        4: "3 - 5",
-        5: "4 - 6",
-        6: "5 - 7",
-        7: "6 - 8",
-      }}
+      onChange={handleOctaveChange}
+      valueLabels={OCTAVE_RANGES}
     />
   );
-};
+}
 
 export default OctaveControls;
