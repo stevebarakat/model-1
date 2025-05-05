@@ -1,3 +1,20 @@
+.adsrContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-sm);
+  background-color: var(--control-bg);
+  border-radius: var(--border-radius-md);
+}
+
+.controls {
+  display: flex;
+  gap: var(--spacing-sm);
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
 /* .adsrContainer {
   display: flex;
   flex-direction: column;

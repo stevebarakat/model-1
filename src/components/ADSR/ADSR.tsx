@@ -79,16 +79,14 @@ function ADSR({
   };
 
   return (
-    <div className={styles.adsrContainer}>
-      <div className="controls">
-        {Object.entries(adsrControls).map(([param, config]) => (
-          <Knob
-            key={param}
-            {...config}
-            onChange={handleChange(param as ADSRParam)}
-          />
-        ))}
-      </div>
+    <div className="controls">
+      {Object.entries(adsrControls).map(([param, config]) => (
+        <Knob
+          key={param}
+          {...config}
+          onChange={handleChange(param as ADSRParam)}
+        />
+      ))}
     </div>
   );
 }

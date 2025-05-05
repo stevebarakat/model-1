@@ -1,28 +1,30 @@
 .keyboardContainer {
   position: relative;
-  margin-right: 20px;
+  margin-right: var(--spacing-lg);
   width: 100%;
   display: flex;
   flex-direction: column;
-  margin-bottom: 12px;
+  margin-bottom: var(--spacing-md);
 }
 
 .keyboard {
-  background: hsl(0 0% 0%);
-  border-radius: 0 0 4px 4px;
+  background: var(--synth-bg);
+  border-radius: 0 0 var(--border-radius-md) var(--border-radius-md);
   position: relative;
-  padding: 0 3px 4px;
-  /* overflow: hidden; */
-  box-shadow: 0 4px 6px -1px hsl(217, 30%, 25%),
-    0 4px 6px -1px hsl(217, 50%, 10%);
+  padding: 0 var(--spacing-xs) var(--spacing-xs);
+  box-shadow: 0 4px 6px -1px var(--synth-border), 0 4px 6px -1px var(--synth-bg);
   &:before {
     content: "";
     box-shadow: 0 4px 8px 8px hsl(217 30% 0% / 0.375);
-    background: linear-gradient(180deg, hsl(217, 50%, 20%), hsl(217, 10%, 5%));
+    background: linear-gradient(
+      180deg,
+      var(--synth-gradient-start),
+      var(--synth-bg)
+    );
     display: flex;
     position: relative;
     width: calc(100% + 190px);
-    height: 12px;
+    height: var(--spacing-md);
     left: -155px;
     z-index: 5000;
   }
@@ -45,7 +47,7 @@
     hsl(0 0% 0% / 1) 100%
   );
   filter: blur(9px);
-  width: 20px;
+  width: var(--spacing-lg);
   height: 100%;
   z-index: 10;
 }
@@ -61,7 +63,7 @@
     hsl(0 0% 0% / 1) 100%
   );
   filter: blur(9px);
-  width: 20px;
+  width: var(--spacing-lg);
   height: 100%;
   z-index: 10;
 }
@@ -69,14 +71,14 @@
 .whiteKey {
   height: 194px;
   flex: 1;
-  background: linear-gradient(180deg, hsl(0, 0%, 100%), hsl(0, 0%, 80%));
+  background: linear-gradient(180deg, var(--key-white), var(--key-white-hover));
   box-shadow: inset 0 0.5px 0.5px 1px hsla(0, 0%, 0%, 0.4),
     inset 0 0 0.5px 1.5px hsla(0, 0%, 90%, 0.5),
     inset 0 0 0.5px 2.5px hsla(0, 0%, 90%, 0.5);
-  border-bottom: 3px solid #666;
-  border-radius: 0 0 5px 5px;
+  border-bottom: 3px solid var(--keyboard-border);
+  border-radius: 0 0 var(--border-radius-md) var(--border-radius-md);
   cursor: pointer;
-  transition: all 0.15s ease;
+  transition: var(--transition-fast);
   &:before {
     z-index: 1000;
     content: "";
@@ -94,31 +96,31 @@
 .whiteKeyActive {
   background: linear-gradient(
     to bottom,
-    #fff 0%,
-    #f8f8f8 75%,
-    #f0f0f0 85%,
-    #e8e8e8 90%,
-    #ddd 95%
+    var(--key-white) 0%,
+    var(--key-white-hover) 75%,
+    var(--key-white-active) 85%,
+    var(--key-white-hover) 90%,
+    var(--key-white-active) 95%
   );
   transform: translateY(2px);
-  box-shadow: 0 1px 2px rgb(0 0 0 / 0.1), inset 0 1px 1px hsl(217, 70%, 90%);
+  box-shadow: 0 1px 2px rgb(0 0 0 / 0.1), inset 0 1px 1px var(--key-white);
 }
 
 .blackKey {
   position: absolute;
   top: 2px;
-  border-radius: 0 0 5px 5px;
+  border-radius: 0 0 var(--border-radius-md) var(--border-radius-md);
   height: 123px;
-  border-top: 2px solid hsl(217, 13%, 15%);
+  border-top: 2px solid var(--key-black);
   background: linear-gradient(
     to bottom,
-    hsl(217, 13%, 15%),
-    hsl(217, 13%, 10%)
+    var(--key-black),
+    var(--key-black-hover)
   );
   cursor: pointer;
-  transition: all 0.15s ease;
+  transition: var(--transition-fast);
   z-index: 20;
-  box-shadow: 0 4px 6px hsl(0 0% 0% / 0.3), inset 0 1px 1px hsl(217, 13%, 18%);
+  box-shadow: 0 4px 6px hsl(0 0% 0% / 0.3), inset 0 1px 1px var(--key-black);
   transform: translateY(-2px);
   &:after {
     content: "";
@@ -127,20 +129,25 @@
     left: 4px;
     right: 4px;
     bottom: 15px;
-    background: linear-gradient(180deg, hsl(217, 13%, 18%), hsl(217, 13%, 12%));
+    background: linear-gradient(
+      180deg,
+      var(--key-black),
+      var(--key-black-hover)
+    );
     box-shadow: inset 0 0 12px 0px hsla(0, 0%, 100%, 0.1);
-    border-radius: 0 0 5px 5px;
+    border-radius: 0 0 var(--border-radius-md) var(--border-radius-md);
     overflow: hidden;
     overflow: clip;
     transform: rotateX(-10deg);
     transform-origin: top center;
   }
 }
+
 .blackKeyActive {
   background: linear-gradient(
     to bottom,
-    hsl(217, 13%, 18%),
-    hsl(217, 13%, 12%)
+    var(--key-black),
+    var(--key-black-hover)
   );
   &:after {
     transform: translateY(2px);
@@ -151,37 +158,39 @@
 .keyboardControls {
   display: flex;
   justify-content: flex-end;
-  padding: 4px 8px;
-  margin-bottom: 4px;
+  padding: var(--spacing-xs) var(--spacing-sm);
+  margin-bottom: var(--spacing-xs);
 }
 
 .button {
-  padding: 0.875rem 1.75rem;
+  padding: var(--spacing-md) var(--spacing-xl);
   background: linear-gradient(
     to bottom,
-    hsl(217, 13%, 20%),
-    hsl(217, 13%, 15%)
+    var(--synth-gradient-start),
+    var(--synth-gradient-end)
   );
   border: none;
-  border-radius: 4px;
-  color: var(--text-primary);
+  border-radius: var(--border-radius-md);
+  color: var(--color-text-primary);
   cursor: pointer;
-  transition: all 0.15s ease;
+  transition: var(--transition-fast);
 }
 
 .button:hover {
   background: linear-gradient(
     to bottom,
-    hsl(217, 13%, 25%),
-    hsl(217, 13%, 20%)
+    var(--synth-gradient-start),
+    var(--synth-gradient-end)
   );
+  opacity: 0.9;
 }
 
 .buttonActive {
   background: linear-gradient(
     to bottom,
-    hsl(217, 13%, 30%),
-    hsl(217, 13%, 25%)
+    var(--synth-gradient-start),
+    var(--synth-gradient-end)
   );
-  box-shadow: inset 0 1px 1px hsl(217, 13%, 35%);
+  opacity: 0.8;
+  box-shadow: inset 0 1px 1px var(--synth-border);
 }
