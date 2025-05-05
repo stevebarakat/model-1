@@ -104,6 +104,9 @@ function App() {
           waveform: modifiers.lfo.waveform,
           routing: modifiers.lfo.routing,
         },
+        reverb: effects.reverb,
+        delay: effects.delay,
+        distortion: effects.distortion,
       });
     }
   }, [
@@ -115,6 +118,7 @@ function App() {
     modWheel,
     glide,
     tune,
+    effects,
   ]);
 
   return (
