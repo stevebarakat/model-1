@@ -109,6 +109,12 @@ function Keyboard(
     }
   }
 
+  function handleKeyLeave(note: string): void {
+    if (isMouseDown) {
+      handleKeyRelease(note);
+    }
+  }
+
   useEffect(() => {
     if (synth) {
       setIsLoaded(true);
@@ -141,6 +147,7 @@ function Keyboard(
             }}
             onPointerUp={() => handleKeyRelease(key.note)}
             onPointerEnter={() => handleKeyInteraction(key.note)}
+            onPointerLeave={() => handleKeyLeave(key.note)}
           />
         );
       });
@@ -172,6 +179,7 @@ function Keyboard(
             }}
             onPointerUp={() => handleKeyRelease(key.note)}
             onPointerEnter={() => handleKeyInteraction(key.note)}
+            onPointerLeave={() => handleKeyLeave(key.note)}
           />
         );
       });
