@@ -71,9 +71,9 @@ function Modifiers({
 
   return (
     <div className="box">
-      <div className={styles.modifiers}>
-        <div className={styles.sections}>
-          <div className="controls">
+      <div className="section">
+        <div className={styles.column}>
+          <div className="row">
             <ADSR
               attack={attackTime}
               decay={decayTime}
@@ -85,7 +85,7 @@ function Modifiers({
               onReleaseChange={onReleaseTimeChange}
             />
           </div>
-          <div className="controls">
+          <div className="row">
             <Knob
               value={filterTypeToValue(filterType)}
               min={0}
@@ -126,7 +126,7 @@ function Modifiers({
               onChange={onContourAmountChange}
             />
           </div>
-          <div className="controls">
+          <div className="row">
             <Knob
               value={lfoRate}
               min={0.1}

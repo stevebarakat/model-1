@@ -23,8 +23,8 @@ function Effects({
 }: EffectsProps): React.ReactElement {
   return (
     <div className="box">
-      <div className={styles.effectsContainer}>
-        <div className={styles.effects}>
+      <div className="section">
+        <div className={styles.column}>
           <Reverb amount={reverbAmount} onAmountChange={onReverbAmountChange} />
           <Delay amount={delayAmount} onAmountChange={onDelayAmountChange} />
           <Distortion

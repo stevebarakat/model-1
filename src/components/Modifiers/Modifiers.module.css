@@ -1,10 +1,10 @@
-.modifiers {
+.section {
   padding: var(--spacing-md);
   display: flex;
   flex-direction: column;
 }
 
-.sections {
+.column {
   display: flex;
   flex-direction: column;
   gap: var(--spacing-sm);

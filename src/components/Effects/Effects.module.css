@@ -1,10 +1,10 @@
-.effectsContainer {
+.section {
   padding: var(--spacing-md);
   display: flex;
   flex-direction: column;
 }
 
-.effects {
+.column {
   display: flex;
   flex-direction: column;
   gap: var(--spacing-sm);

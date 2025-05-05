@@ -78,7 +78,7 @@ function ADSR({
   };
 
   return (
-    <div className="controls">
+    <div className="row">
       {Object.entries(adsrControls).map(([param, config]) => (
         <Knob
           key={param}

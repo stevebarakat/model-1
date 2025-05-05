@@ -6,8 +6,7 @@
   --border-radius: 8px;
   --synth-bg: hsl(217, 32%, 5%);
   --knob-size: 45px;
-  --section-spacing: 0.75rem;
-  --spacing-md: 12px;
+  --spacing-md: 0.75rem;
   --spacing-sm: 0.5rem;
   --color-background: hsl(0, 0%, 10%);
   --synth-gradient-start: hsl(217, 39%, 25%);

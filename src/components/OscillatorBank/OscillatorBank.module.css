@@ -1,10 +1,10 @@
-.oscillatorBank {
+.section {
   padding: var(--spacing-md);
   display: flex;
   flex-direction: column;
 }
 
-.oscillators {
+.column {
   display: flex;
   flex-direction: column;
   gap: var(--spacing-sm);

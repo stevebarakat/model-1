@@ -1,5 +1,4 @@
 import Knob from "../Knob";
-import styles from "./OscillatorBank.module.css";
 import { Square, Triangle, AudioWaveform, Activity } from "lucide-react";
 import {
   OscillatorSettings,
@@ -7,6 +6,7 @@ import {
   OscillatorType,
   OscillatorBankProps,
 } from "../../synth/types";
+import styles from "./OscillatorBank.module.css";
 
 // Constants for mapping values
 const RANGE_MAP: Record<RangeType, number> = {
@@ -47,7 +47,7 @@ function valueToWaveform(value: number): OscillatorType {
   return WAVEFORMS[Math.max(0, Math.min(WAVEFORMS.length - 1, index))];
 }
 
-// Component for individual oscillator controls
+// Component for individual oscillator row
 function OscillatorControls({
   osc,
   onChange,
@@ -59,7 +59,7 @@ function OscillatorControls({
   ) => void;
 }) {
   return (
-    <div className="controls">
+    <div className="row">
       <Knob
         value={rangeToValue(osc.range)}
         min={0}
@@ -122,8 +122,8 @@ function OscillatorBank({
 }: OscillatorBankProps) {
   return (
     <div className="box">
-      <div className={styles.oscillatorBank}>
-        <div className={styles.oscillators}>
+      <div className="section">
+        <div className={styles.column}>
           <OscillatorControls osc={osc1} onChange={onOsc1Change} />
           <OscillatorControls osc={osc2} onChange={onOsc2Change} />
           <OscillatorControls osc={osc3} onChange={onOsc3Change} />

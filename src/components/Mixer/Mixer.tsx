@@ -41,7 +41,7 @@ function OscillatorControls({
   onPanChange,
 }: OscillatorControlsProps) {
   return (
-    <div className={styles.mixerRow}>
+    <div className={styles.row}>
       <Knob
         value={volume}
         min={0}
@@ -120,8 +120,8 @@ function Mixer({
 }: MixerProps) {
   return (
     <div className="box">
-      <div className={styles.mixer}>
-        <div className="controls">
+      <div className="section">
+        <div className="row">
           <div>
             <OscillatorControls
               volume={osc1Volume}
@@ -145,7 +145,7 @@ function Mixer({
               onPanChange={onOsc3PanChange}
             />
           </div>
-          <div className={styles.mixerColumn}>
+          <div className={styles.column}>
             <NoiseControls
               volume={noiseVolume}
               type={noiseType}

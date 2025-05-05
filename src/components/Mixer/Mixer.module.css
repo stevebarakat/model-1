@@ -1,16 +1,16 @@
-.mixer {
+.section {
   padding: var(--spacing-md);
   display: flex;
   flex-direction: column;
 }
 
-.mixerRow {
-  display: flex;
-  gap: var(--spacing-md);
-}
-
-.mixerColumn {
+.column {
   display: flex;
   flex-direction: column;
   gap: var(--spacing-sm);
+}
+
+.row {
+  display: flex;
+  gap: var(--spacing-md);
 }

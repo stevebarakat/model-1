@@ -4,6 +4,23 @@ body {
   font-family: var(--font-primary);
 }
 
+.section {
+  padding: var(--spacing-md);
+  display: flex;
+  flex-direction: column;
+}
+
+.column {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+}
+
+.row {
+  display: flex;
+  gap: var(--spacing-md);
+}
+
 .section-title {
   font-size: 0.8rem;
   text-transform: uppercase;
@@ -11,11 +28,6 @@ body {
   text-align: center;
   margin-top: 0.5rem;
   user-select: none;
-}
-
-.controls {
-  display: flex;
-  gap: 0.75rem;
 }
 
 .box {
