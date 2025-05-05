@@ -2,7 +2,7 @@
   /* Color System */
   --color-primary: hsl(51, 100%, 50%);
   --color-background: hsl(0, 0%, 10%);
-  --color-text-primary: hsl(220, 13%, 95%);
+  --color-text-primary: hsl(220, 13%, 90%);
   --color-text-secondary: hsl(220, 13%, 65%);
 
   /* Synth UI Colors */
@@ -37,7 +37,6 @@
 
   /* Component Sizes */
   --knob-size: 45px;
-  --grid-cell-size: 36px;
   --border-radius-sm: 2px;
   --border-radius-md: 4px;
   --border-radius-lg: 8px;
