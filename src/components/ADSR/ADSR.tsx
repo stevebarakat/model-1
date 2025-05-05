@@ -1,6 +1,5 @@
 import React from "react";
 import Knob from "../Knob/Knob";
-import styles from "./ADSR.module.css";
 
 type ADSRValue = {
   value: number;

@@ -1,16 +1,87 @@
 .oscillatorBank {
-  padding: var(--spacing-sm);
-  color: var(--color-text-primary);
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
-  height: 100%;
+  gap: var(--spacing-md);
+  padding: var(--spacing-md);
+  background: var(--control-bg);
+  border-radius: var(--border-radius-md);
 }
 
-.oscillators {
+.oscillator {
   display: flex;
   flex-direction: column;
   gap: var(--spacing-sm);
+  padding: var(--spacing-sm);
+  background: var(--synth-bg);
+  border-radius: var(--border-radius-md);
+}
+
+.oscillatorHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--spacing-xs);
+}
+
+.oscillatorTitle {
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  color: var(--color-text-primary);
+}
+
+.oscillatorControls {
+  display: flex;
+  gap: var(--spacing-md);
+  align-items: center;
+}
+
+.waveformSelector {
+  display: flex;
+  gap: var(--spacing-xs);
+  padding: var(--spacing-xs);
+  background: var(--synth-bg);
+  border-radius: var(--border-radius-sm);
+}
+
+.waveformButton {
+  padding: var(--spacing-xs) var(--spacing-sm);
+  background: var(--control-bg);
+  border: 1px solid var(--synth-border);
+  border-radius: var(--border-radius-sm);
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  transition: var(--transition-fast);
+}
+
+.waveformButton:hover {
+  background: var(--synth-gradient-start);
+  color: var(--color-text-primary);
+}
+
+.waveformButtonActive {
+  background: var(--synth-gradient-start);
+  color: var(--color-text-primary);
+  border-color: var(--synth-border-active);
+}
+
+.oscillatorParams {
+  display: flex;
+  gap: var(--spacing-md);
+  justify-content: space-between;
+}
+
+.paramGroup {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+  align-items: center;
+}
+
+.paramLabel {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
 }
 
 .rangeSwitch select,
