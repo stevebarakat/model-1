@@ -1,5 +1,4 @@
 import Knob from "../Knob/Knob";
-import Switch from "../Switch";
 
 type MixerProps = {
   osc1Volume: number;
@@ -8,8 +7,6 @@ type MixerProps = {
   osc1Pan: number;
   osc2Pan: number;
   osc3Pan: number;
-  modMix: number;
-  onModMixChange: (value: number) => void;
   onOsc1VolumeChange: (value: number) => void;
   onOsc2VolumeChange: (value: number) => void;
   onOsc3VolumeChange: (value: number) => void;
@@ -62,8 +59,6 @@ function Mixer({
   osc1Pan,
   osc2Pan,
   osc3Pan,
-  modMix,
-  onModMixChange,
   onOsc1VolumeChange,
   onOsc2VolumeChange,
   onOsc3VolumeChange,
@@ -72,7 +67,7 @@ function Mixer({
   onOsc3PanChange,
 }: MixerProps) {
   return (
-    <div className="box">
+    <div className="box filled">
       <div className="section">
         <div className="row">
           <div className="column">

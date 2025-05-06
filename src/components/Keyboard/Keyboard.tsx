@@ -48,13 +48,15 @@ function generateKeyboardKeys(octaveRange: {
   min: number;
   max: number;
 }): Note[] {
-  const keys: Note[] = [];
-  for (let octave = octaveRange.min; octave <= octaveRange.max; octave++) {
-    OCTAVE_NOTES.forEach((key) => {
-      keys.push({ note: `${key.note}${octave}`, isSharp: key.isSharp });
-    });
-  }
-  return keys;
+  return Array.from(
+    { length: octaveRange.max - octaveRange.min + 1 },
+    (_, i) => octaveRange.min + i
+  ).flatMap((octave) =>
+    OCTAVE_NOTES.map((key) => ({
+      note: `${key.note}${octave}`,
+      isSharp: key.isSharp,
+    }))
+  );
 }
 
 function Keyboard(

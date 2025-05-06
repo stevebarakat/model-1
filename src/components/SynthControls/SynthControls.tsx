@@ -114,7 +114,7 @@ function SynthControls({
         onOsc2Change={handleOsc2Change}
         onOsc3Change={handleOsc3Change}
       />
-      <div className={styles.indent}></div>
+      {/* <div className={styles.indent}></div> */}
       <Mixer
         osc1Volume={mixer.osc1Volume}
         osc2Volume={mixer.osc2Volume}
@@ -122,8 +122,6 @@ function SynthControls({
         osc1Pan={oscillators.osc1.pan ?? 0}
         osc2Pan={oscillators.osc2.pan ?? 0}
         osc3Pan={oscillators.osc3.pan ?? 0}
-        modMix={mixer.modMix}
-        onModMixChange={(value) => onMixerChange({ modMix: value })}
         onOsc1VolumeChange={(value) => onMixerChange({ osc1Volume: value })}
         onOsc2VolumeChange={(value) => onMixerChange({ osc2Volume: value })}
         onOsc3VolumeChange={(value) => onMixerChange({ osc3Volume: value })}
