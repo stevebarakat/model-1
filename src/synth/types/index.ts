@@ -1,6 +1,5 @@
 export type Note = string;
 export type OscillatorType = "sine" | "square" | "sawtooth" | "triangle";
-export type NoiseType = "white" | "pink";
 export type RangeType = "32" | "16" | "8" | "4" | "2";
 export type FilterType = BiquadFilterType;
 export type NoteData = {
@@ -9,8 +8,6 @@ export type NoteData = {
   oscillatorPanners: StereoPannerNode[];
   gainNode: GainNode;
   filterNode: BiquadFilterNode;
-  noiseNode?: AudioNode;
-  noiseGain?: GainNode;
   lfo: OscillatorNode;
   lfoGains: {
     filterCutoff: GainNode;
@@ -20,6 +17,10 @@ export type NoteData = {
   };
   filterEnvelope: GainNode;
   filterModGain: GainNode;
+  noiseNode: AudioWorkletNode | null;
+  noiseGain: GainNode | null;
+  noisePanner: StereoPannerNode | null;
+  noiseFilter: BiquadFilterNode | null;
 };
 
 export type NoteState = {
@@ -39,13 +40,6 @@ export type OscillatorSettings = {
   pan?: number; // -1 (left) to 1 (right)
 };
 
-export type NoiseGenerator = {
-  node: AudioNode;
-  start: () => void;
-  stop: () => void;
-  type: NoiseType;
-};
-
 export type LFORouting = {
   filterCutoff: boolean;
   filterResonance: boolean;
@@ -60,8 +54,10 @@ export type SynthSettings = {
   glide: number;
   oscillators: OscillatorSettings[];
   noise: {
-    type: NoiseType;
     volume: number;
+    pan: number;
+    type: "white" | "pink";
+    tone: number; // 0-100, controls filter cutoff
   };
   filter: {
     cutoff: number;

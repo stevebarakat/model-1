@@ -28,6 +28,8 @@ function App() {
     updateMixer,
     modifiers,
     updateModifiers,
+    noise,
+    updateNoise,
     tune,
     setTune,
   } = useSynthStore();
@@ -78,6 +80,12 @@ function App() {
             detune: oscillators.osc3.detune,
           },
         ],
+        noise: {
+          volume: noise.volume,
+          pan: noise.pan,
+          type: noise.type,
+          tone: noise.tone,
+        },
         envelope: {
           attack: modifiers.envelope.attack,
           decay: modifiers.envelope.decay,
@@ -89,10 +97,6 @@ function App() {
           resonance: modifiers.resonance,
           contourAmount: modifiers.contourAmount,
           type: modifiers.filterType,
-        },
-        noise: {
-          type: mixer.noiseType,
-          volume: mixer.noiseVolume,
         },
         tune: tune + ((pitchWheel - 50) / 50) * 100,
         modMix: mixer.modMix,
@@ -119,6 +123,7 @@ function App() {
     glide,
     tune,
     effects,
+    noise,
   ]);
 
   return (
@@ -130,10 +135,12 @@ function App() {
             <SynthControls
               oscillators={oscillators}
               mixer={mixer}
+              noise={noise}
               modifiers={modifiers}
               effects={effects}
               onOscillatorChange={setOscillator}
               onMixerChange={updateMixer}
+              onNoiseChange={updateNoise}
               onModifiersChange={updateModifiers}
               onEffectsChange={updateEffects}
             />

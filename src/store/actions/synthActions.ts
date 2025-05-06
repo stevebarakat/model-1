@@ -34,6 +34,10 @@ export function createSynthActions(
       set((state: SynthState) => ({
         mixer: { ...state.mixer, ...settings },
       })),
+    updateNoise: (settings) =>
+      set((state: SynthState) => ({
+        noise: { ...state.noise, ...settings },
+      })),
     updateModifiers: (settings) =>
       set((state: SynthState) => ({
         modifiers: { ...state.modifiers, ...settings },

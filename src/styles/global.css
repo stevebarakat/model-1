@@ -8,7 +8,7 @@ body {
 .section {
   display: flex;
   flex-direction: column;
-  padding: var(--spacing-md);
+  padding: var(--spacing-sm);
 }
 
 .column {

@@ -1,8 +1,6 @@
 import Knob from "../Knob/Knob";
 import Switch from "../Switch";
 
-type NoiseType = "white" | "pink";
-
 type MixerProps = {
   osc1Volume: number;
   osc2Volume: number;
@@ -10,8 +8,6 @@ type MixerProps = {
   osc1Pan: number;
   osc2Pan: number;
   osc3Pan: number;
-  noiseVolume: number;
-  noiseType: NoiseType;
   modMix: number;
   onModMixChange: (value: number) => void;
   onOsc1VolumeChange: (value: number) => void;
@@ -20,8 +16,6 @@ type MixerProps = {
   onOsc1PanChange: (value: number) => void;
   onOsc2PanChange: (value: number) => void;
   onOsc3PanChange: (value: number) => void;
-  onNoiseVolumeChange: (value: number) => void;
-  onNoiseTypeChange: (type: NoiseType) => void;
 };
 
 type OscillatorControlsProps = {
@@ -61,38 +55,6 @@ function OscillatorControls({
   );
 }
 
-type NoiseControlsProps = {
-  volume: number;
-  type: NoiseType;
-  onVolumeChange: (value: number) => void;
-  onTypeChange: (type: NoiseType) => void;
-};
-
-function NoiseControls({
-  volume,
-  type,
-  onVolumeChange,
-  onTypeChange,
-}: NoiseControlsProps) {
-  return (
-    <>
-      <Knob
-        value={volume}
-        min={0}
-        max={1}
-        step={0.01}
-        label="Noise"
-        onChange={onVolumeChange}
-      />
-      <Switch
-        checked={type === "pink"}
-        onCheckedChange={(checked) => onTypeChange(checked ? "pink" : "white")}
-        label={type === "white" ? "White" : "Pink"}
-      />
-    </>
-  );
-}
-
 function Mixer({
   osc1Volume,
   osc2Volume,
@@ -100,8 +62,6 @@ function Mixer({
   osc1Pan,
   osc2Pan,
   osc3Pan,
-  noiseVolume,
-  noiseType,
   modMix,
   onModMixChange,
   onOsc1VolumeChange,
@@ -110,8 +70,6 @@ function Mixer({
   onOsc1PanChange,
   onOsc2PanChange,
   onOsc3PanChange,
-  onNoiseVolumeChange,
-  onNoiseTypeChange,
 }: MixerProps) {
   return (
     <div className="box">
@@ -138,22 +96,6 @@ function Mixer({
               label="Osc 3"
               onVolumeChange={onOsc3VolumeChange}
               onPanChange={onOsc3PanChange}
-            />
-          </div>
-          <div className="column">
-            <NoiseControls
-              volume={noiseVolume}
-              type={noiseType}
-              onVolumeChange={onNoiseVolumeChange}
-              onTypeChange={onNoiseTypeChange}
-            />
-            <Knob
-              value={modMix}
-              min={0}
-              max={1}
-              step={0.01}
-              label="Mod"
-              onChange={onModMixChange}
             />
           </div>
         </div>

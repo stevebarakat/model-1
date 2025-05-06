@@ -154,7 +154,7 @@ function Knob({
         aria-label={label}
         aria-valuetext={ariaValueText}
       />
-      <div className={styles.knobGradient} />
+      {/* <div className={styles.knobGradient} /> */}
     </div>
   );
 }

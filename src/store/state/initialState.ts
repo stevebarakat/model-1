@@ -13,6 +13,7 @@ export function createInitialState(): Omit<
   | "updateOscillator"
   | "setOscillator"
   | "updateMixer"
+  | "updateNoise"
   | "updateModifiers"
   | "updateEffects"
 > {
@@ -34,9 +35,13 @@ export function createInitialState(): Omit<
       osc1Volume: 0.7,
       osc2Volume: 0.7,
       osc3Volume: 0.7,
-      noiseVolume: 0,
-      noiseType: "white",
       modMix: 0,
+    },
+    noise: {
+      volume: 0,
+      pan: 0,
+      type: "white",
+      tone: 50,
     },
     modifiers: {
       cutoff: 2000,

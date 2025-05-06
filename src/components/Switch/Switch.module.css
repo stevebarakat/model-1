@@ -17,6 +17,7 @@
 
 .switchRoot {
   position: relative;
+  top: 2px;
   display: flex;
   justify-content: flex-start;
   align-items: center;
@@ -28,7 +29,6 @@
   border-radius: 3px;
   cursor: pointer;
   rotate: 90deg;
-  top: 2px;
 }
 
 .switchThumb {

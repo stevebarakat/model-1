@@ -12,6 +12,7 @@
     hsl(0deg 0% 10%) 100%
   );
   border-radius: 4px;
+
   /* border-left: 2px solid hsl(218, 33%, 25%);
   border-right: 2px solid hsl(218, 33%, 25%); */
   &::before {
@@ -77,9 +78,9 @@
 }
 
 .controlsContainer {
-  display: flex;
   position: relative;
   z-index: 100;
+  display: flex;
   flex-direction: column;
   background-color: var(--synth-bg);
 }
@@ -91,18 +92,18 @@
 }
 
 .horizontalIndent {
-  align-self: flex-end;
+  margin-bottom: -2px;
   width: 100%;
   height: 8px;
   background: linear-gradient(
     0deg,
-    hsl(217deg 20% 25% / 0.5),
+    hsl(217deg 20% 25% / 50%),
     hsl(217deg 40% 25%),
     hsl(217deg 10% 5%),
     hsl(217deg 30% 20%),
     hsl(217deg 50% 25%)
   );
-  margin-bottom: -2px;
+  align-self: flex-end;
 }
 
 .keyRow {

@@ -1,10 +1,6 @@
 import { Note, NoteData, NoteState, SynthSettings } from "./types";
 import { noteToFrequency, getRangeMultiplier } from "./utils/frequency";
-import {
-  createOscillator,
-  createNoiseGenerator,
-  createGainNode,
-} from "./audio/nodes";
+import { createOscillator, createGainNode } from "./audio/nodes";
 import { setupEffects } from "./audio/effects";
 
 type SynthContext = {
@@ -14,6 +10,9 @@ type SynthContext = {
   reverbGain: GainNode;
   dryGain: GainNode;
   wetGain: GainNode;
+  noiseNode: AudioWorkletNode | null;
+  noiseGain: GainNode;
+  noisePanner: StereoPannerNode;
 };
 
 type SynthState = {
@@ -26,7 +25,21 @@ function createSynthContext(): SynthContext {
   const context = new AudioContext();
   const { masterGain, delayGain, reverbGain, dryGain, wetGain } =
     setupEffects(context);
-  return { context, masterGain, delayGain, reverbGain, dryGain, wetGain };
+  const noiseGain = context.createGain();
+  const noisePanner = context.createStereoPanner();
+  noiseGain.connect(noisePanner);
+  noisePanner.connect(masterGain);
+  return {
+    context,
+    masterGain,
+    delayGain,
+    reverbGain,
+    dryGain,
+    wetGain,
+    noiseNode: null,
+    noiseGain,
+    noisePanner,
+  };
 }
 
 function createInitialState(): SynthState {
@@ -62,8 +75,10 @@ function createInitialState(): SynthState {
         },
       ],
       noise: {
-        type: "white",
         volume: 0,
+        pan: 0,
+        type: "white",
+        tone: 50,
       },
       filter: {
         cutoff: 2000,
@@ -202,8 +217,20 @@ function updateLFOGains(
 // Factory function to create a synth
 export default async function createSynth() {
   const synthContext = createSynthContext();
-  await synthContext.context.audioWorklet.addModule("pink-noise-processor.js");
   const state = createInitialState();
+
+  // Load both noise processors
+  try {
+    await synthContext.context.audioWorklet.addModule(
+      "/white-noise-processor.js"
+    );
+    await synthContext.context.audioWorklet.addModule(
+      "/pink-noise-processor.js"
+    );
+    console.log("Noise processors loaded successfully");
+  } catch (error) {
+    console.error("Failed to load noise processors:", error);
+  }
 
   function updateSettings(newSettings: Partial<SynthSettings>): void {
     state.settings = { ...state.settings, ...newSettings };
@@ -231,6 +258,29 @@ export default async function createSynth() {
 
     if (newSettings.delay) {
       synthContext.delayGain.gain.value = newSettings.delay.amount / 100;
+    }
+
+    if (newSettings.noise) {
+      if (newSettings.noise.volume !== undefined) {
+        const newVolume = newSettings.noise.volume;
+        synthContext.noiseGain.gain.value = newVolume;
+      }
+      if (newSettings.noise.pan !== undefined) {
+        synthContext.noisePanner.pan.value = newSettings.noise.pan;
+      }
+      if (newSettings.noise.tone !== undefined) {
+        // Update tone for all active notes
+        state.activeNotes.forEach((noteData) => {
+          if (noteData.noiseFilter) {
+            const minFreq = 20;
+            const maxFreq = 20000;
+            const freq =
+              minFreq *
+              Math.pow(maxFreq / minFreq, newSettings.noise!.tone / 100);
+            noteData.noiseFilter.frequency.value = freq;
+          }
+        });
+      }
     }
 
     state.activeNotes.forEach((noteData, note) => {
@@ -314,33 +364,6 @@ export default async function createSynth() {
               newSettings.filter.contourAmount;
           }
         }
-      }
-
-      if (state.settings.noise.volume > 0) {
-        if (!noteData.noiseNode) {
-          const noise = createNoiseGenerator(
-            synthContext.context,
-            state.settings.noise.type
-          );
-          const noiseGain = createGainNode(
-            synthContext.context,
-            state.settings.noise.volume
-          );
-          noise.node.connect(noiseGain);
-          noiseGain.connect(noteData.gainNode);
-          noise.start();
-          noteData.noiseNode = noise.node;
-          noteData.noiseGain = noiseGain;
-        } else if (noteData.noiseGain) {
-          noteData.noiseGain.gain.value = state.settings.noise.volume;
-        }
-      } else if (noteData.noiseNode) {
-        noteData.noiseNode.disconnect();
-        if (noteData.noiseGain) {
-          noteData.noiseGain.disconnect();
-        }
-        noteData.noiseNode = undefined;
-        noteData.noiseGain = undefined;
       }
 
       if (noteData.lfo) {
@@ -488,21 +511,6 @@ export default async function createSynth() {
           console.warn("Error stopping filter:", e);
         }
 
-        if (existingNote.noiseNode) {
-          try {
-            existingNote.noiseNode.disconnect();
-          } catch (e) {
-            console.warn("Error stopping noise:", e);
-          }
-        }
-        if (existingNote.noiseGain) {
-          try {
-            existingNote.noiseGain.disconnect();
-          } catch (e) {
-            console.warn("Error stopping noise gain:", e);
-          }
-        }
-
         try {
           existingNote.lfo.stop();
           existingNote.lfoGains.filterCutoff.disconnect();
@@ -538,6 +546,44 @@ export default async function createSynth() {
     );
     filter.type = state.settings.filter.type;
     filter.frequency.value = baseCutoff;
+
+    // Create noise node if noise is enabled
+    let noiseNode: AudioWorkletNode | null = null;
+    let noiseFilter: BiquadFilterNode | null = null;
+    if (state.settings.noise.volume > 0) {
+      try {
+        const processorName =
+          state.settings.noise.type === "pink"
+            ? "pink-noise-processor"
+            : "white-noise-processor";
+        noiseNode = new AudioWorkletNode(synthContext.context, processorName);
+        const noiseGain = createGainNode(
+          synthContext.context,
+          state.settings.noise.volume
+        );
+        const noisePanner = synthContext.context.createStereoPanner();
+        noisePanner.pan.value = state.settings.noise.pan;
+
+        // Create noise filter
+        noiseFilter = synthContext.context.createBiquadFilter();
+        noiseFilter.type = "lowpass";
+        // Map tone (0-100) to frequency range (20Hz - 20kHz)
+        const minFreq = 20;
+        const maxFreq = 20000;
+        const freq =
+          minFreq *
+          Math.pow(maxFreq / minFreq, state.settings.noise.tone / 100);
+        noiseFilter.frequency.value = freq;
+        noiseFilter.Q.value = 1;
+
+        noiseNode.connect(noiseGain);
+        noiseGain.connect(noiseFilter);
+        noiseFilter.connect(noisePanner);
+        noisePanner.connect(noteGain);
+      } catch (error) {
+        console.error("Failed to create noise node:", error);
+      }
+    }
 
     // Adjust Q value based on filter type
     const baseQ = state.settings.filter.resonance * 30;
@@ -694,23 +740,6 @@ export default async function createSynth() {
       }
     });
 
-    let noiseNode: AudioNode | undefined;
-    let noiseGain: GainNode | undefined;
-    if (state.settings.noise.volume > 0) {
-      const noise = createNoiseGenerator(
-        synthContext.context,
-        state.settings.noise.type
-      );
-      noiseGain = createGainNode(
-        synthContext.context,
-        state.settings.noise.volume
-      );
-      noiseNode = noise.node;
-      noiseNode.connect(noiseGain);
-      noiseGain.connect(noteGain);
-      noise.start();
-    }
-
     noteGain.gain.setValueAtTime(0, startTime);
     noteGain.gain.linearRampToValueAtTime(
       1,
@@ -740,12 +769,16 @@ export default async function createSynth() {
       oscillatorPanners,
       gainNode: noteGain,
       filterNode: filter,
-      noiseNode,
-      noiseGain,
       lfo,
       lfoGains,
       filterEnvelope,
       filterModGain,
+      noiseNode,
+      noiseGain: noiseNode
+        ? createGainNode(synthContext.context, state.settings.noise.volume)
+        : null,
+      noisePanner: noiseNode ? synthContext.context.createStereoPanner() : null,
+      noiseFilter,
     });
   }
 
@@ -811,21 +844,6 @@ export default async function createSynth() {
           console.warn("Error stopping filter:", e);
         }
 
-        if (noteData.noiseNode) {
-          try {
-            noteData.noiseNode.disconnect();
-          } catch (e) {
-            console.warn("Error stopping noise:", e);
-          }
-        }
-        if (noteData.noiseGain) {
-          try {
-            noteData.noiseGain.disconnect();
-          } catch (e) {
-            console.warn("Error stopping noise gain:", e);
-          }
-        }
-
         try {
           noteData.filterEnvelope.disconnect();
           noteData.filterModGain.disconnect();
@@ -833,10 +851,21 @@ export default async function createSynth() {
           console.warn("Error stopping filter envelope:", e);
         }
 
+        // Clean up noise nodes
+        if (noteData.noiseNode) {
+          try {
+            noteData.noiseNode.disconnect();
+            if (noteData.noiseGain) noteData.noiseGain.disconnect();
+            if (noteData.noisePanner) noteData.noisePanner.disconnect();
+          } catch (e) {
+            console.warn("Error stopping noise nodes:", e);
+          }
+        }
+
         state.activeNotes.delete(note);
         state.noteStates.delete(note);
       }
-    }, state.settings.envelope.release * 1000); // Convert release time to milliseconds
+    }, state.settings.envelope.release * 1000);
   }
 
   function handleNoteTransition(fromNote: Note | null, toNote: Note): void {

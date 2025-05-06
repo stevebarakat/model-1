@@ -1,7 +1,6 @@
 import {
   OscillatorSettings,
   FilterType,
-  NoiseType,
   WaveformType,
   LFORouting,
 } from "@/synth/types";
@@ -9,6 +8,7 @@ import Mixer from "../Mixer";
 import OscillatorBank from "../OscillatorBank";
 import Modifiers from "../Modifiers";
 import Effects from "../Effects";
+import Noise from "../Noise/Noise";
 import styles from "./SynthControls.module.css";
 
 type SynthControlsProps = {
@@ -21,9 +21,13 @@ type SynthControlsProps = {
     osc1Volume: number;
     osc2Volume: number;
     osc3Volume: number;
-    noiseVolume: number;
-    noiseType: NoiseType;
     modMix: number;
+  };
+  noise: {
+    volume: number;
+    pan: number;
+    type: "white" | "pink";
+    tone: number;
   };
   modifiers: {
     cutoff: number;
@@ -50,6 +54,7 @@ type SynthControlsProps = {
   };
   onOscillatorChange: (osc: 1 | 2 | 3, settings: OscillatorSettings) => void;
   onMixerChange: (settings: Partial<SynthControlsProps["mixer"]>) => void;
+  onNoiseChange: (settings: Partial<SynthControlsProps["noise"]>) => void;
   onModifiersChange: (
     settings: Partial<SynthControlsProps["modifiers"]>
   ) => void;
@@ -59,10 +64,12 @@ type SynthControlsProps = {
 function SynthControls({
   oscillators,
   mixer,
+  noise,
   modifiers,
   effects,
   onOscillatorChange,
   onMixerChange,
+  onNoiseChange,
   onModifiersChange,
   onEffectsChange,
 }: SynthControlsProps) {
@@ -98,6 +105,15 @@ function SynthControls({
 
   return (
     <>
+      <OscillatorBank
+        osc1={oscillators.osc1}
+        osc2={oscillators.osc2}
+        osc3={oscillators.osc3}
+        onOsc1Change={handleOsc1Change}
+        onOsc2Change={handleOsc2Change}
+        onOsc3Change={handleOsc3Change}
+      />
+      <div className={styles.indent}></div>
       <Mixer
         osc1Volume={mixer.osc1Volume}
         osc2Volume={mixer.osc2Volume}
@@ -105,8 +121,6 @@ function SynthControls({
         osc1Pan={oscillators.osc1.pan ?? 0}
         osc2Pan={oscillators.osc2.pan ?? 0}
         osc3Pan={oscillators.osc3.pan ?? 0}
-        noiseVolume={mixer.noiseVolume}
-        noiseType={mixer.noiseType}
         modMix={mixer.modMix}
         onModMixChange={(value) => onMixerChange({ modMix: value })}
         onOsc1VolumeChange={(value) => onMixerChange({ osc1Volume: value })}
@@ -115,17 +129,19 @@ function SynthControls({
         onOsc1PanChange={(value) => handleOsc1Change("pan", value)}
         onOsc2PanChange={(value) => handleOsc2Change("pan", value)}
         onOsc3PanChange={(value) => handleOsc3Change("pan", value)}
-        onNoiseVolumeChange={(value) => onMixerChange({ noiseVolume: value })}
-        onNoiseTypeChange={(value) => onMixerChange({ noiseType: value })}
       />
       <div className={styles.indent}></div>
-      <OscillatorBank
-        osc1={oscillators.osc1}
-        osc2={oscillators.osc2}
-        osc3={oscillators.osc3}
-        onOsc1Change={handleOsc1Change}
-        onOsc2Change={handleOsc2Change}
-        onOsc3Change={handleOsc3Change}
+      <Noise
+        volume={noise.volume}
+        pan={noise.pan}
+        type={noise.type}
+        tone={noise.tone}
+        onVolumeChange={(value: number) => onNoiseChange({ volume: value })}
+        onPanChange={(value: number) => onNoiseChange({ pan: value })}
+        onTypeChange={(value: "white" | "pink") =>
+          onNoiseChange({ type: value })
+        }
+        onToneChange={(value: number) => onNoiseChange({ tone: value })}
       />
       <div className={styles.indent}></div>
       <Modifiers

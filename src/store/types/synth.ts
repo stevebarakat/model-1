@@ -32,9 +32,15 @@ export type SynthState = {
     osc1Volume: number;
     osc2Volume: number;
     osc3Volume: number;
-    noiseVolume: number;
-    noiseType: "white" | "pink";
     modMix: number;
+  };
+
+  // Noise state
+  noise: {
+    volume: number;
+    pan: number;
+    type: "white" | "pink";
+    tone: number;
   };
 
   // Modifier state
@@ -89,6 +95,7 @@ export type SynthActions = {
   ) => void;
   setOscillator: (id: 1 | 2 | 3, settings: OscillatorSettings) => void;
   updateMixer: (settings: Partial<SynthState["mixer"]>) => void;
+  updateNoise: (settings: Partial<SynthState["noise"]>) => void;
   updateModifiers: (settings: Partial<SynthState["modifiers"]>) => void;
   updateEffects: (settings: Partial<SynthState["effects"]>) => void;
 };

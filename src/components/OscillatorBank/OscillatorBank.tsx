@@ -67,11 +67,11 @@ function OscillatorControls({
         label="Range"
         unit="'"
         valueLabels={{
-          0: "32",
-          1: "16",
-          2: "8",
-          3: "4",
-          4: "2",
+          0: "32 '",
+          1: "16 '",
+          2: "8 '",
+          3: "4 '",
+          4: "2 '",
         }}
         onChange={(value) => onChange("range", valueToRange(value))}
       />

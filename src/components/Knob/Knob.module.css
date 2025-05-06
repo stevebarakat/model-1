@@ -67,7 +67,7 @@
   left: 50%;
   display: block;
   color: var(--color-text-secondary);
-  font-size: var(--font-size-md);
+  font-size: var(--font-size-sm);
   text-align: center;
   text-transform: uppercase;
   white-space: nowrap;
@@ -77,8 +77,10 @@
 
 .knobValue {
   color: var(--color-text-primary);
+  text-transform: unset;
 }
 
 .knobValue span {
   font-size: var(--font-size-xs);
+  text-transform: uppercase;
 }
