@@ -2,10 +2,10 @@
   width: 8px;
   background: linear-gradient(
     90deg,
-    hsl(0deg 0% 10%),
-    hsl(0deg 0% 25%),
-    hsl(0deg 0% 5%),
-    hsl(0deg 0% 20%),
-    hsl(0deg 0% 25%)
+    hsl(217deg 20% 10%),
+    hsl(217deg 40% 25%),
+    hsl(217deg 10% 5%),
+    hsl(217deg 30% 20%),
+    hsl(217deg 50% 25%)
   );
 }

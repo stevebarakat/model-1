@@ -1,5 +1,3 @@
-@import "../../styles/mixins.css";
-
 .slider {
   position: relative;
   top: 50px;
@@ -19,17 +17,18 @@
   justify-content: center;
   width: 105px;
   height: 14px;
-  @mixin gradient-control 90deg;
+  background: linear-gradient(90deg, hsl(217deg 30% 20%), hsl(217deg 40% 25%));
   background: var(--base-texture);
-  box-shadow: 0 1px 2px hsl(0deg 0% 3% / 95%), 0 2px 4px hsl(0deg 0% 3% / 95%);
+  box-shadow: 0 1px 2px hsl(217deg 40% 3% / 95%),
+    0 2px 4px hsl(217deg 40% 3% / 95%);
   cursor: pointer;
   transform: translateY(-50%);
 
   --base-texture: linear-gradient(
     270deg,
-    hsl(0deg 0% 10%),
+    hsl(217deg 25% 10%),
     hsl(0deg 0% 100%) 28%,
-    hsl(0deg 0% 10%)
+    hsl(217deg 25% 10%)
   );
 }
 
@@ -73,7 +72,11 @@
   left: 0;
   width: 100%;
   height: 100%;
-  @mixin gradient-dark 90deg;
+  background: linear-gradient(
+    90deg,
+    hsl(217deg 30% 0% / 50%),
+    hsl(217deg 40% 5% / 0%)
+  );
   filter: blur(6px);
   transform: translateY(-50%);
 }
