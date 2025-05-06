@@ -1,6 +1,5 @@
 import Knob from "../Knob";
 import Switch from "../Switch";
-import styles from "./Noise.module.css";
 
 type NoiseProps = {
   volume: number;
@@ -30,15 +29,24 @@ function Noise({
   return (
     <div className="box">
       <div className="section">
-        <div className="row">
-          <Knob
-            value={volume}
-            min={0}
-            max={1}
-            step={0.01}
-            label="Volume"
-            onChange={onVolumeChange}
-          />
+        <div className="column">
+          <div className="row">
+            <Knob
+              value={volume}
+              min={0}
+              max={1}
+              step={0.01}
+              label="Volume"
+              onChange={onVolumeChange}
+            />
+            <Switch
+              checked={type === "pink"}
+              onCheckedChange={(checked) =>
+                onTypeChange(checked ? "pink" : "white")
+              }
+              label={type === "pink" ? "Pink" : "White"}
+            />
+          </div>
           <Knob
             value={pan}
             min={-1}
@@ -47,22 +55,15 @@ function Noise({
             label="Pan"
             onChange={onPanChange}
           />
-          <Knob
-            value={tone}
-            min={0}
-            max={4}
-            step={1}
-            label="Freq"
-            onChange={onToneChange}
-            valueLabels={["LOW", "MID LOW", "MID", "MID HIGH", "HIGH"]}
-          />
-          <div className={styles.noiseTypeToggle}>
-            <Switch
-              checked={type === "pink"}
-              onCheckedChange={(checked) =>
-                onTypeChange(checked ? "pink" : "white")
-              }
-              label={type === "pink" ? "Pink" : "White"}
+          <div className="row">
+            <Knob
+              value={tone}
+              min={0}
+              max={4}
+              step={1}
+              label="Freq"
+              onChange={onToneChange}
+              valueLabels={["LOW", "MID LOW", "MID", "MID HIGH", "HIGH"]}
             />
             <Switch
               checked={sync}
