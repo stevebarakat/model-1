@@ -919,10 +919,3 @@ export default async function createSynth() {
     handleNoteTransition,
   };
 }
-
-// Remove the synchronous usage since createSynth is async
-// const synth = createSynth();
-// synth.triggerAttack("C4");
-// synth.triggerRelease("C4");
-// // When done
-// synth.dispose();
