@@ -62,7 +62,7 @@ function Noise({
               onCheckedChange={(checked) =>
                 onTypeChange(checked ? "pink" : "white")
               }
-              label="Pink"
+              label={type === "pink" ? "Pink" : "White"}
             />
             <Switch
               checked={sync}
