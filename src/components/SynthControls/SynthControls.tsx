@@ -28,6 +28,7 @@ type SynthControlsProps = {
     pan: number;
     type: "white" | "pink";
     tone: number;
+    sync: boolean;
   };
   modifiers: {
     cutoff: number;
@@ -136,12 +137,14 @@ function SynthControls({
         pan={noise.pan}
         type={noise.type}
         tone={noise.tone}
+        sync={noise.sync}
         onVolumeChange={(value: number) => onNoiseChange({ volume: value })}
         onPanChange={(value: number) => onNoiseChange({ pan: value })}
         onTypeChange={(value: "white" | "pink") =>
           onNoiseChange({ type: value })
         }
         onToneChange={(value: number) => onNoiseChange({ tone: value })}
+        onSyncChange={(value: boolean) => onNoiseChange({ sync: value })}
       />
       <div className={styles.indent}></div>
       <Modifiers

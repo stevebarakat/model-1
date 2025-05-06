@@ -58,6 +58,7 @@ export type SynthSettings = {
     pan: number;
     type: "white" | "pink";
     tone: number; // 0-100, controls filter cutoff
+    sync: boolean; // whether to sync filter frequency with note frequency
   };
   filter: {
     cutoff: number;

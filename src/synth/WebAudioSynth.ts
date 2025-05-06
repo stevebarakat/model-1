@@ -79,6 +79,7 @@ function createInitialState(): SynthState {
         pan: 0,
         type: "white",
         tone: 50,
+        sync: false,
       },
       filter: {
         cutoff: 2000,
@@ -261,6 +262,13 @@ export default async function createSynth() {
     }
 
     if (newSettings.noise) {
+      // Update state first
+      if (newSettings.noise.sync !== undefined) {
+        state.settings.noise.sync = newSettings.noise.sync;
+      }
+      if (newSettings.noise.tone !== undefined) {
+        state.settings.noise.tone = newSettings.noise.tone;
+      }
       if (newSettings.noise.volume !== undefined) {
         const newVolume = newSettings.noise.volume;
         synthContext.noiseGain.gain.value = newVolume;
@@ -268,15 +276,28 @@ export default async function createSynth() {
       if (newSettings.noise.pan !== undefined) {
         synthContext.noisePanner.pan.value = newSettings.noise.pan;
       }
-      if (newSettings.noise.tone !== undefined) {
+      if (
+        newSettings.noise.tone !== undefined ||
+        newSettings.noise.sync !== undefined
+      ) {
         // Update tone for all active notes
-        state.activeNotes.forEach((noteData) => {
+        state.activeNotes.forEach((noteData, note) => {
           if (noteData.noiseFilter) {
-            const minFreq = 20;
-            const maxFreq = 20000;
-            const freq =
-              minFreq *
-              Math.pow(maxFreq / minFreq, newSettings.noise!.tone / 100);
+            // Map tone (0-4) to frequency ranges
+            const baseFreq =
+              state.settings.noise.tone === 0
+                ? 200
+                : state.settings.noise.tone === 1
+                ? 800
+                : state.settings.noise.tone === 2
+                ? 2000
+                : state.settings.noise.tone === 3
+                ? 5000
+                : 20000;
+            const noteFreq = noteToFrequency(note, state.settings.tune);
+            const freq = state.settings.noise.sync
+              ? noteFreq * (baseFreq / 440)
+              : baseFreq;
             noteData.noiseFilter.frequency.value = freq;
           }
         });
@@ -567,12 +588,21 @@ export default async function createSynth() {
         // Create noise filter
         noiseFilter = synthContext.context.createBiquadFilter();
         noiseFilter.type = "lowpass";
-        // Map tone (0-100) to frequency range (20Hz - 20kHz)
-        const minFreq = 20;
-        const maxFreq = 20000;
-        const freq =
-          minFreq *
-          Math.pow(maxFreq / minFreq, state.settings.noise.tone / 100);
+        // Map tone (0-4) to frequency ranges
+        const baseFreq =
+          state.settings.noise.tone === 0
+            ? 200
+            : state.settings.noise.tone === 1
+            ? 800
+            : state.settings.noise.tone === 2
+            ? 2000
+            : state.settings.noise.tone === 3
+            ? 5000
+            : 20000;
+        const noteFreq = targetFrequency;
+        const freq = state.settings.noise.sync
+          ? noteFreq * (baseFreq / 440)
+          : baseFreq;
         noiseFilter.frequency.value = freq;
         noiseFilter.Q.value = 1;
 

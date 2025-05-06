@@ -85,6 +85,7 @@ function App() {
           pan: noise.pan,
           type: noise.type,
           tone: noise.tone,
+          sync: noise.sync,
         },
         envelope: {
           attack: modifiers.envelope.attack,

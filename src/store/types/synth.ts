@@ -41,6 +41,7 @@ export type SynthState = {
     pan: number;
     type: "white" | "pink";
     tone: number;
+    sync: boolean;
   };
 
   // Modifier state

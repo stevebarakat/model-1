@@ -7,10 +7,12 @@ type NoiseProps = {
   pan: number;
   type: "white" | "pink";
   tone: number;
+  sync: boolean;
   onVolumeChange: (value: number) => void;
   onPanChange: (value: number) => void;
   onTypeChange: (type: "white" | "pink") => void;
   onToneChange: (value: number) => void;
+  onSyncChange: (sync: boolean) => void;
 };
 
 function Noise({
@@ -18,10 +20,12 @@ function Noise({
   pan,
   type,
   tone,
+  sync,
   onVolumeChange,
   onPanChange,
   onTypeChange,
   onToneChange,
+  onSyncChange,
 }: NoiseProps) {
   return (
     <div className="box">
@@ -45,11 +49,12 @@ function Noise({
           />
           <Knob
             value={tone}
-            min={20}
-            max={100}
+            min={0}
+            max={4}
             step={1}
-            label="Tone"
+            label="Freq"
             onChange={onToneChange}
+            valueLabels={["LOW", "MID LOW", "MID", "MID HIGH", "HIGH"]}
           />
           <div className={styles.noiseTypeToggle}>
             <Switch
@@ -58,6 +63,11 @@ function Noise({
                 onTypeChange(checked ? "pink" : "white")
               }
               label="Pink"
+            />
+            <Switch
+              checked={sync}
+              onCheckedChange={onSyncChange}
+              label="Sync"
             />
           </div>
         </div>
