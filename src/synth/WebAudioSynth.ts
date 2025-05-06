@@ -821,75 +821,54 @@ export default async function createSynth() {
     noteState.isReleased = true;
     noteState.releaseTime = now;
 
-    noteData.gainNode.gain.cancelScheduledValues(now);
-    noteData.filterEnvelope.gain.cancelScheduledValues(now);
+    // Handle gain and filter envelope release
+    const handleRelease = (node: GainNode, currentValue: number) => {
+      node.gain.cancelScheduledValues(now);
+      node.gain.setValueAtTime(currentValue, now);
+      node.gain.exponentialRampToValueAtTime(
+        0.001,
+        now + state.settings.envelope.release
+      );
+    };
 
-    const currentGain = noteData.gainNode.gain.value;
-    const currentFilterGain = noteData.filterEnvelope.gain.value;
+    handleRelease(noteData.gainNode, noteData.gainNode.gain.value);
+    handleRelease(noteData.filterEnvelope, noteData.filterEnvelope.gain.value);
 
-    noteData.gainNode.gain.setValueAtTime(currentGain, now);
-    noteData.gainNode.gain.exponentialRampToValueAtTime(
-      0.001,
-      now + state.settings.envelope.release
-    );
-
-    noteData.filterEnvelope.gain.setValueAtTime(currentFilterGain, now);
-    noteData.filterEnvelope.gain.exponentialRampToValueAtTime(
-      0.001,
-      now + state.settings.envelope.release
-    );
-
+    // Disconnect LFO connections
     noteData.lfo.stop();
-    noteData.lfoGains.filterCutoff.disconnect();
-    noteData.lfoGains.filterResonance.disconnect();
-    noteData.lfoGains.oscillatorPitch.disconnect();
-    noteData.lfoGains.oscillatorVolume.disconnect();
+    Object.values(noteData.lfoGains).forEach((gain) => gain.disconnect());
 
+    // Cleanup function to handle node disconnection
+    const disconnectNode = (node: AudioNode | null, nodeName: string) => {
+      if (!node) return;
+      try {
+        node.disconnect();
+      } catch (e) {
+        console.warn(`Error stopping ${nodeName}:`, e);
+      }
+    };
+
+    // Schedule cleanup after release
     setTimeout(() => {
       const currentState = state.noteStates.get(note);
       if (!currentState || !currentState.isReleased) return;
 
       if (state.activeNotes.has(note)) {
-        noteData.oscillators.forEach((osc) => {
-          if (osc) {
-            try {
-              osc.stop();
-              osc.disconnect();
-            } catch (e) {
-              console.warn("Error stopping oscillator:", e);
-            }
-          }
-        });
+        // Cleanup oscillators
+        noteData.oscillators.forEach((osc) =>
+          disconnectNode(osc, "oscillator")
+        );
 
-        try {
-          noteData.gainNode.disconnect();
-        } catch (e) {
-          console.warn("Error stopping gain node:", e);
-        }
+        // Cleanup main nodes
+        disconnectNode(noteData.gainNode, "gain node");
+        disconnectNode(noteData.filterNode, "filter");
+        disconnectNode(noteData.filterEnvelope, "filter envelope");
+        disconnectNode(noteData.filterModGain, "filter mod gain");
 
-        try {
-          noteData.filterNode.disconnect();
-        } catch (e) {
-          console.warn("Error stopping filter:", e);
-        }
-
-        try {
-          noteData.filterEnvelope.disconnect();
-          noteData.filterModGain.disconnect();
-        } catch (e) {
-          console.warn("Error stopping filter envelope:", e);
-        }
-
-        // Clean up noise nodes
-        if (noteData.noiseNode) {
-          try {
-            noteData.noiseNode.disconnect();
-            if (noteData.noiseGain) noteData.noiseGain.disconnect();
-            if (noteData.noisePanner) noteData.noisePanner.disconnect();
-          } catch (e) {
-            console.warn("Error stopping noise nodes:", e);
-          }
-        }
+        // Cleanup noise nodes
+        disconnectNode(noteData.noiseNode, "noise node");
+        disconnectNode(noteData.noiseGain, "noise gain");
+        disconnectNode(noteData.noisePanner, "noise panner");
 
         state.activeNotes.delete(note);
         state.noteStates.delete(note);
