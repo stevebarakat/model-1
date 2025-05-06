@@ -4,17 +4,17 @@
   --color-background: hsl(0deg 0% 10%);
   --color-text-primary: hsl(220deg 13% 90%);
   --color-text-secondary: hsl(220deg 13% 70%);
-  --color-off-black: hsl(217deg 32% 5%);
+  --color-off-black: hsl(0deg 0% 5%);
 
   /* Synth UI Colors */
-  --synth-border: hsl(217deg 30% 40% / 40%);
-  --synth-bg: hsl(217deg 39% 15%);
+  --synth-border: hsl(0deg 0% 40% / 40%);
+  --synth-bg: hsl(0deg 0% 15%);
 
   /* Control Colors */
-  --control-bg: hsl(217deg 32% 3%);
-  --control-border: hsl(217deg 30% 40% / 40%);
-  --control-hover: hsl(217deg 32% 8%);
-  --control-active: hsl(217deg 32% 12%);
+  --control-bg: hsl(0deg 0% 3%);
+  --control-border: hsl(0deg 0% 40% / 40%);
+  --control-hover: hsl(0deg 0% 8%);
+  --control-active: hsl(0deg 0% 12%);
 
   /* Spacing System */
   --spacing-xs: 0.25rem;
