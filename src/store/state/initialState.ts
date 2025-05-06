@@ -41,7 +41,7 @@ export function createInitialState(): Omit<
       volume: 0,
       pan: 0,
       type: "white",
-      tone: 50,
+      tone: 440,
       sync: false,
     },
     modifiers: {
