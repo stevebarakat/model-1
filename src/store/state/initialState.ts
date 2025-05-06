@@ -23,7 +23,7 @@ export function createInitialState(): Omit<
     pitchWheel: 50,
     modWheel: 50,
     tune: 0,
-    modMix: 0,
+    modMix: 50,
     currentOctave: 4,
     glide: 0,
     oscillators: {
@@ -35,7 +35,7 @@ export function createInitialState(): Omit<
       osc1Volume: 0.7,
       osc2Volume: 0.7,
       osc3Volume: 0.7,
-      modMix: 0,
+      modMix: 50,
     },
     noise: {
       volume: 0,

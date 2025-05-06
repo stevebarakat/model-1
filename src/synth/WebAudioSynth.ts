@@ -163,6 +163,8 @@ function createLFOConnections(
   noteData: NoteData,
   routing: LFORouting
 ): LFOConnection[] {
+  console.log("Creating LFO connections:", { routing });
+
   return [
     {
       source: noteData.lfoGains.filterCutoff,
@@ -188,24 +190,23 @@ function createLFOConnections(
 }
 
 function updateLFOConnections(noteData: NoteData, routing: LFORouting): void {
+  console.log("Updating LFO connections:", { routing });
+
   const connections = createLFOConnections(noteData, routing);
 
   // First disconnect all connections
-  connections.forEach(({ source }) => source.disconnect());
+  connections.forEach(({ source }) => {
+    console.log("Disconnecting LFO gain:", source);
+    source.disconnect();
+  });
 
   // Then connect enabled ones
   connections
     .filter(({ enabled, target }) => enabled && target)
-    .forEach(({ source, target }) => source.connect(target));
-}
-
-function disconnectLFO(noteData: NoteData): void {
-  updateLFOConnections(noteData, {
-    filterCutoff: false,
-    filterResonance: false,
-    oscillatorPitch: false,
-    oscillatorVolume: false,
-  });
+    .forEach(({ source, target }) => {
+      console.log("Connecting LFO gain to target:", { source, target });
+      source.connect(target);
+    });
 }
 
 function reconnectLFO(noteData: NoteData, routing: LFORouting): void {
@@ -362,20 +363,33 @@ function updateModulation(
   state: SynthState,
   modAmount: number
 ): void {
+  console.log("Updating modulation:", {
+    modAmount,
+    modWheel: state.settings.modWheel,
+    modMix: state.settings.modMix,
+  });
+
   const baseCutoff = Math.min(
     Math.max(state.settings.filter.cutoff, 20),
     20000
   );
 
   const updateNoteModulation = (noteData: NoteData) => {
-    if (!noteData.lfo) return;
-
-    if (modAmount === 0) {
-      disconnectLFO(noteData);
-    } else {
-      reconnectLFO(noteData, state.settings.lfo.routing);
+    if (!noteData.lfo) {
+      console.log("No LFO found for note");
+      return;
     }
 
+    console.log("Updating note modulation:", {
+      lfoType: noteData.lfo.type,
+      lfoRate: noteData.lfo.frequency.value,
+      routing: state.settings.lfo.routing,
+    });
+
+    // Always reconnect LFO with current routing
+    reconnectLFO(noteData, state.settings.lfo.routing);
+
+    // Update LFO gains based on modulation amount
     updateLFOGains(
       noteData,
       modAmount,
@@ -395,33 +409,40 @@ function updateLFOGains(
   baseCutoff: number,
   currentTime: number
 ): void {
+  console.log("Updating LFO gains:", { modAmount, lfoDepth, baseCutoff });
+
   const smoothingTime = 0.01;
 
   const lfoGainConfigs = [
     {
       gain: noteData.lfoGains.filterCutoff.gain,
       multiplier: baseCutoff,
+      name: "filterCutoff",
     },
     {
       gain: noteData.lfoGains.filterResonance.gain,
       multiplier: 30,
+      name: "filterResonance",
     },
     {
       gain: noteData.lfoGains.oscillatorPitch.gain,
       multiplier: 100,
+      name: "oscillatorPitch",
     },
     {
       gain: noteData.lfoGains.oscillatorVolume.gain,
       multiplier: 1,
+      name: "oscillatorVolume",
     },
   ];
 
-  lfoGainConfigs.forEach(({ gain, multiplier }) => {
-    gain.setTargetAtTime(
-      modAmount * lfoDepth * multiplier,
-      currentTime,
-      smoothingTime
-    );
+  lfoGainConfigs.forEach(({ gain, multiplier, name }) => {
+    const targetValue = modAmount * lfoDepth * multiplier;
+    console.log(`Setting ${name} gain:`, {
+      targetValue,
+      currentValue: gain.value,
+    });
+    gain.setTargetAtTime(targetValue, currentTime, smoothingTime);
   });
 }
 
@@ -608,6 +629,7 @@ export default async function createSynth() {
       newSettings.lfo?.depth !== undefined ||
       newSettings.lfo?.routing !== undefined
     ) {
+      // Update LFO settings for all active notes
       state.activeNotes.forEach((noteData) => {
         if (noteData.lfo) {
           if (newSettings.lfo?.waveform !== undefined) {
@@ -616,67 +638,15 @@ export default async function createSynth() {
           if (newSettings.lfo?.rate !== undefined) {
             noteData.lfo.frequency.value = newSettings.lfo.rate;
           }
-          if (newSettings.lfo?.depth !== undefined) {
-            const baseCutoff = Math.min(
-              Math.max(state.settings.filter.cutoff, 20),
-              20000
-            );
-            const currentTime = synthContext.context.currentTime;
-            const smoothingTime = 0.01; // 10ms smoothing
-            noteData.lfoGains.filterCutoff.gain.setTargetAtTime(
-              newSettings.lfo.depth * baseCutoff,
-              currentTime,
-              smoothingTime
-            );
-            noteData.lfoGains.filterResonance.gain.setTargetAtTime(
-              newSettings.lfo.depth * 30,
-              currentTime,
-              smoothingTime
-            );
-            noteData.lfoGains.oscillatorPitch.gain.setTargetAtTime(
-              newSettings.lfo.depth * 100,
-              currentTime,
-              smoothingTime
-            );
-            noteData.lfoGains.oscillatorVolume.gain.setTargetAtTime(
-              newSettings.lfo.depth,
-              currentTime,
-              smoothingTime
-            );
-          }
           if (newSettings.lfo?.routing !== undefined) {
-            // Disconnect all LFO connections
-            noteData.lfoGains.filterCutoff.disconnect();
-            noteData.lfoGains.filterResonance.disconnect();
-            noteData.lfoGains.oscillatorPitch.disconnect();
-            noteData.lfoGains.oscillatorVolume.disconnect();
-
-            // Reconnect based on new routing settings
-            if (newSettings.lfo.routing.filterCutoff) {
-              noteData.lfoGains.filterCutoff.connect(
-                noteData.filterNode.frequency
-              );
-            }
-            if (newSettings.lfo.routing.filterResonance) {
-              noteData.lfoGains.filterResonance.connect(noteData.filterNode.Q);
-            }
-            if (newSettings.lfo.routing.oscillatorPitch) {
-              noteData.oscillators.forEach((osc) => {
-                if (osc) {
-                  noteData.lfoGains.oscillatorPitch.connect(osc.detune);
-                }
-              });
-            }
-            if (newSettings.lfo.routing.oscillatorVolume) {
-              noteData.oscillatorGains.forEach((gain) => {
-                if (gain) {
-                  noteData.lfoGains.oscillatorVolume.connect(gain.gain);
-                }
-              });
-            }
+            reconnectLFO(noteData, newSettings.lfo.routing);
           }
         }
       });
+
+      // Update modulation amount for all active notes
+      const modAmount = (state.settings.modWheel / 100) * state.settings.modMix;
+      updateModulation(synthContext, state, modAmount);
     }
 
     if (newSettings.oscillators && Array.isArray(newSettings.oscillators)) {
@@ -699,6 +669,7 @@ export default async function createSynth() {
 
   function triggerAttack(note: Note): void {
     const now = synthContext.context.currentTime;
+    console.log("Triggering attack for note:", note);
 
     state.noteStates.set(note, {
       isPlaying: true,
@@ -716,6 +687,7 @@ export default async function createSynth() {
     if (state.activeNotes.has(note)) {
       const existingNote = state.activeNotes.get(note);
       if (existingNote) {
+        console.log("Cleaning up existing note");
         const cleanupNode = (node: AudioNode | null, name: string) => {
           if (!node) return;
           try {
@@ -744,9 +716,13 @@ export default async function createSynth() {
     const hasActiveOscillators = state.settings.oscillators.some(
       (osc) => (osc.volume ?? 0) > 0
     );
-    if (!hasActiveOscillators) return;
+    if (!hasActiveOscillators) {
+      console.log("No active oscillators, skipping note creation");
+      return;
+    }
 
     const targetFrequency = noteToFrequency(note, state.settings.tune);
+    console.log("Creating note with frequency:", targetFrequency);
 
     // Create main audio chain
     const noteGain = createGainNode(synthContext.context, 0);
@@ -769,6 +745,12 @@ export default async function createSynth() {
     const lfo = synthContext.context.createOscillator();
     lfo.type = state.settings.lfo.waveform;
     lfo.frequency.value = state.settings.lfo.rate;
+    console.log("Created LFO:", {
+      type: lfo.type,
+      rate: lfo.frequency.value,
+      depth: state.settings.lfo.depth,
+      routing: state.settings.lfo.routing,
+    });
 
     const lfoGains = {
       filterCutoff: createGainNode(synthContext.context, 0),
@@ -855,8 +837,8 @@ export default async function createSynth() {
       now + state.settings.envelope.attack + state.settings.envelope.decay
     );
 
-    // Store the note data
-    state.activeNotes.set(note, {
+    // Create the note data object
+    const noteData: NoteData = {
       oscillators: oscillatorChains
         .map((chain) => chain.oscillator)
         .filter((osc): osc is OscillatorNode => osc !== null),
@@ -876,7 +858,24 @@ export default async function createSynth() {
       noiseGain,
       noisePanner,
       noiseFilter,
+    };
+
+    console.log("Created note data:", {
+      hasOscillators: noteData.oscillators.length > 0,
+      hasFilter: !!noteData.filterNode,
+      hasLFO: !!noteData.lfo,
+      lfoGains: Object.keys(noteData.lfoGains),
     });
+
+    // Set up LFO connections
+    reconnectLFO(noteData, state.settings.lfo.routing);
+
+    // Store the note data
+    state.activeNotes.set(note, noteData);
+
+    // Apply initial modulation
+    const modAmount = (state.settings.modWheel / 100) * state.settings.modMix;
+    updateModulation(synthContext, state, modAmount);
   }
 
   function triggerRelease(note: Note): void {

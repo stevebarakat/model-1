@@ -155,7 +155,7 @@ function App() {
             onPitchWheelChange={setPitchWheel}
             onModWheelChange={(value) => {
               setModWheel(value);
-              updateMixer({ modMix: value / 100 });
+              updateMixer({ modMix: value });
             }}
             onPitchWheelReset={() => setPitchWheel(50)}
             glide={glide}
