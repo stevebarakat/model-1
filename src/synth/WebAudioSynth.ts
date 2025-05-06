@@ -228,7 +228,6 @@ export default async function createSynth() {
     await synthContext.context.audioWorklet.addModule(
       "/pink-noise-processor.js"
     );
-    console.log("Noise processors loaded successfully");
   } catch (error) {
     console.error("Failed to load noise processors:", error);
   }
