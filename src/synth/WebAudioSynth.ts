@@ -309,47 +309,32 @@ function createNoiseChain(
     const noiseFilter = context.createBiquadFilter();
     noiseFilter.type = "lowpass";
 
-    // Use tone value directly as frequency
-    const baseFreq = Math.max(20, Math.min(20000, settings.tone));
-
-    // Calculate final frequency with validation
-    let freq = baseFreq;
-    if (
-      settings.sync &&
-      Number.isFinite(targetFrequency) &&
-      targetFrequency > 0
-    ) {
-      const ratio = baseFreq / 440;
-      freq = targetFrequency * ratio;
-
-      // Ensure frequency is within valid range (20Hz to 20kHz)
-      freq = Math.max(20, Math.min(freq, 20000));
-
-      // Double check the result is finite
-      if (!Number.isFinite(freq)) {
-        console.warn("Calculated frequency is non-finite:", {
-          targetFrequency,
-          baseFreq,
-          ratio,
-          calculatedFreq: freq,
-        });
-        freq = baseFreq; // Fallback to base frequency
-      }
-    }
-
-    // Final validation before setting the frequency
-    if (Number.isFinite(freq) && freq >= 20 && freq <= 20000) {
-      noiseFilter.frequency.value = freq;
+    // Calculate filter frequency
+    let freq;
+    if (settings.sync) {
+      // When sync is enabled, use tone as a multiplier of the note frequency
+      // Map tone (20-20000) to a multiplier (0.045-45)
+      const toneMultiplier = settings.tone / 440;
+      freq = targetFrequency * toneMultiplier;
     } else {
-      console.warn(
-        "Invalid frequency value:",
-        freq,
-        "using base frequency:",
-        baseFreq
-      );
-      noiseFilter.frequency.value = baseFreq;
+      // When sync is disabled, use tone directly as the filter frequency
+      freq = settings.tone;
     }
 
+    // Ensure frequency is within valid range
+    freq = Math.max(20, Math.min(freq, 20000));
+
+    // Double check the result is finite
+    if (!Number.isFinite(freq)) {
+      console.warn("Calculated frequency is non-finite:", {
+        targetFrequency,
+        tone: settings.tone,
+        calculatedFreq: freq,
+      });
+      freq = settings.tone; // Fallback to direct tone value
+    }
+
+    noiseFilter.frequency.value = freq;
     noiseFilter.Q.value = 1;
 
     noiseNode.connect(noiseGain);
@@ -507,11 +492,21 @@ export default async function createSynth() {
         // Update tone for all active notes
         state.activeNotes.forEach((noteData, note) => {
           if (noteData.noiseFilter) {
-            const baseFreq = state.settings.noise.tone;
             const noteFreq = noteToFrequency(note, state.settings.tune);
-            const freq = state.settings.noise.sync
-              ? noteFreq * (baseFreq / 440)
-              : baseFreq;
+            let freq;
+
+            if (state.settings.noise.sync) {
+              // When sync is enabled, use tone as a multiplier of the note frequency
+              // Map tone (20-20000) to a multiplier (0.045-45)
+              const toneMultiplier = state.settings.noise.tone / 440;
+              freq = noteFreq * toneMultiplier;
+            } else {
+              // When sync is disabled, use tone directly as the filter frequency
+              freq = state.settings.noise.tone;
+            }
+
+            // Ensure frequency is within valid range
+            freq = Math.max(20, Math.min(freq, 20000));
             noteData.noiseFilter.frequency.value = freq;
           }
         });
