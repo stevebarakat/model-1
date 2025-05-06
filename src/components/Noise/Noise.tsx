@@ -58,12 +58,12 @@ function Noise({
           <div className="row">
             <Knob
               value={tone}
-              min={0}
-              max={4}
+              min={20}
+              max={20000}
               step={1}
               label="Freq"
               onChange={onToneChange}
-              valueLabels={["LOW", "MID LOW", "MID", "MID HIGH", "HIGH"]}
+              logarithmic={true}
             />
             <Switch
               checked={sync}

@@ -1,4 +1,11 @@
-import { Note, NoteData, NoteState, SynthSettings } from "./types";
+import {
+  Note,
+  NoteData,
+  NoteState,
+  SynthSettings,
+  OscillatorType,
+  RangeType,
+} from "./types";
 import { noteToFrequency, getRangeMultiplier } from "./utils/frequency";
 import { createOscillator, createGainNode } from "./audio/nodes";
 import { setupEffects } from "./audio/effects";
@@ -21,6 +28,37 @@ type SynthState = {
   settings: SynthSettings;
 };
 
+type LFORouting = {
+  filterCutoff: boolean;
+  filterResonance: boolean;
+  oscillatorPitch: boolean;
+  oscillatorVolume: boolean;
+};
+
+type LFOConnection = {
+  source: GainNode;
+  target: AudioParam;
+  enabled: boolean;
+};
+
+type OscillatorSettings = {
+  waveform: OscillatorType;
+  frequency: number;
+  range: RangeType;
+  detune: number;
+  volume?: number;
+  type?: OscillatorType;
+  pan?: number;
+};
+
+type NoiseSettings = {
+  volume: number;
+  pan: number;
+  type: "white" | "pink";
+  tone: number;
+  sync: boolean;
+};
+
 function createSynthContext(): SynthContext {
   const context = new AudioContext();
   const { masterGain, delayGain, reverbGain, dryGain, wetGain } =
@@ -29,6 +67,10 @@ function createSynthContext(): SynthContext {
   const noisePanner = context.createStereoPanner();
   noiseGain.connect(noisePanner);
   noisePanner.connect(masterGain);
+
+  // Ensure master gain is connected to destination
+  masterGain.connect(context.destination);
+
   return {
     context,
     masterGain,
@@ -117,71 +159,248 @@ function createInitialState(): SynthState {
   };
 }
 
+function createLFOConnections(
+  noteData: NoteData,
+  routing: LFORouting
+): LFOConnection[] {
+  return [
+    {
+      source: noteData.lfoGains.filterCutoff,
+      target: noteData.filterNode.frequency,
+      enabled: routing.filterCutoff,
+    },
+    {
+      source: noteData.lfoGains.filterResonance,
+      target: noteData.filterNode.Q,
+      enabled: routing.filterResonance,
+    },
+    {
+      source: noteData.lfoGains.oscillatorPitch,
+      target: noteData.oscillators[0]?.detune,
+      enabled: routing.oscillatorPitch,
+    },
+    {
+      source: noteData.lfoGains.oscillatorVolume,
+      target: noteData.oscillatorGains[0]?.gain,
+      enabled: routing.oscillatorVolume,
+    },
+  ];
+}
+
+function updateLFOConnections(noteData: NoteData, routing: LFORouting): void {
+  const connections = createLFOConnections(noteData, routing);
+
+  // First disconnect all connections
+  connections.forEach(({ source }) => source.disconnect());
+
+  // Then connect enabled ones
+  connections
+    .filter(({ enabled, target }) => enabled && target)
+    .forEach(({ source, target }) => source.connect(target));
+}
+
+function disconnectLFO(noteData: NoteData): void {
+  updateLFOConnections(noteData, {
+    filterCutoff: false,
+    filterResonance: false,
+    oscillatorPitch: false,
+    oscillatorVolume: false,
+  });
+}
+
+function reconnectLFO(noteData: NoteData, routing: LFORouting): void {
+  updateLFOConnections(noteData, routing);
+}
+
+function createOscillatorChain(
+  context: AudioContext,
+  oscSettings: OscillatorSettings,
+  baseFrequency: number,
+  startTime: number,
+  lastFrequency: number | null,
+  glide: number
+): {
+  oscillator: OscillatorNode | null;
+  gain: GainNode | null;
+  panner: StereoPannerNode | null;
+} {
+  if ((oscSettings.volume ?? 0) <= 0) {
+    return {
+      oscillator: null,
+      gain: null,
+      panner: null,
+    };
+  }
+
+  const rangeMultiplier = getRangeMultiplier(oscSettings.range);
+  const frequencyOffset = Math.pow(2, oscSettings.frequency / 12);
+  const finalFrequency = baseFrequency * rangeMultiplier * frequencyOffset;
+  const startFrequency =
+    glide > 0 && lastFrequency
+      ? lastFrequency * rangeMultiplier * frequencyOffset
+      : finalFrequency;
+
+  const oscillator = createOscillator(
+    context,
+    {
+      ...oscSettings,
+      type: oscSettings.waveform,
+    },
+    startFrequency
+  );
+
+  const gain = createGainNode(context, oscSettings.volume ?? 0);
+  const panner = context.createStereoPanner();
+  panner.pan.value = oscSettings.pan ?? 0;
+
+  oscillator.connect(gain);
+  gain.connect(panner);
+  oscillator.start(startTime);
+
+  if (glide > 0 && lastFrequency) {
+    const glideTime = glide * 0.5;
+    oscillator.frequency.linearRampToValueAtTime(
+      finalFrequency,
+      startTime + glideTime
+    );
+  }
+
+  return { oscillator, gain, panner };
+}
+
+function createNoiseChain(
+  context: AudioContext,
+  settings: NoiseSettings,
+  targetFrequency: number
+): {
+  noiseNode: AudioWorkletNode | null;
+  noiseGain: GainNode | null;
+  noisePanner: StereoPannerNode | null;
+  noiseFilter: BiquadFilterNode | null;
+} {
+  if (settings.volume <= 0) {
+    return {
+      noiseNode: null,
+      noiseGain: null,
+      noisePanner: null,
+      noiseFilter: null,
+    };
+  }
+
+  try {
+    // Validate input parameters
+    if (!Number.isFinite(targetFrequency) || targetFrequency <= 0) {
+      console.warn("Invalid target frequency:", targetFrequency);
+      targetFrequency = 440; // Default to A4 if invalid
+    }
+
+    const processorName =
+      settings.type === "pink"
+        ? "pink-noise-processor"
+        : "white-noise-processor";
+    const noiseNode = new AudioWorkletNode(context, processorName);
+    const noiseGain = createGainNode(context, settings.volume);
+    const noisePanner = context.createStereoPanner();
+
+    // Validate pan value
+    const panValue = Math.max(-1, Math.min(1, settings.pan));
+    noisePanner.pan.value = panValue;
+
+    const noiseFilter = context.createBiquadFilter();
+    noiseFilter.type = "lowpass";
+
+    // Use tone value directly as frequency
+    const baseFreq = Math.max(20, Math.min(20000, settings.tone));
+
+    // Calculate final frequency with validation
+    let freq = baseFreq;
+    if (
+      settings.sync &&
+      Number.isFinite(targetFrequency) &&
+      targetFrequency > 0
+    ) {
+      const ratio = baseFreq / 440;
+      freq = targetFrequency * ratio;
+
+      // Ensure frequency is within valid range (20Hz to 20kHz)
+      freq = Math.max(20, Math.min(freq, 20000));
+
+      // Double check the result is finite
+      if (!Number.isFinite(freq)) {
+        console.warn("Calculated frequency is non-finite:", {
+          targetFrequency,
+          baseFreq,
+          ratio,
+          calculatedFreq: freq,
+        });
+        freq = baseFreq; // Fallback to base frequency
+      }
+    }
+
+    // Final validation before setting the frequency
+    if (Number.isFinite(freq) && freq >= 20 && freq <= 20000) {
+      noiseFilter.frequency.value = freq;
+    } else {
+      console.warn(
+        "Invalid frequency value:",
+        freq,
+        "using base frequency:",
+        baseFreq
+      );
+      noiseFilter.frequency.value = baseFreq;
+    }
+
+    noiseFilter.Q.value = 1;
+
+    noiseNode.connect(noiseGain);
+    noiseGain.connect(noiseFilter);
+    noiseFilter.connect(noisePanner);
+
+    return { noiseNode, noiseGain, noisePanner, noiseFilter };
+  } catch (error) {
+    console.error("Failed to create noise node:", error, {
+      settings,
+      targetFrequency,
+      context: context.state,
+    });
+    return {
+      noiseNode: null,
+      noiseGain: null,
+      noisePanner: null,
+      noiseFilter: null,
+    };
+  }
+}
+
 function updateModulation(
   synthContext: SynthContext,
   state: SynthState,
   modAmount: number
 ): void {
-  state.activeNotes.forEach((noteData) => {
-    if (noteData.lfo) {
-      const baseCutoff = Math.min(
-        Math.max(state.settings.filter.cutoff, 20),
-        20000
-      );
+  const baseCutoff = Math.min(
+    Math.max(state.settings.filter.cutoff, 20),
+    20000
+  );
 
-      if (modAmount === 0) {
-        disconnectLFO(noteData);
-      } else {
-        reconnectLFO(noteData, state.settings.lfo.routing);
-      }
+  const updateNoteModulation = (noteData: NoteData) => {
+    if (!noteData.lfo) return;
 
-      updateLFOGains(
-        noteData,
-        modAmount,
-        state.settings.lfo.depth,
-        baseCutoff,
-        synthContext.context.currentTime
-      );
+    if (modAmount === 0) {
+      disconnectLFO(noteData);
+    } else {
+      reconnectLFO(noteData, state.settings.lfo.routing);
     }
-  });
-}
 
-function disconnectLFO(noteData: NoteData): void {
-  noteData.lfoGains.filterCutoff.disconnect();
-  noteData.lfoGains.filterResonance.disconnect();
-  noteData.lfoGains.oscillatorPitch.disconnect();
-  noteData.lfoGains.oscillatorVolume.disconnect();
-}
+    updateLFOGains(
+      noteData,
+      modAmount,
+      state.settings.lfo.depth,
+      baseCutoff,
+      synthContext.context.currentTime
+    );
+  };
 
-function reconnectLFO(
-  noteData: NoteData,
-  routing: {
-    filterCutoff: boolean;
-    filterResonance: boolean;
-    oscillatorPitch: boolean;
-    oscillatorVolume: boolean;
-  }
-): void {
-  if (routing.filterCutoff) {
-    noteData.lfoGains.filterCutoff.connect(noteData.filterNode.frequency);
-  }
-  if (routing.filterResonance) {
-    noteData.lfoGains.filterResonance.connect(noteData.filterNode.Q);
-  }
-  if (routing.oscillatorPitch) {
-    noteData.oscillators.forEach((osc) => {
-      if (osc) {
-        noteData.lfoGains.oscillatorPitch.connect(osc.detune);
-      }
-    });
-  }
-  if (routing.oscillatorVolume) {
-    noteData.oscillatorGains.forEach((gain) => {
-      if (gain) {
-        noteData.lfoGains.oscillatorVolume.connect(gain.gain);
-      }
-    });
-  }
+  Array.from(state.activeNotes.values()).forEach(updateNoteModulation);
 }
 
 function updateLFOGains(
@@ -193,26 +412,32 @@ function updateLFOGains(
 ): void {
   const smoothingTime = 0.01;
 
-  noteData.lfoGains.filterCutoff.gain.setTargetAtTime(
-    modAmount * lfoDepth * baseCutoff,
-    currentTime,
-    smoothingTime
-  );
-  noteData.lfoGains.filterResonance.gain.setTargetAtTime(
-    modAmount * lfoDepth * 30,
-    currentTime,
-    smoothingTime
-  );
-  noteData.lfoGains.oscillatorPitch.gain.setTargetAtTime(
-    modAmount * lfoDepth * 100,
-    currentTime,
-    smoothingTime
-  );
-  noteData.lfoGains.oscillatorVolume.gain.setTargetAtTime(
-    modAmount * lfoDepth,
-    currentTime,
-    smoothingTime
-  );
+  const lfoGainConfigs = [
+    {
+      gain: noteData.lfoGains.filterCutoff.gain,
+      multiplier: baseCutoff,
+    },
+    {
+      gain: noteData.lfoGains.filterResonance.gain,
+      multiplier: 30,
+    },
+    {
+      gain: noteData.lfoGains.oscillatorPitch.gain,
+      multiplier: 100,
+    },
+    {
+      gain: noteData.lfoGains.oscillatorVolume.gain,
+      multiplier: 1,
+    },
+  ];
+
+  lfoGainConfigs.forEach(({ gain, multiplier }) => {
+    gain.setTargetAtTime(
+      modAmount * lfoDepth * multiplier,
+      currentTime,
+      smoothingTime
+    );
+  });
 }
 
 // Factory function to create a synth
@@ -282,17 +507,7 @@ export default async function createSynth() {
         // Update tone for all active notes
         state.activeNotes.forEach((noteData, note) => {
           if (noteData.noiseFilter) {
-            // Map tone (0-4) to frequency ranges
-            const baseFreq =
-              state.settings.noise.tone === 0
-                ? 200
-                : state.settings.noise.tone === 1
-                ? 800
-                : state.settings.noise.tone === 2
-                ? 2000
-                : state.settings.noise.tone === 3
-                ? 5000
-                : 20000;
+            const baseFreq = state.settings.noise.tone;
             const noteFreq = noteToFrequency(note, state.settings.tune);
             const freq = state.settings.noise.sync
               ? noteFreq * (baseFreq / 440)
@@ -497,56 +712,35 @@ export default async function createSynth() {
       releaseTime: null,
     });
 
-    // Find the last active note for glide before cleaning up
     const lastActiveNote = Array.from(state.activeNotes.keys())[0];
     const lastFrequency = lastActiveNote
       ? noteToFrequency(lastActiveNote, state.settings.tune)
       : null;
 
+    // Clean up existing note if present
     if (state.activeNotes.has(note)) {
       const existingNote = state.activeNotes.get(note);
       if (existingNote) {
-        existingNote.oscillators.forEach((osc) => {
-          if (osc) {
-            try {
-              osc.stop();
-              osc.disconnect();
-            } catch (e) {
-              console.warn("Error stopping oscillator:", e);
+        const cleanupNode = (node: AudioNode | null, name: string) => {
+          if (!node) return;
+          try {
+            if ("stop" in node && typeof node.stop === "function") {
+              node.stop();
             }
+            node.disconnect();
+          } catch (e) {
+            console.warn(`Error stopping ${name}:`, e);
           }
-        });
+        };
 
-        try {
-          existingNote.gainNode.gain.cancelScheduledValues(now);
-          existingNote.gainNode.gain.setValueAtTime(0, now);
-          existingNote.gainNode.disconnect();
-        } catch (e) {
-          console.warn("Error stopping gain node:", e);
-        }
-
-        try {
-          existingNote.filterNode.disconnect();
-        } catch (e) {
-          console.warn("Error stopping filter:", e);
-        }
-
-        try {
-          existingNote.lfo.stop();
-          existingNote.lfoGains.filterCutoff.disconnect();
-          existingNote.lfoGains.filterResonance.disconnect();
-          existingNote.lfoGains.oscillatorPitch.disconnect();
-          existingNote.lfoGains.oscillatorVolume.disconnect();
-        } catch (e) {
-          console.warn("Error stopping LFO:", e);
-        }
-
-        try {
-          existingNote.filterEnvelope.disconnect();
-          existingNote.filterModGain.disconnect();
-        } catch (e) {
-          console.warn("Error stopping filter envelope:", e);
-        }
+        existingNote.oscillators.forEach((osc) =>
+          cleanupNode(osc, "oscillator")
+        );
+        cleanupNode(existingNote.gainNode, "gain node");
+        cleanupNode(existingNote.filterNode, "filter");
+        cleanupNode(existingNote.lfo, "LFO");
+        cleanupNode(existingNote.filterEnvelope, "filter envelope");
+        cleanupNode(existingNote.filterModGain, "filter mod gain");
 
         state.activeNotes.delete(note);
       }
@@ -558,6 +752,8 @@ export default async function createSynth() {
     if (!hasActiveOscillators) return;
 
     const targetFrequency = noteToFrequency(note, state.settings.tune);
+
+    // Create main audio chain
     const noteGain = createGainNode(synthContext.context, 0);
     const filter = synthContext.context.createBiquadFilter();
     const baseCutoff = Math.min(
@@ -567,79 +763,18 @@ export default async function createSynth() {
     filter.type = state.settings.filter.type;
     filter.frequency.value = baseCutoff;
 
-    // Create noise node if noise is enabled
-    let noiseNode: AudioWorkletNode | null = null;
-    let noiseFilter: BiquadFilterNode | null = null;
-    if (state.settings.noise.volume > 0) {
-      try {
-        const processorName =
-          state.settings.noise.type === "pink"
-            ? "pink-noise-processor"
-            : "white-noise-processor";
-        noiseNode = new AudioWorkletNode(synthContext.context, processorName);
-        const noiseGain = createGainNode(
-          synthContext.context,
-          state.settings.noise.volume
-        );
-        const noisePanner = synthContext.context.createStereoPanner();
-        noisePanner.pan.value = state.settings.noise.pan;
-
-        // Create noise filter
-        noiseFilter = synthContext.context.createBiquadFilter();
-        noiseFilter.type = "lowpass";
-        // Map tone (0-4) to frequency ranges
-        const baseFreq =
-          state.settings.noise.tone === 0
-            ? 200
-            : state.settings.noise.tone === 1
-            ? 800
-            : state.settings.noise.tone === 2
-            ? 2000
-            : state.settings.noise.tone === 3
-            ? 5000
-            : 20000;
-        const noteFreq = targetFrequency;
-        const freq = state.settings.noise.sync
-          ? noteFreq * (baseFreq / 440)
-          : baseFreq;
-        noiseFilter.frequency.value = freq;
-        noiseFilter.Q.value = 1;
-
-        noiseNode.connect(noiseGain);
-        noiseGain.connect(noiseFilter);
-        noiseFilter.connect(noisePanner);
-        noisePanner.connect(noteGain);
-      } catch (error) {
-        console.error("Failed to create noise node:", error);
-      }
-    }
-
-    // Adjust Q value based on filter type
-    const baseQ = state.settings.filter.resonance * 30;
-    if (state.settings.filter.type === "notch") {
-      // Make notch filter more pronounced
-      filter.Q.value = baseQ * 2;
-    } else if (state.settings.filter.type === "bandpass") {
-      // Make bandpass filter more focused
-      filter.Q.value = baseQ * 1.5;
-    } else {
-      filter.Q.value = baseQ;
-    }
-
-    // Add gain boost for bandpass filter
-    const filterGain = createGainNode(
+    // Create noise chain
+    const { noiseNode, noiseGain, noisePanner, noiseFilter } = createNoiseChain(
       synthContext.context,
-      state.settings.filter.type === "bandpass" ? 4 : 1
+      state.settings.noise,
+      targetFrequency
     );
-    filter.connect(filterGain);
-    filterGain.connect(synthContext.masterGain);
 
     // Create LFO
     const lfo = synthContext.context.createOscillator();
     lfo.type = state.settings.lfo.waveform;
     lfo.frequency.value = state.settings.lfo.rate;
 
-    // Create LFO gains for each routing destination
     const lfoGains = {
       filterCutoff: createGainNode(synthContext.context, 0),
       filterResonance: createGainNode(synthContext.context, 0),
@@ -647,47 +782,52 @@ export default async function createSynth() {
       oscillatorVolume: createGainNode(synthContext.context, 0),
     };
 
-    // Connect LFO to each gain node
-    lfo.connect(lfoGains.filterCutoff);
-    lfo.connect(lfoGains.filterResonance);
-    lfo.connect(lfoGains.oscillatorPitch);
-    lfo.connect(lfoGains.oscillatorVolume);
-
-    // Connect each gain to its destination based on routing settings
-    if (state.settings.lfo.routing.filterCutoff) {
-      lfoGains.filterCutoff.connect(filter.frequency);
-    }
-    if (state.settings.lfo.routing.filterResonance) {
-      lfoGains.filterResonance.connect(filter.Q);
-    }
-
+    // Connect LFO
+    Object.values(lfoGains).forEach((gain) => lfo.connect(gain));
     lfo.start();
 
-    // Update LFO gains based on mod wheel and mod mix
-    const modAmount = (state.settings.modWheel / 100) * state.settings.modMix;
-    const currentTime = synthContext.context.currentTime;
-    const smoothingTime = 0.01; // 10ms smoothing
+    // Create oscillator chains
+    const oscillatorChains = state.settings.oscillators.map((oscSettings) => {
+      if ((oscSettings.volume ?? 0) <= 0) {
+        return {
+          oscillator: null,
+          gain: null,
+          panner: null,
+        };
+      }
 
-    lfoGains.filterCutoff.gain.setTargetAtTime(
-      modAmount * state.settings.lfo.depth * baseCutoff,
-      currentTime,
-      smoothingTime
+      return createOscillatorChain(
+        synthContext.context,
+        oscSettings,
+        targetFrequency,
+        now,
+        lastFrequency,
+        state.settings.glide
+      );
+    });
+
+    // Connect everything
+    const filterGain = createGainNode(
+      synthContext.context,
+      state.settings.filter.type === "bandpass" ? 4 : 1
     );
-    lfoGains.filterResonance.gain.setTargetAtTime(
-      modAmount * state.settings.lfo.depth * 30,
-      currentTime,
-      smoothingTime
-    );
-    lfoGains.oscillatorPitch.gain.setTargetAtTime(
-      modAmount * state.settings.lfo.depth * 100,
-      currentTime,
-      smoothingTime
-    );
-    lfoGains.oscillatorVolume.gain.setTargetAtTime(
-      modAmount * state.settings.lfo.depth,
-      currentTime,
-      smoothingTime
-    );
+
+    // Connect oscillators to note gain
+    oscillatorChains.forEach(({ oscillator, gain, panner }) => {
+      if (oscillator && gain && panner) {
+        panner.connect(noteGain);
+      }
+    });
+
+    // Connect noise chain if present
+    if (noiseNode && noiseGain && noisePanner) {
+      noisePanner.connect(noteGain);
+    }
+
+    // Connect main signal chain
+    noteGain.connect(filter);
+    filter.connect(filterGain);
+    filterGain.connect(synthContext.masterGain);
 
     const filterEnvelope = createGainNode(synthContext.context, 0);
     const filterModGain = createGainNode(
@@ -699,103 +839,38 @@ export default async function createSynth() {
     filterEnvelope.connect(filterModGain);
     filterModGain.connect(filter.frequency);
 
-    // Connect the main signal chain
-    noteGain.connect(filter);
-    filter.connect(synthContext.masterGain);
-
-    const oscillators: OscillatorNode[] = [];
-    const oscillatorGains: GainNode[] = [];
-    const oscillatorPanners: StereoPannerNode[] = [];
-
-    const startTime = now;
-
-    state.settings.oscillators.forEach((oscSettings) => {
-      const volume = oscSettings.volume ?? 0;
-      if (volume > 0) {
-        // Calculate the starting frequency based on glide
-        const rangeMultiplier = getRangeMultiplier(oscSettings.range);
-        const frequencyOffset = Math.pow(2, oscSettings.frequency / 12);
-        const finalFrequency =
-          targetFrequency * rangeMultiplier * frequencyOffset;
-
-        // If glide is enabled and we have a previous note, start from its frequency
-        const startFrequency =
-          state.settings.glide > 0 && lastFrequency
-            ? lastFrequency * rangeMultiplier * frequencyOffset
-            : finalFrequency;
-
-        const osc = createOscillator(
-          synthContext.context,
-          {
-            ...oscSettings,
-            type: oscSettings.waveform,
-          },
-          startFrequency
-        );
-
-        const gainNode = createGainNode(synthContext.context, volume);
-        const panner = synthContext.context.createStereoPanner();
-        panner.pan.value = oscSettings.pan ?? 0;
-
-        osc.connect(gainNode);
-        gainNode.connect(panner);
-        panner.connect(noteGain);
-        osc.start(startTime);
-
-        // Apply glide if enabled
-        if (state.settings.glide > 0 && lastFrequency) {
-          const glideTime = state.settings.glide * 0.5; // Scale glide time (0-1 to 0-0.5 seconds)
-          osc.frequency.linearRampToValueAtTime(
-            finalFrequency,
-            startTime + glideTime
-          );
-        }
-
-        // Connect LFO to oscillator if routing is enabled
-        if (state.settings.lfo.routing.oscillatorPitch) {
-          lfoGains.oscillatorPitch.connect(osc.detune);
-        }
-        if (state.settings.lfo.routing.oscillatorVolume) {
-          lfoGains.oscillatorVolume.connect(gainNode.gain);
-        }
-
-        oscillators.push(osc);
-        oscillatorGains.push(gainNode);
-        oscillatorPanners.push(panner);
-      } else {
-        oscillators.push(null as unknown as OscillatorNode);
-        oscillatorGains.push(null as unknown as GainNode);
-        oscillatorPanners.push(null as unknown as StereoPannerNode);
-      }
-    });
-
-    noteGain.gain.setValueAtTime(0, startTime);
+    // Set up envelopes
+    noteGain.gain.setValueAtTime(0, now);
     noteGain.gain.linearRampToValueAtTime(
       1,
-      startTime + state.settings.envelope.attack
+      now + state.settings.envelope.attack
     );
     noteGain.gain.linearRampToValueAtTime(
       state.settings.envelope.sustain,
-      startTime + state.settings.envelope.attack + state.settings.envelope.decay
+      now + state.settings.envelope.attack + state.settings.envelope.decay
     );
 
-    filterEnvelope.gain.setValueAtTime(0, startTime);
+    filterEnvelope.gain.setValueAtTime(0, now);
     filterEnvelope.gain.linearRampToValueAtTime(
       1,
-      startTime + state.settings.envelope.attack
+      now + state.settings.envelope.attack
     );
     filterEnvelope.gain.linearRampToValueAtTime(
       state.settings.envelope.sustain,
-      startTime + state.settings.envelope.attack + state.settings.envelope.decay
+      now + state.settings.envelope.attack + state.settings.envelope.decay
     );
 
-    noteGain.connect(filter);
-    filter.connect(synthContext.masterGain);
-
+    // Store the note data
     state.activeNotes.set(note, {
-      oscillators,
-      oscillatorGains,
-      oscillatorPanners,
+      oscillators: oscillatorChains
+        .map((chain) => chain.oscillator)
+        .filter((osc): osc is OscillatorNode => osc !== null),
+      oscillatorGains: oscillatorChains
+        .map((chain) => chain.gain)
+        .filter((gain): gain is GainNode => gain !== null),
+      oscillatorPanners: oscillatorChains
+        .map((chain) => chain.panner)
+        .filter((panner): panner is StereoPannerNode => panner !== null),
       gainNode: noteGain,
       filterNode: filter,
       lfo,
@@ -803,10 +878,8 @@ export default async function createSynth() {
       filterEnvelope,
       filterModGain,
       noiseNode,
-      noiseGain: noiseNode
-        ? createGainNode(synthContext.context, state.settings.noise.volume)
-        : null,
-      noisePanner: noiseNode ? synthContext.context.createStereoPanner() : null,
+      noiseGain,
+      noisePanner,
       noiseFilter,
     });
   }

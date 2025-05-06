@@ -10,15 +10,29 @@ type KnobProps = {
   unit?: string;
   onChange: (value: number) => void;
   valueLabels?: Record<number, string | React.ReactElement>;
+  logarithmic?: boolean;
 };
 
 type MousePosition = {
   clientY: number;
 };
 
-function getRotation(value: number, min: number, max: number): number {
+function getRotation(
+  value: number,
+  min: number,
+  max: number,
+  logarithmic: boolean
+): number {
   const range = max - min;
-  const percentage = (value - min) / range;
+  let percentage;
+  if (logarithmic) {
+    const logMin = Math.log(min);
+    const logMax = Math.log(max);
+    const logValue = Math.log(value);
+    percentage = (logValue - logMin) / (logMax - logMin);
+  } else {
+    percentage = (value - min) / range;
+  }
   return percentage * 300 - 150; // -150 to +150 degrees
 }
 
@@ -43,6 +57,7 @@ function Knob({
   unit = "",
   onChange,
   valueLabels,
+  logarithmic = false,
 }: KnobProps): React.ReactElement {
   const knobRef = useRef<HTMLDivElement>(null);
   const [isDragging, setIsDragging] = useState(false);
@@ -51,7 +66,7 @@ function Knob({
   const [startValue, setStartValue] = useState(0);
   const hasLabel = label !== "";
 
-  const rotation = getRotation(value, min, max);
+  const rotation = getRotation(value, min, max, logarithmic);
   const displayValue = getDisplayValue(value, step, unit, valueLabels);
   const ariaValueText =
     typeof displayValue === "string"
@@ -69,13 +84,29 @@ function Knob({
       const sensitivity = 1.0;
       const deltaY = (startY - e.clientY) * sensitivity;
       const range = max - min;
-      const newValue = Math.min(
-        max,
-        Math.max(min, startValue + (deltaY / 100) * range)
-      );
+      let newValue;
+
+      if (logarithmic) {
+        const logMin = Math.log(min);
+        const logMax = Math.log(max);
+        const logRange = logMax - logMin;
+        const logStartValue = Math.log(startValue);
+        const logDelta = (deltaY / 100) * logRange;
+        const logNewValue = Math.min(
+          logMax,
+          Math.max(logMin, logStartValue + logDelta)
+        );
+        newValue = Math.exp(logNewValue);
+      } else {
+        newValue = Math.min(
+          max,
+          Math.max(min, startValue + (deltaY / 100) * range)
+        );
+      }
+
       onChange(Number(newValue.toFixed(1)));
     },
-    [min, max, startY, startValue, onChange]
+    [min, max, startY, startValue, onChange, logarithmic]
   );
 
   const handleKeyDown = useCallback(
