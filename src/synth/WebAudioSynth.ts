@@ -734,6 +734,16 @@ export default async function createSynth() {
     filter.type = state.settings.filter.type;
     filter.frequency.value = baseCutoff;
 
+    // Set initial filter resonance
+    const baseQ = state.settings.filter.resonance * 30;
+    if (state.settings.filter.type === "notch") {
+      filter.Q.value = baseQ * 2;
+    } else if (state.settings.filter.type === "bandpass") {
+      filter.Q.value = baseQ * 1.5;
+    } else {
+      filter.Q.value = baseQ;
+    }
+
     // Create noise chain
     const { noiseNode, noiseGain, noisePanner, noiseFilter } = createNoiseChain(
       synthContext.context,
@@ -809,12 +819,17 @@ export default async function createSynth() {
     const filterEnvelope = createGainNode(synthContext.context, 0);
     const filterModGain = createGainNode(
       synthContext.context,
-      state.settings.filter.contourAmount * baseCutoff * 0.15
+      state.settings.filter.contourAmount * baseCutoff * 2
     );
 
+    // Connect filter envelope
     noteGain.connect(filterEnvelope);
     filterEnvelope.connect(filterModGain);
-    filterModGain.connect(filter.frequency);
+
+    // Set up filter frequency modulation
+    const filterFreq = filter.frequency;
+    filterFreq.setValueAtTime(baseCutoff, now);
+    filterModGain.connect(filterFreq);
 
     // Set up envelopes
     noteGain.gain.setValueAtTime(0, now);
@@ -827,6 +842,7 @@ export default async function createSynth() {
       now + state.settings.envelope.attack + state.settings.envelope.decay
     );
 
+    // Set up filter envelope with proper scaling
     filterEnvelope.gain.setValueAtTime(0, now);
     filterEnvelope.gain.linearRampToValueAtTime(
       1,
@@ -890,16 +906,26 @@ export default async function createSynth() {
 
     // Handle gain and filter envelope release
     const handleRelease = (node: GainNode, currentValue: number) => {
+      const releaseTime = now + state.settings.envelope.release;
       node.gain.cancelScheduledValues(now);
       node.gain.setValueAtTime(currentValue, now);
-      node.gain.exponentialRampToValueAtTime(
-        0.001,
-        now + state.settings.envelope.release
-      );
+      node.gain.linearRampToValueAtTime(0, releaseTime);
     };
 
-    handleRelease(noteData.gainNode, noteData.gainNode.gain.value);
-    handleRelease(noteData.filterEnvelope, noteData.filterEnvelope.gain.value);
+    if (noteData.gainNode) {
+      handleRelease(noteData.gainNode, noteData.gainNode.gain.value);
+    }
+
+    if (noteData.filterEnvelope) {
+      handleRelease(
+        noteData.filterEnvelope,
+        noteData.filterEnvelope.gain.value
+      );
+    }
+
+    if (noteData.noiseGain) {
+      handleRelease(noteData.noiseGain, noteData.noiseGain.gain.value);
+    }
 
     // Disconnect LFO connections
     noteData.lfo.stop();
