@@ -172,20 +172,26 @@ function Knob({
       ) : (
         hasLabel && <div className={styles.knobLabel}>{label}</div>
       )}
-      <div
-        ref={knobRef}
-        className={styles.knob}
-        style={{ transform: `rotate(${rotation}deg)` }}
-        onMouseDown={handleMouseDown}
-        tabIndex={0}
-        role="slider"
-        aria-valuemin={min}
-        aria-valuemax={max}
-        aria-valuenow={value}
-        aria-label={label}
-        aria-valuetext={ariaValueText}
-      />
-      {/* <div className={styles.knobGradient} /> */}
+      <div className={styles.knob}>
+        <div className={styles.topShadow}></div>
+        <div
+          className={styles.outerKnob}
+          ref={knobRef}
+          style={{ transform: `rotate(${rotation}deg)` }}
+          onMouseDown={handleMouseDown}
+          tabIndex={0}
+          role="slider"
+          aria-valuemin={min}
+          aria-valuemax={max}
+          aria-valuenow={value}
+          aria-label={label}
+          aria-valuetext={ariaValueText}
+        >
+          <div className={styles.brushedMetal}></div>
+          <div className={styles.innerKnob}></div>
+        </div>
+        <div className={styles.bottomShadow}></div>
+      </div>
     </div>
   );
 }

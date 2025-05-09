@@ -1,11 +1,22 @@
 {
   "styling": {
     "colors": "hsl",
-    "cssFramework": "css-modules"
+    "cssFramework": "css-modules",
+    "respectGlobalStyles": true
   },
   "codeGeneration": {
     "avoidPackages": ["tailwindcss"],
-    "preferredPackages": ["xstate", "zod", "react-router-dom"]
+    "preferredPackages": [
+      "postcss",
+      "autoprefixer",
+      "postcss-preset-env",
+      "stylelint",
+      "stylelint-order",
+      "stylelint-config-standard",
+      "react-router-dom",
+      "zustand",
+      "zod"
+    ]
   },
   "documentation": {
     "includeComments": false
@@ -19,6 +30,12 @@
   },
   "ui": {
     "iconLibrary": "lucide"
+  },
+  "programming": {
+    "paradigm": "functional",
+    "preferImmutability": true,
+    "preferPureFunctions": true,
+    "avoidSideEffects": true
   },
   "principles": {
     "singleResponsibility": {

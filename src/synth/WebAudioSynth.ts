@@ -23,8 +23,9 @@ type SynthContext = {
 };
 
 type SynthState = {
-  activeNotes: Map<Note, NoteData>;
-  noteStates: Map<Note, NoteState>;
+  currentNote: Note | null;
+  noteState: NoteState | null;
+  noteData: NoteData | null;
   settings: SynthSettings;
 };
 
@@ -86,8 +87,9 @@ function createSynthContext(): SynthContext {
 
 function createInitialState(): SynthState {
   return {
-    activeNotes: new Map<Note, NoteData>(),
-    noteStates: new Map<Note, NoteState>(),
+    currentNote: null,
+    noteState: null,
+    noteData: null,
     settings: {
       tune: 0,
       modMix: 0,
@@ -374,32 +376,28 @@ function updateModulation(
     20000
   );
 
-  const updateNoteModulation = (noteData: NoteData) => {
-    if (!noteData.lfo) {
-      console.log("No LFO found for note");
-      return;
-    }
+  if (!state.noteData || !state.noteData.lfo) {
+    console.log("No active note or LFO found");
+    return;
+  }
 
-    console.log("Updating note modulation:", {
-      lfoType: noteData.lfo.type,
-      lfoRate: noteData.lfo.frequency.value,
-      routing: state.settings.lfo.routing,
-    });
+  console.log("Updating note modulation:", {
+    lfoType: state.noteData.lfo.type,
+    lfoRate: state.noteData.lfo.frequency.value,
+    routing: state.settings.lfo.routing,
+  });
 
-    // Always reconnect LFO with current routing
-    reconnectLFO(noteData, state.settings.lfo.routing);
+  // Always reconnect LFO with current routing
+  reconnectLFO(state.noteData, state.settings.lfo.routing);
 
-    // Update LFO gains based on modulation amount
-    updateLFOGains(
-      noteData,
-      modAmount,
-      state.settings.lfo.depth,
-      baseCutoff,
-      synthContext.context.currentTime
-    );
-  };
-
-  Array.from(state.activeNotes.values()).forEach(updateNoteModulation);
+  // Update LFO gains based on modulation amount
+  updateLFOGains(
+    state.noteData,
+    modAmount,
+    state.settings.lfo.depth,
+    baseCutoff,
+    synthContext.context.currentTime
+  );
 }
 
 function updateLFOGains(
@@ -510,34 +508,38 @@ export default async function createSynth() {
         newSettings.noise.tone !== undefined ||
         newSettings.noise.sync !== undefined
       ) {
-        // Update tone for all active notes
-        state.activeNotes.forEach((noteData, note) => {
-          if (noteData.noiseFilter) {
-            const noteFreq = noteToFrequency(note, state.settings.tune);
-            let freq;
+        // Update tone for active note
+        if (state.noteData?.noiseFilter && state.currentNote) {
+          const noteFreq = noteToFrequency(
+            state.currentNote,
+            state.settings.tune
+          );
+          let freq;
 
-            if (state.settings.noise.sync) {
-              // When sync is enabled, use tone as a multiplier of the note frequency
-              // Map tone (20-20000) to a multiplier (0.045-45)
-              const toneMultiplier = state.settings.noise.tone / 440;
-              freq = noteFreq * toneMultiplier;
-            } else {
-              // When sync is disabled, use tone directly as the filter frequency
-              freq = state.settings.noise.tone;
-            }
-
-            // Ensure frequency is within valid range
-            freq = Math.max(20, Math.min(freq, 20000));
-            noteData.noiseFilter.frequency.value = freq;
+          if (state.settings.noise.sync) {
+            // When sync is enabled, use tone as a multiplier of the note frequency
+            // Map tone (20-20000) to a multiplier (0.045-45)
+            const toneMultiplier = state.settings.noise.tone / 440;
+            freq = noteFreq * toneMultiplier;
+          } else {
+            // When sync is disabled, use tone directly as the filter frequency
+            freq = state.settings.noise.tone;
           }
-        });
+
+          // Ensure frequency is within valid range
+          freq = Math.max(20, Math.min(freq, 20000));
+          state.noteData.noiseFilter.frequency.value = freq;
+        }
       }
     }
 
-    state.activeNotes.forEach((noteData, note) => {
-      const baseFrequency = noteToFrequency(note, state.settings.tune);
+    if (state.noteData && state.currentNote) {
+      const baseFrequency = noteToFrequency(
+        state.currentNote,
+        state.settings.tune
+      );
 
-      noteData.oscillators.forEach((osc, index) => {
+      state.noteData.oscillators.forEach((osc, index) => {
         if (index < state.settings.oscillators.length) {
           const oscSettings = state.settings.oscillators[index];
           const volume = oscSettings.volume ?? 0;
@@ -545,11 +547,12 @@ export default async function createSynth() {
           if (volume === 0 && osc) {
             osc.stop();
             osc.disconnect();
-            if (noteData.oscillatorGains[index]) {
-              noteData.oscillatorGains[index].disconnect();
+            if (state.noteData.oscillatorGains[index]) {
+              state.noteData.oscillatorGains[index].disconnect();
             }
-            noteData.oscillators[index] = null as unknown as OscillatorNode;
-            noteData.oscillatorGains[index] = null as unknown as GainNode;
+            state.noteData.oscillators[index] =
+              null as unknown as OscillatorNode;
+            state.noteData.oscillatorGains[index] = null as unknown as GainNode;
           } else if (volume > 0 && !osc) {
             const newOsc = createOscillator(
               synthContext.context,
@@ -558,10 +561,10 @@ export default async function createSynth() {
             );
             const newGain = createGainNode(synthContext.context, volume);
             newOsc.connect(newGain);
-            newGain.connect(noteData.gainNode);
+            newGain.connect(state.noteData.gainNode);
             newOsc.start();
-            noteData.oscillators[index] = newOsc;
-            noteData.oscillatorGains[index] = newGain;
+            state.noteData.oscillators[index] = newOsc;
+            state.noteData.oscillatorGains[index] = newGain;
           } else if (osc && volume > 0) {
             osc.type = oscSettings.waveform;
             const rangeMultiplier = getRangeMultiplier(oscSettings.range);
@@ -571,57 +574,53 @@ export default async function createSynth() {
             osc.frequency.value = newFrequency;
             osc.detune.value = oscSettings.detune ?? 0;
 
-            if (noteData.oscillatorGains[index]) {
-              noteData.oscillatorGains[index].gain.value = volume;
+            if (state.noteData.oscillatorGains[index]) {
+              state.noteData.oscillatorGains[index].gain.value = volume;
             }
           }
         }
       });
 
-      if (noteData.filterNode) {
+      if (state.noteData.filterNode) {
         if (
           newSettings.filter?.cutoff !== undefined ||
           newSettings.filter?.resonance !== undefined ||
-          newSettings.filter?.contourAmount !== undefined ||
           newSettings.filter?.type !== undefined
         ) {
           if (newSettings.filter?.cutoff !== undefined) {
-            noteData.filterNode.frequency.value = newSettings.filter.cutoff;
+            state.noteData.filterNode.frequency.value =
+              newSettings.filter.cutoff;
           }
           if (newSettings.filter?.resonance !== undefined) {
             const baseQ = newSettings.filter.resonance * 30;
             if (newSettings.filter?.type === "notch") {
-              noteData.filterNode.Q.value = baseQ * 2;
+              state.noteData.filterNode.Q.value = baseQ * 2;
             } else if (newSettings.filter?.type === "bandpass") {
-              noteData.filterNode.Q.value = baseQ * 1.5;
+              state.noteData.filterNode.Q.value = baseQ * 1.5;
             } else {
-              noteData.filterNode.Q.value = baseQ;
+              state.noteData.filterNode.Q.value = baseQ;
             }
           }
           if (newSettings.filter?.type !== undefined) {
-            noteData.filterNode.type = newSettings.filter.type;
+            state.noteData.filterNode.type = newSettings.filter.type;
             // Update Q value when filter type changes
             const baseQ = state.settings.filter.resonance * 30;
             if (newSettings.filter.type === "notch") {
-              noteData.filterNode.Q.value = baseQ * 2;
+              state.noteData.filterNode.Q.value = baseQ * 2;
             } else if (newSettings.filter.type === "bandpass") {
-              noteData.filterNode.Q.value = baseQ * 1.5;
+              state.noteData.filterNode.Q.value = baseQ * 1.5;
             } else {
-              noteData.filterNode.Q.value = baseQ;
+              state.noteData.filterNode.Q.value = baseQ;
             }
-          }
-          if (newSettings.filter?.contourAmount !== undefined) {
-            noteData.filterModGain.gain.value =
-              newSettings.filter.contourAmount;
           }
         }
       }
 
-      if (noteData.lfo) {
-        noteData.lfo.type = state.settings.lfo.waveform;
-        noteData.lfo.frequency.value = state.settings.lfo.rate;
+      if (state.noteData.lfo) {
+        state.noteData.lfo.type = state.settings.lfo.waveform;
+        state.noteData.lfo.frequency.value = state.settings.lfo.rate;
       }
-    });
+    }
 
     if (
       newSettings.lfo?.waveform !== undefined ||
@@ -629,41 +628,40 @@ export default async function createSynth() {
       newSettings.lfo?.depth !== undefined ||
       newSettings.lfo?.routing !== undefined
     ) {
-      // Update LFO settings for all active notes
-      state.activeNotes.forEach((noteData) => {
-        if (noteData.lfo) {
-          if (newSettings.lfo?.waveform !== undefined) {
-            noteData.lfo.type = newSettings.lfo.waveform;
-          }
-          if (newSettings.lfo?.rate !== undefined) {
-            noteData.lfo.frequency.value = newSettings.lfo.rate;
-          }
-          if (newSettings.lfo?.routing !== undefined) {
-            reconnectLFO(noteData, newSettings.lfo.routing);
-          }
+      // Update LFO settings for active note
+      if (state.noteData?.lfo) {
+        if (newSettings.lfo?.waveform !== undefined) {
+          state.noteData.lfo.type = newSettings.lfo.waveform;
         }
-      });
+        if (newSettings.lfo?.rate !== undefined) {
+          state.noteData.lfo.frequency.value = newSettings.lfo.rate;
+        }
+        if (newSettings.lfo?.routing !== undefined) {
+          reconnectLFO(state.noteData, newSettings.lfo.routing);
+        }
+      }
 
-      // Update modulation amount for all active notes
+      // Update modulation amount for active note
       const modAmount = (state.settings.modWheel / 100) * state.settings.modMix;
       updateModulation(synthContext, state, modAmount);
     }
 
     if (newSettings.oscillators && Array.isArray(newSettings.oscillators)) {
       const oscillators = newSettings.oscillators;
-      state.activeNotes.forEach((noteData) => {
-        noteData.oscillators.forEach((osc, index) => {
+      if (state.noteData) {
+        state.noteData.oscillators.forEach((osc, index) => {
           if (osc && index < oscillators.length) {
             const oscSettings = oscillators[index];
             if (
               oscSettings.pan !== undefined &&
-              noteData.oscillatorPanners[index]
+              state.noteData.oscillatorPanners[index]
             ) {
-              noteData.oscillatorPanners[index].pan.value = oscSettings.pan;
+              state.noteData.oscillatorPanners[index].pan.value =
+                oscSettings.pan;
             }
           }
         });
-      });
+      }
     }
   }
 
@@ -671,47 +669,22 @@ export default async function createSynth() {
     const now = synthContext.context.currentTime;
     console.log("Triggering attack for note:", note);
 
-    state.noteStates.set(note, {
+    // If there's a current note, release it first
+    if (state.currentNote) {
+      triggerRelease(state.currentNote);
+    }
+
+    state.noteState = {
       isPlaying: true,
       isReleased: false,
       startTime: now,
       releaseTime: null,
-    });
+    };
+    state.currentNote = note;
 
-    const lastActiveNote = Array.from(state.activeNotes.keys())[0];
-    const lastFrequency = lastActiveNote
-      ? noteToFrequency(lastActiveNote, state.settings.tune)
+    const lastFrequency = state.currentNote
+      ? noteToFrequency(state.currentNote, state.settings.tune)
       : null;
-
-    // Clean up existing note if present
-    if (state.activeNotes.has(note)) {
-      const existingNote = state.activeNotes.get(note);
-      if (existingNote) {
-        console.log("Cleaning up existing note");
-        const cleanupNode = (node: AudioNode | null, name: string) => {
-          if (!node) return;
-          try {
-            if ("stop" in node && typeof node.stop === "function") {
-              node.stop();
-            }
-            node.disconnect();
-          } catch (e) {
-            console.warn(`Error stopping ${name}:`, e);
-          }
-        };
-
-        existingNote.oscillators.forEach((osc) =>
-          cleanupNode(osc, "oscillator")
-        );
-        cleanupNode(existingNote.gainNode, "gain node");
-        cleanupNode(existingNote.filterNode, "filter");
-        cleanupNode(existingNote.lfo, "LFO");
-        cleanupNode(existingNote.filterEnvelope, "filter envelope");
-        cleanupNode(existingNote.filterModGain, "filter mod gain");
-
-        state.activeNotes.delete(note);
-      }
-    }
 
     const hasActiveOscillators = state.settings.oscillators.some(
       (osc) => (osc.volume ?? 0) > 0
@@ -816,39 +789,13 @@ export default async function createSynth() {
     filter.connect(filterGain);
     filterGain.connect(synthContext.masterGain);
 
-    const filterEnvelope = createGainNode(synthContext.context, 0);
-    const filterModGain = createGainNode(
-      synthContext.context,
-      state.settings.filter.contourAmount * baseCutoff * 2
-    );
-
-    // Connect filter envelope
-    noteGain.connect(filterEnvelope);
-    filterEnvelope.connect(filterModGain);
-
-    // Set up filter frequency modulation
-    const filterFreq = filter.frequency;
-    filterFreq.setValueAtTime(baseCutoff, now);
-    filterModGain.connect(filterFreq);
-
-    // Set up envelopes
+    // Set up amplitude envelope
     noteGain.gain.setValueAtTime(0, now);
     noteGain.gain.linearRampToValueAtTime(
       1,
       now + state.settings.envelope.attack
     );
     noteGain.gain.linearRampToValueAtTime(
-      state.settings.envelope.sustain,
-      now + state.settings.envelope.attack + state.settings.envelope.decay
-    );
-
-    // Set up filter envelope with proper scaling
-    filterEnvelope.gain.setValueAtTime(0, now);
-    filterEnvelope.gain.linearRampToValueAtTime(
-      1,
-      now + state.settings.envelope.attack
-    );
-    filterEnvelope.gain.linearRampToValueAtTime(
       state.settings.envelope.sustain,
       now + state.settings.envelope.attack + state.settings.envelope.decay
     );
@@ -868,8 +815,8 @@ export default async function createSynth() {
       filterNode: filter,
       lfo,
       lfoGains,
-      filterEnvelope,
-      filterModGain,
+      filterEnvelope: createGainNode(synthContext.context, 0),
+      filterModGain: createGainNode(synthContext.context, 0),
       noiseNode,
       noiseGain,
       noisePanner,
@@ -887,7 +834,7 @@ export default async function createSynth() {
     reconnectLFO(noteData, state.settings.lfo.routing);
 
     // Store the note data
-    state.activeNotes.set(note, noteData);
+    state.noteData = noteData;
 
     // Apply initial modulation
     const modAmount = (state.settings.modWheel / 100) * state.settings.modMix;
@@ -895,14 +842,17 @@ export default async function createSynth() {
   }
 
   function triggerRelease(note: Note): void {
-    const noteData = state.activeNotes.get(note);
-    const noteState = state.noteStates.get(note);
-
-    if (!noteData || !noteState || noteState.isReleased) return;
+    if (
+      !state.noteData ||
+      !state.noteState ||
+      state.noteState.isReleased ||
+      state.currentNote !== note
+    )
+      return;
 
     const now = synthContext.context.currentTime;
-    noteState.isReleased = true;
-    noteState.releaseTime = now;
+    state.noteState.isReleased = true;
+    state.noteState.releaseTime = now;
 
     // Handle gain and filter envelope release
     const handleRelease = (node: GainNode, currentValue: number) => {
@@ -910,26 +860,45 @@ export default async function createSynth() {
       node.gain.cancelScheduledValues(now);
       node.gain.setValueAtTime(currentValue, now);
       node.gain.linearRampToValueAtTime(0, releaseTime);
+
+      // Handle filter frequency release
+      if (state.noteData.filterNode) {
+        state.noteData.filterNode.frequency.cancelScheduledValues(now);
+        state.noteData.filterNode.frequency.setValueAtTime(
+          state.noteData.filterNode.frequency.value,
+          now
+        );
+        state.noteData.filterNode.frequency.linearRampToValueAtTime(
+          state.settings.filter.cutoff,
+          releaseTime
+        );
+      }
     };
 
-    if (noteData.gainNode) {
-      handleRelease(noteData.gainNode, noteData.gainNode.gain.value);
-    }
-
-    if (noteData.filterEnvelope) {
+    if (state.noteData.gainNode) {
       handleRelease(
-        noteData.filterEnvelope,
-        noteData.filterEnvelope.gain.value
+        state.noteData.gainNode,
+        state.noteData.gainNode.gain.value
       );
     }
 
-    if (noteData.noiseGain) {
-      handleRelease(noteData.noiseGain, noteData.noiseGain.gain.value);
+    if (state.noteData.filterNode) {
+      handleRelease(
+        state.noteData.filterNode,
+        state.noteData.filterNode.frequency.value
+      );
+    }
+
+    if (state.noteData.noiseGain) {
+      handleRelease(
+        state.noteData.noiseGain,
+        state.noteData.noiseGain.gain.value
+      );
     }
 
     // Disconnect LFO connections
-    noteData.lfo.stop();
-    Object.values(noteData.lfoGains).forEach((gain) => gain.disconnect());
+    state.noteData.lfo.stop();
+    Object.values(state.noteData.lfoGains).forEach((gain) => gain.disconnect());
 
     // Cleanup function to handle node disconnection
     const disconnectNode = (node: AudioNode | null, nodeName: string) => {
@@ -943,29 +912,25 @@ export default async function createSynth() {
 
     // Schedule cleanup after release
     setTimeout(() => {
-      const currentState = state.noteStates.get(note);
-      if (!currentState || !currentState.isReleased) return;
+      if (!state.noteState || !state.noteState.isReleased) return;
 
-      if (state.activeNotes.has(note)) {
-        // Cleanup oscillators
-        noteData.oscillators.forEach((osc) =>
-          disconnectNode(osc, "oscillator")
-        );
+      // Cleanup oscillators
+      state.noteData.oscillators.forEach((osc) =>
+        disconnectNode(osc, "oscillator")
+      );
 
-        // Cleanup main nodes
-        disconnectNode(noteData.gainNode, "gain node");
-        disconnectNode(noteData.filterNode, "filter");
-        disconnectNode(noteData.filterEnvelope, "filter envelope");
-        disconnectNode(noteData.filterModGain, "filter mod gain");
+      // Cleanup main nodes
+      disconnectNode(state.noteData.gainNode, "gain node");
+      disconnectNode(state.noteData.filterNode, "filter");
 
-        // Cleanup noise nodes
-        disconnectNode(noteData.noiseNode, "noise node");
-        disconnectNode(noteData.noiseGain, "noise gain");
-        disconnectNode(noteData.noisePanner, "noise panner");
+      // Cleanup noise nodes
+      disconnectNode(state.noteData.noiseNode, "noise node");
+      disconnectNode(state.noteData.noiseGain, "noise gain");
+      disconnectNode(state.noteData.noisePanner, "noise panner");
 
-        state.activeNotes.delete(note);
-        state.noteStates.delete(note);
-      }
+      state.currentNote = null;
+      state.noteState = null;
+      state.noteData = null;
     }, state.settings.envelope.release * 1000);
   }
 
