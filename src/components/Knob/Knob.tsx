@@ -173,6 +173,7 @@ function Knob({
         hasLabel && <div className={styles.knobLabel}>{label}</div>
       )}
       <div className={styles.knob}>
+        <div className={styles.innerKnobShadow}></div>
         <div className={styles.topShadow}></div>
         <div
           className={styles.outerKnob}
