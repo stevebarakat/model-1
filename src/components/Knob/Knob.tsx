@@ -173,8 +173,9 @@ function Knob({
         hasLabel && <div className={styles.knobLabel}>{label}</div>
       )}
       <div className={styles.knob}>
+        {/* <img src="/src/components/Knob/knob-bg.svg" alt="knob-bg" /> */}
         <div className={styles.innerKnobShadow}></div>
-        <div className={styles.topShadow}></div>
+        {/* <div className={styles.topShadow}></div> */}
         <div
           className={styles.outerKnob}
           ref={knobRef}
@@ -190,7 +191,7 @@ function Knob({
         >
           <div className={styles.innerKnob}></div>
         </div>
-        <div className={styles.bottomShadow}></div>
+        {/* <div className={styles.bottomShadow}></div> */}
       </div>
     </div>
   );
