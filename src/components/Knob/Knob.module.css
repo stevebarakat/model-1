@@ -13,34 +13,63 @@
   border-radius: 50%;
 }
 
-.outerKnob {
+.outerKnob,
+.outerKnobTop,
+.outerKnobBottom {
+  position: absolute;
   width: 100%;
   height: 100%;
   background: url("/src/components/Knob/knob-bg.svg") no-repeat center center;
   display: grid;
   place-items: center;
-  /* dot */
-  &::after {
-    position: absolute;
-    top: 17.5%;
-    left: 50%;
-    z-index: 5;
-    width: 4px;
-    height: 4px;
-    background: linear-gradient(
-      to bottom,
-      hsl(220deg 13% 75%),
-      hsl(220deg 13% 85%)
-    );
-    border-radius: 50%;
-    transform: translate(-50%, -100%);
-    content: "";
-  }
+}
+
+.topShadow {
+  width: 95%;
+  height: 95%;
+  border-radius: 50%;
+  position: absolute;
+  top: 2.5%;
+  left: 2.5%;
+  box-shadow: inset 0px 1px 10px hsl(0 0% 30%);
+  pointer-events: none;
+  z-index: 1;
+  filter: blur(3px);
+}
+
+.bottomShadow {
+  width: 95%;
+  height: 95%;
+  border-radius: 50%;
+  position: absolute;
+  bottom: 2.5%;
+  right: 2.5%;
+  box-shadow: inset 0px -1px 2px hsl(0 0% 0%);
+  pointer-events: none;
+  z-index: 2;
+  filter: blur(3px);
+}
+
+.dot {
+  position: absolute;
+  top: 12.5%;
+  left: 50%;
+  z-index: 5;
+  width: 3px;
+  height: 3px;
+  background: linear-gradient(
+    to bottom,
+    hsl(220deg 13% 75%),
+    hsl(220deg 13% 85%)
+  );
+  border-radius: 50%;
+  transform: translate(-50%, -100%);
+  content: "";
 }
 
 .innerKnob {
-  width: 50%;
-  height: 50%;
+  width: 65%;
+  height: 65%;
   position: absolute;
   border-radius: 50%;
   /* inner shine */
@@ -99,8 +128,8 @@
   content: "";
   top: 50%;
   left: 50%;
-  width: 50%;
-  height: 50%;
+  width: 70%;
+  height: 70%;
   background-image: conic-gradient(
     from 59.5deg at 50% 50%,
     hsl(180, 0%, 68%) 0%,
