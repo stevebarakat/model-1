@@ -6,6 +6,7 @@ import {
   OscillatorType,
   OscillatorBankProps,
 } from "../../synth/types";
+import PointerKnob from "../PointerKnob";
 
 // Constants for mapping values
 const RANGE_MAP: Record<RangeType, number> = {
@@ -75,7 +76,7 @@ function OscillatorControls({
         }}
         onChange={(value) => onChange("range", valueToRange(value))}
       />
-      <Knob
+      <PointerKnob
         value={waveformToValue(osc.waveform)}
         min={0}
         max={3}
@@ -98,7 +99,7 @@ function OscillatorControls({
         unit="st"
         onChange={(value) => onChange("frequency", value)}
       />
-      <Knob
+      <PointerKnob
         value={osc.detune}
         min={-50}
         max={50}

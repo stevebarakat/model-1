@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState, useCallback } from "react";
-import styles from "./Knob.module.css";
+import styles from "./PointerKnob.module.css";
 
 type KnobProps = {
   value: number;

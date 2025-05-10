@@ -42,12 +42,12 @@
 }
 
 .innerKnob {
-  width: 50%;
-  height: 50%;
+  width: 55%;
+  height: 55%;
   position: absolute;
   border-radius: 50%;
   /* inner shine */
-  &::before {
+  /* &::before {
     content: "";
     position: absolute;
     width: 100%;
@@ -67,9 +67,9 @@
       hsl(240, 0%, 28%) 83.5%,
       hsl(240, 0%, 78%) 100%
     );
-    /* filter: blur(0.25px); */
+    filter: blur(0.25px);
     border-radius: 50%;
-  }
+  } */
   /* outer shine */
   &::after {
     content: "";
@@ -78,22 +78,8 @@
     left: 2.5%;
     width: 95%;
     height: 95%;
-    background-image: conic-gradient(
-      from 59.5deg at 50% 50%,
-      hsl(180, 0%, 68%) 0%,
-      hsl(180, 0%, 30%) 16.5%,
-      hsl(240, 0%, 28%) 16.5%,
-      hsl(240, 0%, 78%) 33%,
-      hsl(180, 0%, 68%) 33%,
-      hsl(180, 0%, 30%) 49.5%,
-      hsl(240, 0%, 28%) 49.5%,
-      hsl(240, 0%, 78%) 66%,
-      hsl(180, 0%, 68%) 66%,
-      hsl(180, 0%, 30%) 83.5%,
-      hsl(240, 0%, 28%) 83.5%,
-      hsl(240, 0%, 78%) 100%
-    );
-    /* filter: blur(0.5px); */
+    background-image: url("/images/brushed-metal.png");
+    filter: blur(0.5px);
     border-radius: 50%;
     /* box-shadow: inset 0px 1px 1px hsl(0 0% 0%); */
   }
@@ -124,7 +110,7 @@
   );
   border-radius: 50%;
   z-index: 1;
-  mix-blend-mode: soft-light;
+  /* mix-blend-mode: soft-light; */
   pointer-events: none;
 }
 
