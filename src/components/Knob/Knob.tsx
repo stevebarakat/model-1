@@ -188,7 +188,6 @@ function Knob({
           aria-label={label}
           aria-valuetext={ariaValueText}
         >
-          {/* <div className={styles.brushedMetal}></div> */}
           <div className={styles.innerKnob}></div>
         </div>
         <div className={styles.bottomShadow}></div>

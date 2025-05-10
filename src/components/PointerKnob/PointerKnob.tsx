@@ -173,25 +173,41 @@ function Knob({
         hasLabel && <div className={styles.knobLabel}>{label}</div>
       )}
       <div className={styles.knob}>
-        <div className={styles.innerKnobShadow}></div>
-        <div className={styles.topShadow}></div>
         <div
-          className={styles.outerKnob}
-          ref={knobRef}
+          className={styles.dragHandle}
           style={{ transform: `rotate(${rotation}deg)` }}
-          onMouseDown={handleMouseDown}
-          tabIndex={0}
-          role="slider"
-          aria-valuemin={min}
-          aria-valuemax={max}
-          aria-valuenow={value}
-          aria-label={label}
-          aria-valuetext={ariaValueText}
         >
-          {/* <div className={styles.brushedMetal}></div> */}
-          <div className={styles.innerKnob}></div>
+          <div
+            className={styles.outerKnob}
+            ref={knobRef}
+            onMouseDown={handleMouseDown}
+            tabIndex={0}
+            role="slider"
+            aria-valuemin={min}
+            aria-valuemax={max}
+            aria-valuenow={value}
+            aria-label={label}
+            aria-valuetext={ariaValueText}
+          >
+            <div className={styles.innerKnob}></div>
+            <div className={styles.dot}></div>
+          </div>
+          <div
+            className={styles.outerKnobTop}
+            style={{
+              bottom: `${rotation * 0.05}%`,
+              right: `${rotation * 0.05}%`,
+            }}
+          ></div>
+          <div
+            className={styles.outerKnobBottom}
+            style={{
+              top: `${rotation * 0.025}%`,
+              left: `${rotation * 0.025}%`,
+            }}
+          ></div>
         </div>
-        <div className={styles.bottomShadow}></div>
+        {/* <div className={styles.bottomShadow}></div> */}
       </div>
     </div>
   );
