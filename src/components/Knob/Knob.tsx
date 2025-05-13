@@ -173,11 +173,10 @@ function Knob({
         hasLabel && <div className={styles.knobLabel}>{label}</div>
       )}
       <div className={styles.knob}>
-        <div className={styles.innerKnobShadow}></div>
-        <div className={styles.topShadow}></div>
+        {/* <div className={styles.topShadow}></div> */}
         <div
-          className={styles.outerKnob}
           ref={knobRef}
+          className={styles.outerKnob}
           style={{ transform: `rotate(${rotation}deg)` }}
           onMouseDown={handleMouseDown}
           tabIndex={0}
@@ -189,9 +188,10 @@ function Knob({
           aria-valuetext={ariaValueText}
         >
           <div className={styles.dot}></div>
+          <div className={styles.innerKnobShadow}></div>
           <div className={styles.innerKnob}></div>
         </div>
-        <div className={styles.bottomShadow}></div>
+        {/* <div className={styles.bottomShadow}></div> */}
       </div>
     </div>
   );
