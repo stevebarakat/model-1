@@ -76,7 +76,6 @@
   border-radius: 50%;
   display: grid;
   place-items: center;
-  /* filter: blur(1px); */
   /* head */
   &::before {
     position: absolute;

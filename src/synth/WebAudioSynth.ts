@@ -381,12 +381,6 @@ function updateModulation(
     return;
   }
 
-  console.log("Updating note modulation:", {
-    lfoType: state.noteData.lfo.type,
-    lfoRate: state.noteData.lfo.frequency.value,
-    routing: state.settings.lfo.routing,
-  });
-
   // Always reconnect LFO with current routing
   reconnectLFO(state.noteData, state.settings.lfo.routing);
 
@@ -407,8 +401,6 @@ function updateLFOGains(
   baseCutoff: number,
   currentTime: number
 ): void {
-  console.log("Updating LFO gains:", { modAmount, lfoDepth, baseCutoff });
-
   const smoothingTime = 0.01;
 
   const lfoGainConfigs = [

@@ -1,8 +1,8 @@
 import React, { useEffect, useRef, useState, useCallback } from "react";
 import styles from "./PointerKnob.module.css";
 
-function clamp(value: number): number {
-  return Math.max(-2, Math.min(value, 2));
+function clamp(value: number, min: number, max: number): number {
+  return Math.max(min, Math.min(value, max));
 }
 
 type KnobProps = {
@@ -169,12 +169,14 @@ function Knob({
     return () => clearTimeout(timer);
   }, [isKeyboardActive, value]);
 
+  console.log("rotation", rotation);
+
   return (
     <div className={styles.knobContainer}>
       {isDragging || isKeyboardActive ? (
-        <div className={styles.knobValue}>{displayValue}</div>
+        <div className={styles.knobValue}></div>
       ) : (
-        hasLabel && <div className={styles.knobLabel}>{label}</div>
+        hasLabel && <div className={styles.knobLabel}></div>
       )}
       <div className={styles.knob}>
         <div
@@ -199,15 +201,19 @@ function Knob({
           <div
             className={styles.outerKnobTop}
             style={{
-              top: `${clamp(rotation * -1)}%`,
-              right: `${clamp(rotation * 1)}%`,
+              top:
+                rotation === 0
+                  ? "-1.5px"
+                  : `${clamp(Math.abs(rotation) * -1, -2, 2)}%`,
+              right: `${clamp(rotation * 1, -2, 2)}%`,
             }}
           ></div>
           <div
             className={styles.outerKnobBottom}
             style={{
-              top: `${clamp(rotation * 1)}%`,
-              left: `${clamp(rotation * 1)}%`,
+              top: `${clamp(Math.abs(rotation) * 1, -2, 2)}%`,
+              left: `${clamp(rotation * 1, -2, 2)}%`,
+              filter: `blur(${clamp(rotation * 0.025, 0, 2)}px)`,
             }}
           ></div>
         </div>
