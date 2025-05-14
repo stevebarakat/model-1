@@ -1,6 +1,10 @@
 import React, { useEffect, useRef, useState, useCallback } from "react";
 import styles from "./PointerKnob.module.css";
 
+function clamp(value: number): number {
+  return Math.max(-2, Math.min(value, 2));
+}
+
 type KnobProps = {
   value: number;
   min: number;
@@ -195,19 +199,18 @@ function Knob({
           <div
             className={styles.outerKnobTop}
             style={{
-              bottom: `${rotation * 0.05}%`,
-              right: `${rotation * 0.05}%`,
+              top: `${clamp(rotation * -1)}%`,
+              right: `${clamp(rotation * 1)}%`,
             }}
           ></div>
           <div
             className={styles.outerKnobBottom}
             style={{
-              top: `${rotation * 0.025}%`,
-              left: `${rotation * 0.025}%`,
+              top: `${clamp(rotation * 1)}%`,
+              left: `${clamp(rotation * 1)}%`,
             }}
           ></div>
         </div>
-        {/* <div className={styles.bottomShadow}></div> */}
       </div>
     </div>
   );
