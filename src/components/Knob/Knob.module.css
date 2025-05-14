@@ -13,11 +13,44 @@
   border-radius: 50%;
 }
 
+.knobRing {
+  position: absolute;
+  top: 0%;
+  left: 0%;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  /* background: hsl(0 0% 0%); */
+  box-shadow: 0 5px 5px 1px hsl(0 0% 5% / 0.5);
+  z-index: -1;
+  pointer-events: none;
+}
+
+.knobGradient {
+  position: absolute;
+  top: -5%;
+  left: -5%;
+  width: 110%;
+  height: 110%;
+  border-radius: 50%;
+  background: linear-gradient(
+    to bottom,
+    hsl(220deg 13% 25% / 1) 0%,
+    hsl(220deg 13% 5% / 0) 30%,
+    hsl(220deg 13% 5% / 0) 100%
+  );
+  mix-blend-mode: difference;
+  filter: blur(1px);
+  z-index: 1;
+  pointer-events: none;
+}
+
 .outerKnob {
   width: 100%;
   height: 100%;
   display: grid;
   place-items: center;
+  border-radius: 50%;
   img {
     user-select: none;
     pointer-events: none;
@@ -29,32 +62,6 @@
     height: 100%;
     z-index: -1;
   }
-}
-
-.topShadow {
-  width: 95%;
-  height: 95%;
-  border-radius: 50%;
-  position: absolute;
-  top: 2.5%;
-  left: 2.5%;
-  box-shadow: inset 0px 1px 10px hsl(0 0% 30%);
-  pointer-events: none;
-  z-index: 1;
-  filter: blur(3px);
-}
-
-.bottomShadow {
-  width: 95%;
-  height: 95%;
-  border-radius: 50%;
-  position: absolute;
-  bottom: 2.5%;
-  right: 2.5%;
-  box-shadow: inset 0px -1px 2px hsl(0 0% 0%);
-  pointer-events: none;
-  z-index: 2;
-  filter: blur(3px);
 }
 
 .dot {
@@ -184,7 +191,8 @@
 }
 
 .knob-bg {
-  fill: url(#top-gradient);
+  filter: drop-shadow(2px 2px 4px rgba(0, 0, 0, 0.3))
+    drop-shadow(-1px -1px 2px rgba(255, 255, 255, 0.1));
 }
 .stop1 {
   stop-color: hsl(0, 0%, 100%);
