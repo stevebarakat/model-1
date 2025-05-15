@@ -1,0 +1,145 @@
+.knobContainer {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: var(--spacing-lg);
+}
+
+.knob {
+  width: var(--knob-size);
+  height: var(--knob-size);
+  position: relative;
+  border-radius: 50%;
+  filter: drop-shadow(0px -1px 0px hsl(0 0% 50% / 0.5));
+}
+
+.knobBtm {
+  width: var(--knob-size);
+  height: var(--knob-size);
+  position: absolute;
+  top: 0;
+  left: 0;
+  filter: drop-shadow(0px 1px 1px hsl(0 0% 0% / 0.75));
+}
+
+.outerKnob {
+  width: 100%;
+  height: 100%;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: url("./arrow-knob.svg") no-repeat center center;
+  img {
+    user-select: none;
+    pointer-events: none;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+  }
+}
+
+.dot {
+  position: absolute;
+  top: 12.5%;
+  left: 50%;
+  z-index: 5;
+  width: 3px;
+  height: 3px;
+  background: linear-gradient(
+    to bottom,
+    hsl(220deg 13% 75%),
+    hsl(220deg 13% 85%)
+  );
+  border-radius: 50%;
+  transform: translate(-50%, -100%);
+  content: "";
+}
+
+.innerKnob {
+  width: 35%;
+  height: 35%;
+  position: absolute;
+  border-radius: 50%;
+  z-index: 1;
+  top: 32.5%;
+  left: 32.5%;
+  pointer-events: none;
+  /* inner shine */
+  &::before {
+    content: "";
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background-image: conic-gradient(
+      from 0deg at 50% 50%,
+      hsl(180, 0%, 68%) 0%,
+      hsl(180, 0%, 30%) 16.5%,
+      hsl(240, 0%, 28%) 16.5%,
+      hsl(240, 0%, 78%) 33%,
+      hsl(180, 0%, 68%) 33%,
+      hsl(180, 0%, 30%) 49.5%,
+      hsl(240, 0%, 28%) 49.5%,
+      hsl(240, 0%, 78%) 66%,
+      hsl(180, 0%, 68%) 66%,
+      hsl(180, 0%, 30%) 83.5%,
+      hsl(240, 0%, 28%) 83.5%,
+      hsl(240, 0%, 78%) 100%
+    );
+    border-radius: 50%;
+  }
+  /* outer shine */
+  &::after {
+    content: "";
+    position: absolute;
+    top: 2.5%;
+    left: 2.5%;
+    width: 95%;
+    height: 95%;
+    background-image: conic-gradient(
+      from 59.5deg at 50% 50%,
+      hsl(180, 0%, 68%) 0%,
+      hsl(180, 0%, 30%) 16.5%,
+      hsl(240, 0%, 28%) 16.5%,
+      hsl(240, 0%, 78%) 33%,
+      hsl(180, 0%, 68%) 33%,
+      hsl(180, 0%, 30%) 49.5%,
+      hsl(240, 0%, 28%) 49.5%,
+      hsl(240, 0%, 78%) 66%,
+      hsl(180, 0%, 68%) 66%,
+      hsl(180, 0%, 30%) 83.5%,
+      hsl(240, 0%, 28%) 83.5%,
+      hsl(240, 0%, 78%) 100%
+    );
+    border-radius: 50%;
+  }
+}
+
+.knobLabel,
+.knobValue {
+  position: absolute;
+  top: -15px;
+  left: 50%;
+  display: block;
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-sm);
+  text-align: center;
+  text-transform: uppercase;
+  white-space: nowrap;
+  transform: translateX(-50%);
+  user-select: none;
+}
+
+.knobValue {
+  color: var(--color-text-primary);
+  text-transform: unset;
+}
+
+.knobValue span {
+  font-size: var(--font-size-xs);
+  text-transform: uppercase;
+}
