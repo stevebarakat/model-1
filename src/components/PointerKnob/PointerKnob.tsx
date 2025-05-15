@@ -206,7 +206,7 @@ function Knob({
           <div
             className={styles.outerKnobBottom}
             style={{
-              top: `${clamp(rotation * 1)}%`,
+              // top: `${clamp(rotation * 1)}%`,
               left: `${clamp(rotation * 1)}%`,
             }}
           ></div>

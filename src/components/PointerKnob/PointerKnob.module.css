@@ -78,6 +78,7 @@
   border-radius: 50%;
   display: grid;
   place-items: center;
+  top: -1px;
   /* head */
   &::before {
     position: absolute;
