@@ -147,7 +147,6 @@
 }
 
 .knobValue {
-  color: var(--color-text-primary);
   text-transform: unset;
 }
 

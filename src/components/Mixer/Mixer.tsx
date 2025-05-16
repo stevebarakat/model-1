@@ -21,7 +21,8 @@ type OscillatorControlsProps = {
   label: string;
   onVolumeChange: (value: number) => void;
   onPanChange: (value: number) => void;
-  showLabels?: boolean;
+  showVolumeLabels?: boolean;
+  showPanLabels?: boolean;
 };
 
 function OscillatorControls({
@@ -30,7 +31,8 @@ function OscillatorControls({
   label,
   onVolumeChange,
   onPanChange,
-  showLabels = true,
+  showVolumeLabels = true,
+  showPanLabels = true,
 }: OscillatorControlsProps) {
   return (
     <div className="row">
@@ -39,16 +41,18 @@ function OscillatorControls({
         min={0}
         max={1}
         step={0.01}
-        label={showLabels ? label : ""}
+        label={showVolumeLabels ? label : ""}
         onChange={onVolumeChange}
+        displayMode={!showVolumeLabels ? "always" : "replace"}
       />
       <Knob
         value={pan}
         min={-1}
         max={1}
         step={0.01}
-        label={showLabels ? "Pan" : ""}
+        label={showPanLabels ? "Pan" : ""}
         onChange={onPanChange}
+        displayMode={!showPanLabels ? "always" : "replace"}
       />
     </div>
   );
@@ -79,7 +83,8 @@ function Mixer({
               label="Osc 1"
               onVolumeChange={onOsc1VolumeChange}
               onPanChange={onOsc1PanChange}
-              showLabels={true}
+              showVolumeLabels={true}
+              showPanLabels={true}
             />
             <OscillatorControls
               volume={osc2Volume}
@@ -87,7 +92,8 @@ function Mixer({
               label="Osc 2"
               onVolumeChange={onOsc2VolumeChange}
               onPanChange={onOsc2PanChange}
-              showLabels={false}
+              showVolumeLabels={true}
+              showPanLabels={false}
             />
             <OscillatorControls
               volume={osc3Volume}
@@ -95,7 +101,8 @@ function Mixer({
               label="Osc 3"
               onVolumeChange={onOsc3VolumeChange}
               onPanChange={onOsc3PanChange}
-              showLabels={false}
+              showVolumeLabels={true}
+              showPanLabels={false}
             />
           </div>
         </div>

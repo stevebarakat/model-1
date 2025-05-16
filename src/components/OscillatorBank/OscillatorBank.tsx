@@ -1,5 +1,4 @@
 import Knob from "../Knob";
-import { Square, Triangle, AudioWaveform, Activity } from "lucide-react";
 import {
   OscillatorSettings,
   RangeType,
@@ -85,8 +84,9 @@ function OscillatorControls({
         max={12}
         step={0.1}
         label={showLabels ? "Freq" : ""}
-        unit={showLabels ? "st" : ""}
+        unit={!showLabels ? "st" : ""}
         onChange={(value) => onChange("frequency", value)}
+        displayMode={!showLabels ? "always" : "replace"}
       />
       <Knob
         size="large"
@@ -95,8 +95,9 @@ function OscillatorControls({
         max={50}
         step={1}
         label={showLabels ? "Detune" : ""}
-        unit={showLabels ? "ct" : ""}
+        unit={!showLabels ? "ct" : ""}
         onChange={(value) => onChange("detune", value)}
+        displayMode={!showLabels ? "always" : "replace"}
       />
       <ArrowKnob
         value={waveformToValue(osc.type ?? "sine")}

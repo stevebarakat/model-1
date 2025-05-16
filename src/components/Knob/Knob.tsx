@@ -12,6 +12,7 @@ type KnobProps = {
   valueLabels?: Record<number, string | React.ReactElement>;
   logarithmic?: boolean;
   size?: "small" | "medium" | "large";
+  displayMode?: "replace" | "always";
 };
 
 type MousePosition = {
@@ -61,6 +62,7 @@ function Knob({
   valueLabels,
   logarithmic = false,
   size = "medium",
+  displayMode = "replace",
 }: KnobProps): React.ReactElement {
   const knobRef = useRef<HTMLDivElement>(null);
   const [isDragging, setIsDragging] = useState(false);
@@ -186,7 +188,12 @@ function Knob({
         styles[`knobContainer${size.charAt(0).toUpperCase() + size.slice(1)}`]
       }`}
     >
-      {isDragging || isKeyboardActive ? (
+      {displayMode === "always" ? (
+        <>
+          {hasLabel && <div className={styles.knobLabel}>{label}</div>}
+          <div className={styles.knobValue}>{displayValue}</div>
+        </>
+      ) : isDragging || isKeyboardActive ? (
         <div className={styles.knobValue}>{displayValue}</div>
       ) : (
         hasLabel && <div className={styles.knobLabel}>{label}</div>
