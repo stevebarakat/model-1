@@ -8,7 +8,7 @@ type RockerSwitchProps = {
 
 function RockerSwitch({ checked, onCheckedChange, label }: RockerSwitchProps) {
   return (
-    <div className={`${styles.switch} ${styles.dark}`}>
+    <div className={`${styles.switch}`}>
       <label>
         {label && <span className={styles.label}>{label}</span>}
         <input

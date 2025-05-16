@@ -51,7 +51,7 @@
   left: 0;
   background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNiAyNiI+PHJlY3Qgd2lkdGg9IjEwIiBoZWlnaHQ9IjIiIHg9IjgiIHk9IjEyIiBmaWxsPSIjNDQ0Ii8+PC9zdmc+"),
     linear-gradient(to right, #fafafa, #e1e1e1);
-  box-shadow: -0.075em 0 0 0 #bcbcbc;
+  box-shadow: -0.475em 0 0 0 #bcbcbc;
   border-radius: 0.075em 0 0 0.075em;
   transform: rotateY(50deg);
   transform-origin: 100% 50%;
@@ -88,7 +88,7 @@
 }
 
 .state:checked ~ .control::after {
-  box-shadow: 0.75em 0 0 0 #bcbcbc;
+  box-shadow: 0.475em 0 0 0 #bcbcbc;
   border-right-color: #eeeeee;
   border-left: none;
   transform: rotateY(-50deg);
