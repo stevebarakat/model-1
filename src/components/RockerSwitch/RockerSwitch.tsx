@@ -1,13 +1,18 @@
-import "./Switch.css";
+import "./RockerSwitch.css";
 
-type SwitchProps = {
+type RockerSwitchProps = {
   checked: boolean;
   onCheckedChange: (checked: boolean) => void;
   label?: string;
   className?: string;
 };
 
-function Switch({ checked, onCheckedChange, label, className }: SwitchProps) {
+function RockerSwitch({
+  checked,
+  onCheckedChange,
+  label,
+  className,
+}: RockerSwitchProps) {
   return (
     <div className="switch switch--dark">
       <label>
@@ -25,4 +30,4 @@ function Switch({ checked, onCheckedChange, label, className }: SwitchProps) {
   );
 }
 
-export default Switch;
+export default RockerSwitch;

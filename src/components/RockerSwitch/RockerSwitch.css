@@ -5,10 +5,19 @@
   font-size: 18px;
   user-select: none;
   transition: all 0.3s ease-in-out;
-  rotate: 90deg;
+  .switch__label {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    /* rotate: 270deg; */
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-sm);
+    text-transform: uppercase;
+  }
 }
 
 .switch__control {
+  rotate: 90deg;
   display: inline-block;
   box-sizing: border-box;
   width: 2.5em;
@@ -75,13 +84,7 @@
   border-left: none;
   transform: rotateY(-50deg);
 }
-.switch__label {
-  rotate: 270deg;
-  display: inline-block;
-  color: var(--color-text-secondary);
-  font-size: var(--font-size-sm);
-  text-transform: uppercase;
-}
+
 .switch--dark .switch__control {
   border: 0.25em solid #191919;
   background-color: #191919;
