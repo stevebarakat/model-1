@@ -7,6 +7,7 @@ import {
   OscillatorBankProps,
 } from "../../synth/types";
 import ArrowKnob from "../ArrowKnob";
+import { WAVEFORM_ICONS } from "../Modifiers/constants";
 
 // Constants for mapping values
 const RANGE_MAP: Record<RangeType, number> = {
@@ -78,7 +79,7 @@ function OscillatorControls({
         onChange={(value) => onChange("range", valueToRange(value))}
       />
       <Knob
-        // size="large"
+        size="large"
         value={osc.frequency}
         min={-12}
         max={12}
@@ -87,21 +88,8 @@ function OscillatorControls({
         unit={showLabels ? "st" : ""}
         onChange={(value) => onChange("frequency", value)}
       />
-      <ArrowKnob
-        value={waveformToValue(osc.type)}
-        min={0}
-        max={3}
-        step={1}
-        label={showLabels ? "Wave" : ""}
-        valueLabels={{
-          0: <AudioWaveform size={8} strokeWidth={2} />,
-          1: <Square size={8} strokeWidth={2} />,
-          2: <Activity size={8} strokeWidth={2} />,
-          3: <Triangle size={8} strokeWidth={2} />,
-        }}
-        onChange={(value) => onChange("type", valueToWaveform(value))}
-      />
       <Knob
+        size="large"
         value={osc.detune}
         min={-50}
         max={50}
@@ -109,6 +97,15 @@ function OscillatorControls({
         label={showLabels ? "Detune" : ""}
         unit={showLabels ? "ct" : ""}
         onChange={(value) => onChange("detune", value)}
+      />
+      <ArrowKnob
+        value={waveformToValue(osc.type ?? "sine")}
+        min={0}
+        max={3}
+        step={1}
+        label={showLabels ? "Wave" : ""}
+        valueLabels={WAVEFORM_ICONS}
+        onChange={(value) => onChange("type", valueToWaveform(value))}
       />
     </div>
   );

@@ -10,6 +10,7 @@ import {
   filterTypeToValue,
   valueToFilterType,
 } from "./utils";
+import ArrowKnob from "../ArrowKnob/ArrowKnob.tsx";
 
 type ModifiersProps = {
   cutoff: number;
@@ -85,7 +86,7 @@ function Modifiers({
             />
           </div>
           <div className="row">
-            <Knob
+            <ArrowKnob
               value={filterTypeToValue(filterType)}
               min={0}
               max={3}
@@ -152,7 +153,7 @@ function Modifiers({
               label="Depth"
               onChange={onLfoDepthChange}
             />
-            <Knob
+            <ArrowKnob
               value={waveformToValue(lfoWaveform)}
               min={0}
               max={3}
