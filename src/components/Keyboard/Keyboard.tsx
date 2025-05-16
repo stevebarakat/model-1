@@ -48,7 +48,7 @@ function generateKeyboardKeys(octaveRange: {
   min: number;
   max: number;
 }): Note[] {
-  return Array.from(
+  const keys = Array.from(
     { length: octaveRange.max - octaveRange.min + 1 },
     (_, i) => octaveRange.min + i
   )
@@ -58,7 +58,10 @@ function generateKeyboardKeys(octaveRange: {
         isSharp: key.isSharp,
       }))
     )
-    .slice(5);
+    .slice(5); // Remove first 5 keys
+
+  // Add one more key at the end (C of the next octave)
+  return [...keys, { note: `C${octaveRange.max + 1}`, isSharp: false }];
 }
 
 function Keyboard(
