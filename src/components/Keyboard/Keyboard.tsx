@@ -30,11 +30,6 @@ type KeyboardRef = {
 };
 
 const OCTAVE_NOTES: Note[] = [
-  { note: "C", isSharp: false },
-  { note: "C#", isSharp: true },
-  { note: "D", isSharp: false },
-  { note: "D#", isSharp: true },
-  { note: "E", isSharp: false },
   { note: "F", isSharp: false },
   { note: "F#", isSharp: true },
   { note: "G", isSharp: false },
@@ -42,13 +37,19 @@ const OCTAVE_NOTES: Note[] = [
   { note: "A", isSharp: false },
   { note: "A#", isSharp: true },
   { note: "B", isSharp: false },
+  { note: "C", isSharp: false },
+  { note: "C#", isSharp: true },
+  { note: "D", isSharp: false },
+  { note: "D#", isSharp: true },
+  { note: "E", isSharp: false },
 ];
 
 function generateKeyboardKeys(octaveRange: {
   min: number;
   max: number;
 }): Note[] {
-  return Array.from(
+  // Generate full octaves
+  const fullOctaves = Array.from(
     { length: octaveRange.max - octaveRange.min + 1 },
     (_, i) => octaveRange.min + i
   ).flatMap((octave) =>
@@ -57,12 +58,20 @@ function generateKeyboardKeys(octaveRange: {
       isSharp: key.isSharp,
     }))
   );
+
+  // Add half octave (F through C) for the last octave
+  const lastOctave = OCTAVE_NOTES.slice(0, 8).map((key) => ({
+    note: `${key.note}${octaveRange.max + 1}`,
+    isSharp: key.isSharp,
+  }));
+
+  return [...fullOctaves, ...lastOctave];
 }
 
 function Keyboard(
   {
     activeKeys = [],
-    octaveRange = { min: 3, max: 6 },
+    octaveRange = { min: -4, max: 6 },
     onKeyDown = () => {},
     onKeyUp = () => {},
     onMouseDown = () => {},
