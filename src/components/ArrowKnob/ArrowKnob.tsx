@@ -43,6 +43,7 @@ function getDisplayValue(
   unit: string,
   valueLabels?: Record<number, string | React.ReactElement>
 ): string | React.ReactElement {
+  if (value === undefined) return "";
   return (
     valueLabels?.[Math.round(value)] ??
     value.toFixed(step >= 1 ? 0 : 2) + (unit ? ` ${unit}` : "")
@@ -221,9 +222,8 @@ function ArrowKnob({
         );
         const labelText = getDisplayValue(v, step, unit, valueLabels);
         return (
-          <div className={styles.knobValueContainer}>
+          <div key={v} className={styles.knobValueContainer}>
             <div
-              key={v}
               className={styles.knobValue}
               style={{
                 position: "absolute",

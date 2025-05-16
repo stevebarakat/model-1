@@ -1,3 +1,65 @@
+export type Note = string;
+
+export type NoteState = {
+  isPlaying: boolean;
+  isReleased: boolean;
+  startTime: number;
+  releaseTime: number | null;
+};
+
+export type SynthSettings = {
+  tune: number;
+  modMix: number;
+  modWheel: number;
+  glide: number;
+  oscillators: Array<{
+    waveform: OscillatorType;
+    frequency: number;
+    range: RangeType;
+    volume: number;
+    detune: number;
+  }>;
+  noise: {
+    volume: number;
+    pan: number;
+    type: "white" | "pink";
+    tone: number;
+    sync: boolean;
+  };
+  filter: {
+    cutoff: number;
+    resonance: number;
+    contourAmount: number;
+    type: "lowpass" | "highpass" | "bandpass" | "notch";
+  };
+  envelope: {
+    attack: number;
+    decay: number;
+    sustain: number;
+    release: number;
+  };
+  lfo: {
+    rate: number;
+    depth: number;
+    waveform: OscillatorType;
+    routing: {
+      filterCutoff: boolean;
+      filterResonance: boolean;
+      oscillatorPitch: boolean;
+      oscillatorVolume: boolean;
+    };
+  };
+  reverb: {
+    amount: number;
+  };
+  distortion: {
+    outputGain: number;
+  };
+  delay: {
+    amount: number;
+  };
+};
+
 export type NoteData = {
   oscillators: OscillatorNode[];
   oscillatorGains: GainNode[];
@@ -11,6 +73,8 @@ export type NoteData = {
     oscillatorPitch: GainNode;
     oscillatorVolume: GainNode;
   };
+  filterEnvelope: GainNode;
+  filterModGain: GainNode;
   noiseNode: AudioWorkletNode | null;
   noiseGain: GainNode | null;
   noisePanner: StereoPannerNode | null;
@@ -18,10 +82,13 @@ export type NoteData = {
 };
 
 export type OscillatorSettings = {
-  type: OscillatorType;
+  type?: OscillatorType;
   range: RangeType;
   frequency: number;
   detune: number;
+  pan?: number;
+  volume: number;
+  waveform?: OscillatorType;
 };
 
 export type RangeType = "32" | "16" | "8" | "4" | "2";
