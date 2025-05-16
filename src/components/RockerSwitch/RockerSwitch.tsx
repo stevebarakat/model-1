@@ -4,15 +4,9 @@ type RockerSwitchProps = {
   checked: boolean;
   onCheckedChange: (checked: boolean) => void;
   label?: string;
-  className?: string;
 };
 
-function RockerSwitch({
-  checked,
-  onCheckedChange,
-  label,
-  className,
-}: RockerSwitchProps) {
+function RockerSwitch({ checked, onCheckedChange, label }: RockerSwitchProps) {
   return (
     <div className="switch switch--dark">
       <label>
