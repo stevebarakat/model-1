@@ -16,7 +16,8 @@ function Switch({ checked, onCheckedChange, label, className }: SwitchProps) {
           className="switch__state"
           type="checkbox"
           name="switch"
-          checked
+          onChange={() => onCheckedChange(!checked)}
+          checked={checked}
         />
         <span className="switch__control switch__control--rounded"></span>
       </label>
