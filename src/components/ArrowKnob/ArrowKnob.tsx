@@ -34,7 +34,7 @@ function getRotation(
   } else {
     percentage = (value - min) / range;
   }
-  return percentage * 300 - 150; // -150 to +150 degrees
+  return percentage * 120 - 60; // -60 to +60 degrees (top 120° arc)
 }
 
 function getDisplayValue(
@@ -47,6 +47,30 @@ function getDisplayValue(
     valueLabels?.[Math.round(value)] ??
     value.toFixed(step >= 1 ? 0 : 2) + (unit ? ` ${unit}` : "")
   );
+}
+
+// Helper to generate all step values
+function getStepValues(min: number, max: number, step: number): number[] {
+  const values = [];
+  for (let v = min; v <= max; v += step) {
+    // Avoid floating point issues
+    values.push(Number(v.toFixed(6)));
+  }
+  // Ensure max is included
+  if (values[values.length - 1] !== max) values.push(max);
+  return values;
+}
+
+// Helper to get label position
+function getLabelPosition(
+  angle: number,
+  radius: number,
+  center: number
+): { left: number; top: number } {
+  const rad = (angle - 90) * (Math.PI / 180); // -90 to start at top
+  const x = center + radius * Math.cos(rad);
+  const y = center + radius * Math.sin(rad);
+  return { left: x, top: y };
 }
 
 function ArrowKnob({
@@ -74,6 +98,10 @@ function ArrowKnob({
     typeof displayValue === "string"
       ? displayValue
       : value.toFixed(step >= 1 ? 0 : 2) + (unit ? ` ${unit}` : "");
+
+  const knobSize = 80; // px, adjust as needed
+  const labelRadius = 38; // px, adjust for label distance from center
+  const stepValues = getStepValues(min, max, step);
 
   function handleMouseDown(e: React.MouseEvent): void {
     const knobRect = knobRef.current?.getBoundingClientRect();
@@ -179,12 +207,41 @@ function ArrowKnob({
   }, [isKeyboardActive, value]);
 
   return (
-    <div className={styles.knobContainer}>
-      {isDragging || isKeyboardActive ? (
-        <div className={styles.knobValue}>{displayValue}</div>
-      ) : (
-        hasLabel && <div className={styles.knobLabel}>{label}</div>
-      )}
+    <div
+      className={styles.knobContainer}
+      style={{ position: "relative", width: knobSize, height: knobSize }}
+    >
+      {/* Value labels around the knob */}
+      {stepValues.map((v) => {
+        const angle = getRotation(v, min, max, logarithmic);
+        const { left, top } = getLabelPosition(
+          angle,
+          labelRadius,
+          knobSize / 2
+        );
+        const labelText = getDisplayValue(v, step, unit, valueLabels);
+        return (
+          <div className={styles.knobValueContainer}>
+            <div
+              key={v}
+              className={styles.knobValue}
+              style={{
+                position: "absolute",
+                left: left / 1.3,
+                top: top / 1.3,
+                transform: "translate(-50%, -50%)",
+                pointerEvents: "none",
+                userSelect: "none",
+                zIndex: 2,
+              }}
+            >
+              {labelText}
+            </div>
+          </div>
+        );
+      })}
+      {/* Remove dynamic value display, always show label if present */}
+      {hasLabel && <div className={styles.knobLabel}>{label}</div>}
       <div className={styles.knob}>
         <div className={styles.knobBtm}>
           <div

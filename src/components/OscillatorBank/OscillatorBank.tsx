@@ -84,10 +84,10 @@ function OscillatorControls({
         step={1}
         label="Wave"
         valueLabels={{
-          0: <AudioWaveform size={14} strokeWidth={2} />,
-          1: <Square size={14} strokeWidth={2} />,
-          2: <Activity size={14} strokeWidth={2} />,
-          3: <Triangle size={14} strokeWidth={2} />,
+          0: <AudioWaveform size={8} strokeWidth={2} />,
+          1: <Square size={8} strokeWidth={2} />,
+          2: <Activity size={8} strokeWidth={2} />,
+          3: <Triangle size={8} strokeWidth={2} />,
         }}
         onChange={(value) => onChange("waveform", valueToWaveform(value))}
       />
