@@ -100,13 +100,13 @@ function OscillatorControls({
         displayMode={!showLabels ? "always" : "replace"}
       />
       <ArrowKnob
-        value={waveformToValue(osc.type ?? "sine")}
+        value={waveformToValue(osc.waveform ?? "sine")}
         min={0}
         max={3}
         step={1}
         label={showLabels ? "Wave" : ""}
         valueLabels={WAVEFORM_ICONS}
-        onChange={(value) => onChange("type", valueToWaveform(value))}
+        onChange={(value) => onChange("waveform", valueToWaveform(value))}
       />
     </div>
   );
