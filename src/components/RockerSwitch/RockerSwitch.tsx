@@ -1,4 +1,4 @@
-import "./RockerSwitch.css";
+import styles from "./RockerSwitch.module.css";
 
 type RockerSwitchProps = {
   checked: boolean;
@@ -8,17 +8,17 @@ type RockerSwitchProps = {
 
 function RockerSwitch({ checked, onCheckedChange, label }: RockerSwitchProps) {
   return (
-    <div className="switch switch--dark">
+    <div className={`${styles.switch} ${styles.dark}`}>
       <label>
-        {label && <span className="switch__label">{label}</span>}
+        {label && <span className={styles.label}>{label}</span>}
         <input
-          className="switch__state"
+          className={styles.state}
           type="checkbox"
           name="switch"
           onChange={() => onCheckedChange(!checked)}
           checked={checked}
         />
-        <span className="switch__control switch__control--rounded"></span>
+        <span className={styles.control}></span>
       </label>
     </div>
   );
