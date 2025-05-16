@@ -1,5 +1,5 @@
 import Knob from "../Knob";
-import Switch from "../Switch";
+import Switch from "../RockerSwitch";
 
 type NoiseProps = {
   volume: number;
