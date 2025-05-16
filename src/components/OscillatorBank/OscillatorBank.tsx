@@ -6,7 +6,6 @@ import {
   OscillatorType,
   OscillatorBankProps,
 } from "../../synth/types";
-import PointerKnob from "../PointerKnob";
 import ArrowKnob from "../ArrowKnob";
 
 // Constants for mapping values
@@ -52,12 +51,14 @@ function valueToWaveform(value: number): OscillatorType {
 function OscillatorControls({
   osc,
   onChange,
+  showLabels = true,
 }: {
   osc: OscillatorSettings;
   onChange: (
     param: keyof OscillatorSettings,
     value: OscillatorSettings[keyof OscillatorSettings]
   ) => void;
+  showLabels?: boolean;
 }) {
   return (
     <div className="row">
@@ -66,8 +67,7 @@ function OscillatorControls({
         min={0}
         max={4}
         step={1}
-        label="Range"
-        unit="'"
+        label={showLabels ? "Range" : ""}
         valueLabels={{
           0: "32 '",
           1: "16 '",
@@ -77,36 +77,37 @@ function OscillatorControls({
         }}
         onChange={(value) => onChange("range", valueToRange(value))}
       />
+      <Knob
+        // size="large"
+        value={osc.frequency}
+        min={-12}
+        max={12}
+        step={0.1}
+        label={showLabels ? "Freq" : ""}
+        unit={showLabels ? "st" : ""}
+        onChange={(value) => onChange("frequency", value)}
+      />
       <ArrowKnob
-        value={waveformToValue(osc.waveform)}
+        value={waveformToValue(osc.type)}
         min={0}
         max={3}
         step={1}
-        label="Wave"
+        label={showLabels ? "Wave" : ""}
         valueLabels={{
           0: <AudioWaveform size={8} strokeWidth={2} />,
           1: <Square size={8} strokeWidth={2} />,
           2: <Activity size={8} strokeWidth={2} />,
           3: <Triangle size={8} strokeWidth={2} />,
         }}
-        onChange={(value) => onChange("waveform", valueToWaveform(value))}
-      />
-      <Knob
-        value={osc.frequency}
-        min={-12}
-        max={12}
-        step={0.1}
-        label="Freq"
-        unit="st"
-        onChange={(value) => onChange("frequency", value)}
+        onChange={(value) => onChange("type", valueToWaveform(value))}
       />
       <Knob
         value={osc.detune}
         min={-50}
         max={50}
         step={1}
-        label="Detune"
-        unit="ct"
+        label={showLabels ? "Detune" : ""}
+        unit={showLabels ? "ct" : ""}
         onChange={(value) => onChange("detune", value)}
       />
     </div>
@@ -125,9 +126,21 @@ function OscillatorBank({
     <div className="box">
       <div className="section">
         <div className="column">
-          <OscillatorControls osc={osc1} onChange={onOsc1Change} />
-          <OscillatorControls osc={osc2} onChange={onOsc2Change} />
-          <OscillatorControls osc={osc3} onChange={onOsc3Change} />
+          <OscillatorControls
+            osc={osc1}
+            onChange={onOsc1Change}
+            showLabels={true}
+          />
+          <OscillatorControls
+            osc={osc2}
+            onChange={onOsc2Change}
+            showLabels={false}
+          />
+          <OscillatorControls
+            osc={osc3}
+            onChange={onOsc3Change}
+            showLabels={false}
+          />
         </div>
         <span className="section-title">Oscillator Bank</span>
       </div>

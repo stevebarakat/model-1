@@ -21,6 +21,7 @@ type OscillatorControlsProps = {
   label: string;
   onVolumeChange: (value: number) => void;
   onPanChange: (value: number) => void;
+  showLabels?: boolean;
 };
 
 function OscillatorControls({
@@ -29,6 +30,7 @@ function OscillatorControls({
   label,
   onVolumeChange,
   onPanChange,
+  showLabels = true,
 }: OscillatorControlsProps) {
   return (
     <div className="row">
@@ -37,7 +39,7 @@ function OscillatorControls({
         min={0}
         max={1}
         step={0.01}
-        label={label}
+        label={showLabels ? label : ""}
         onChange={onVolumeChange}
       />
       <Knob
@@ -45,7 +47,7 @@ function OscillatorControls({
         min={-1}
         max={1}
         step={0.01}
-        label="Pan"
+        label={showLabels ? "Pan" : ""}
         onChange={onPanChange}
       />
     </div>
@@ -77,6 +79,7 @@ function Mixer({
               label="Osc 1"
               onVolumeChange={onOsc1VolumeChange}
               onPanChange={onOsc1PanChange}
+              showLabels={true}
             />
             <OscillatorControls
               volume={osc2Volume}
@@ -84,6 +87,7 @@ function Mixer({
               label="Osc 2"
               onVolumeChange={onOsc2VolumeChange}
               onPanChange={onOsc2PanChange}
+              showLabels={false}
             />
             <OscillatorControls
               volume={osc3Volume}
@@ -91,6 +95,7 @@ function Mixer({
               label="Osc 3"
               onVolumeChange={onOsc3VolumeChange}
               onPanChange={onOsc3PanChange}
+              showLabels={false}
             />
           </div>
         </div>

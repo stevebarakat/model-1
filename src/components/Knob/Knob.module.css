@@ -6,6 +6,18 @@
   margin-top: var(--spacing-lg);
 }
 
+.knobContainerSmall {
+  --knob-size: 25px;
+}
+
+.knobContainerMedium {
+  --knob-size: 35px;
+}
+
+.knobContainerLarge {
+  --knob-size: 45px;
+}
+
 .knob {
   width: var(--knob-size);
   height: var(--knob-size);

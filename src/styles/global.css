@@ -39,9 +39,9 @@ body {
   overflow: hidden;
   border: 2px solid var(--synth-border);
   border-radius: var(--border-radius-sm);
-  &.filled {
+  /* &.filled {
     background-color: var(--synth-border);
     margin-left: -6px;
     border-left: none;
-  }
+  } */
 }
