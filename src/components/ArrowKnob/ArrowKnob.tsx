@@ -64,7 +64,6 @@ function ArrowKnob({
   const [isDragging, setIsDragging] = useState(false);
   const [isKeyboardActive, setIsKeyboardActive] = useState(false);
   const [startY, setStartY] = useState(0);
-  const [startX, setStartX] = useState(0);
   const [startValue, setStartValue] = useState(0);
   const [isRightSide, setIsRightSide] = useState(false);
   const hasLabel = label !== "";
@@ -87,7 +86,6 @@ function ArrowKnob({
     setIsDragging(true);
     setIsRightSide(isRight);
     setStartY(e.clientY);
-    setStartX(e.clientX);
     setStartValue(value);
   }
 

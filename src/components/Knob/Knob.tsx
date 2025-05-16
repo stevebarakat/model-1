@@ -64,7 +64,6 @@ function Knob({
   const [isDragging, setIsDragging] = useState(false);
   const [isKeyboardActive, setIsKeyboardActive] = useState(false);
   const [startY, setStartY] = useState(0);
-  const [startX, setStartX] = useState(0);
   const [startValue, setStartValue] = useState(0);
   const [isRightSide, setIsRightSide] = useState(false);
   const hasLabel = label !== "";
@@ -87,7 +86,6 @@ function Knob({
     setIsDragging(true);
     setIsRightSide(isRight);
     setStartY(e.clientY);
-    setStartX(e.clientX);
     setStartValue(value);
   }
 
@@ -167,16 +165,7 @@ function Knob({
       document.removeEventListener("mousemove", handleMouseMove);
       document.removeEventListener("mouseup", handleMouseUp);
     };
-  }, [
-    isDragging,
-    min,
-    max,
-    startY,
-    startX,
-    startValue,
-    onChange,
-    handleMouseMove,
-  ]);
+  }, [isDragging, min, max, startY, startValue, onChange, handleMouseMove]);
 
   useEffect(() => {
     document.addEventListener("keydown", handleKeyDown);

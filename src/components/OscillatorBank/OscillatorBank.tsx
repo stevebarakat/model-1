@@ -61,7 +61,7 @@ function OscillatorControls({
 }) {
   return (
     <div className="row">
-      <Knob
+      <ArrowKnob
         value={rangeToValue(osc.range)}
         min={0}
         max={4}
@@ -100,7 +100,7 @@ function OscillatorControls({
         unit="st"
         onChange={(value) => onChange("frequency", value)}
       />
-      <ArrowKnob
+      <Knob
         value={osc.detune}
         min={-50}
         max={50}
