@@ -20,13 +20,6 @@
   width: 50px;
 }
 
-.octaveControlsRow {
-  display: flex;
-  justify-content: center;
-  margin: var(--spacing-lg) 0 0;
-  width: 100%;
-}
-
 .topControls {
   display: flex;
   flex-direction: row;

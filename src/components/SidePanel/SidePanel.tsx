@@ -1,6 +1,5 @@
 import Knob from "../Knob";
 import ModWheel from "../ModWheel";
-import OctaveControls from "../OctaveControls";
 import styles from "./SidePanel.module.css";
 
 type TopControlsProps = {
@@ -8,9 +7,6 @@ type TopControlsProps = {
   onTuneChange: (value: number) => void;
   glide: number;
   onGlideChange: (value: number) => void;
-  currentOctave: number;
-  onOctaveChange: (value: number) => void;
-  onOctaveChangeStart: () => void;
 };
 
 type ModWheelsProps = {
@@ -26,9 +22,6 @@ function TopControls({
   onTuneChange,
   glide,
   onGlideChange,
-  currentOctave,
-  onOctaveChange,
-  onOctaveChangeStart,
 }: TopControlsProps) {
   return (
     <div className={styles.topControls}>
@@ -48,11 +41,6 @@ function TopControls({
         step={0.01}
         label="Glide"
         onChange={onGlideChange}
-      />
-      <OctaveControls
-        currentOctave={currentOctave}
-        onOctaveChange={onOctaveChange}
-        onOctaveChangeStart={onOctaveChangeStart}
       />
     </div>
   );
@@ -100,9 +88,6 @@ function SidePanel(props: SidePanelProps) {
         onTuneChange={props.onTuneChange}
         glide={props.glide}
         onGlideChange={props.onGlideChange}
-        currentOctave={props.currentOctave}
-        onOctaveChange={props.onOctaveChange}
-        onOctaveChangeStart={props.onOctaveChangeStart}
       />
       <ModWheels
         pitchWheel={props.pitchWheel}
