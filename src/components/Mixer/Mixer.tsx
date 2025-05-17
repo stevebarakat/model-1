@@ -38,6 +38,10 @@ function OscillatorControls({
   return (
     <>
       <div className={styles.row}>
+        <div className={styles.screwTopLeft} />
+        <div className={styles.screwTopRight} />
+        <div className={styles.screwBottomLeft} />
+        <div className={styles.screwBottomRight} />
         <Knob
           value={volume}
           min={0}
