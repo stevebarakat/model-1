@@ -15,7 +15,7 @@ function Switch({
   bottomLabel,
   className,
 }: SwitchProps) {
-  const isPink = topLabel === "Pink";
+  const isPink = bottomLabel === "Pink";
   const pinkStyle =
     "linear-gradient(to left, hsl(320deg 70% 45% / 90%), hsl(320deg 70% 35% / 90%))";
   const thumbStyle = {
@@ -36,9 +36,9 @@ function Switch({
           style={thumbStyle}
         />
       </button>
-      {/* {bottomLabel && (
+      {bottomLabel && (
         <label className={styles.bottomLabel}>{bottomLabel}</label>
-      )} */}
+      )}
     </div>
   );
 }
