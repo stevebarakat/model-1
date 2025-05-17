@@ -74,9 +74,9 @@ function Mixer({
   onOsc3PanChange,
 }: MixerProps) {
   return (
-    <div className="box">
-      <div className="section">
-        <div className="row">
+    <div className="bx">
+      <div className="sction">
+        <div className="ow">
           <div className={styles.column}>
             <OscillatorControls
               volume={osc1Volume}

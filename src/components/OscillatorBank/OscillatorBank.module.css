@@ -16,14 +16,54 @@
   gap: var(--spacing-md);
   padding: var(--spacing-sm);
   padding-bottom: var(--spacing-lg);
-  border-radius: var(--border-radius-sm);
   &:first-of-type {
-    background-color: hsl(220deg 15% 25% / 15%); /* Subtle blue */
+    background-color: hsl(350deg 40% 20% / 90%); /* Deep red */
   }
   &:nth-of-type(2) {
-    background-color: hsl(220deg 15% 25% / 10%); /* Lighter blue */
+    background-color: hsl(45deg 40% 20% / 90%); /* Amber */
   }
   &:last-of-type {
-    background-color: hsl(220deg 15% 25% / 5%); /* Lightest blue */
+    background-color: hsl(160deg 40% 20% / 90%); /* Emerald */
+  }
+}
+
+.horizontalIndent {
+  display: block;
+  margin-bottom: -2px;
+  width: 100%;
+  height: 8px;
+  align-self: flex-end;
+  background: linear-gradient(
+    0deg,
+    hsl(217deg 20% 25% / 50%),
+    hsl(217deg 40% 25%),
+    hsl(217deg 10% 5%),
+    hsl(217deg 30% 20%),
+    hsl(217deg 50% 25%)
+  );
+  &:first-of-type {
+    background: linear-gradient(
+      0deg,
+      hsl(45deg 40% 20% / 90%),
+      hsl(45deg 40% 20%),
+      hsl(45deg 40% 5%),
+      hsl(350deg 40% 20%),
+      hsl(350deg 40% 20% / 90%)
+    );
+    background-color: hsl(350deg 40% 20% / 90%); /* Deep red */
+  }
+  &:nth-of-type(2) {
+    background: linear-gradient(
+      0deg,
+      hsl(160deg 40% 20% / 90%),
+      hsl(160deg 40% 20%),
+      hsl(45deg 40% 5%),
+      hsl(45deg 40% 20%),
+      hsl(45deg 40% 20% / 90%)
+    );
+    background-color: hsl(45deg 40% 20% / 90%); /* Amber */
+  }
+  &:last-of-type {
+    background-color: hsl(160deg 40% 20% / 90%); /* Emerald */
   }
 }
