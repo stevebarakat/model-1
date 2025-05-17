@@ -114,7 +114,7 @@ function SynthControls({
         onOsc2Change={handleOsc2Change}
         onOsc3Change={handleOsc3Change}
       />
-      {/* <div className={styles.indent}></div> */}
+      <div className={styles.indent}></div>
       <Mixer
         osc1Volume={mixer.osc1Volume}
         osc2Volume={mixer.osc2Volume}

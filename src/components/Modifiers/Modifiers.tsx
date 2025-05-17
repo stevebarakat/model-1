@@ -70,7 +70,7 @@ function Modifiers({
   const cutoffMax = isBandpassOrNotch ? 3000 : 20000;
 
   return (
-    <div className="box">
+    <div className="box filled">
       <div className="section">
         <div className="column">
           <div className="row">

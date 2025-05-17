@@ -7,6 +7,7 @@ import {
 } from "../../synth/types";
 import ArrowKnob from "../ArrowKnob";
 import { WAVEFORM_ICONS } from "../Modifiers/constants";
+import styles from "./OscillatorBank.module.css";
 
 // Constants for mapping values
 const RANGE_MAP: Record<RangeType, number> = {
@@ -52,6 +53,7 @@ function OscillatorControls({
   osc,
   onChange,
   showLabels = true,
+  oscillatorNumber,
 }: {
   osc: OscillatorSettings;
   onChange: (
@@ -59,9 +61,11 @@ function OscillatorControls({
     value: OscillatorSettings[keyof OscillatorSettings]
   ) => void;
   showLabels?: boolean;
+  oscillatorNumber: number;
 }) {
   return (
-    <div className="row">
+    <div className={styles.row}>
+      <div className={styles.oscillatorNumber}>{oscillatorNumber}</div>
       <ArrowKnob
         value={rangeToValue(osc.range)}
         min={0}
@@ -128,16 +132,19 @@ function OscillatorBank({
             osc={osc1}
             onChange={onOsc1Change}
             showLabels={true}
+            oscillatorNumber={1}
           />
           <OscillatorControls
             osc={osc2}
             onChange={onOsc2Change}
             showLabels={false}
+            oscillatorNumber={2}
           />
           <OscillatorControls
             osc={osc3}
             onChange={onOsc3Change}
             showLabels={false}
+            oscillatorNumber={3}
           />
         </div>
         <span className="section-title">Oscillator Bank</span>
