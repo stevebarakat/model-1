@@ -50,6 +50,17 @@ export function setupEffects(context: AudioContext) {
     bypass: 0,
   });
 
+  // Add EQ filters for distortion
+  const distortionLowEQ = context.createBiquadFilter();
+  distortionLowEQ.type = "lowshelf";
+  distortionLowEQ.frequency.value = 200;
+  distortionLowEQ.gain.value = 0;
+
+  const distortionHighEQ = context.createBiquadFilter();
+  distortionHighEQ.type = "highshelf";
+  distortionHighEQ.frequency.value = 2000;
+  distortionHighEQ.gain.value = 0;
+
   const compressor = context.createDynamicsCompressor();
   compressor.threshold.value = -24;
   compressor.knee.value = 12;
@@ -63,8 +74,10 @@ export function setupEffects(context: AudioContext) {
   wetGain.gain.value = 0;
 
   masterGain.connect(dryGain);
-  masterGain.connect(distortion);
-  distortion.connect(compressor);
+  masterGain.connect(distortionLowEQ);
+  distortionLowEQ.connect(distortion);
+  distortion.connect(distortionHighEQ);
+  distortionHighEQ.connect(compressor);
   compressor.connect(wetGain);
 
   masterGain.connect(delayNode);
@@ -96,5 +109,7 @@ export function setupEffects(context: AudioContext) {
     reverbNode,
     reverbEQ,
     createImpulseResponse,
+    distortionLowEQ,
+    distortionHighEQ,
   };
 }

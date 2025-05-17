@@ -25,6 +25,8 @@ type SynthContext = {
   reverbNode: ConvolverNode;
   reverbEQ: BiquadFilterNode;
   createImpulseResponse: (decay: number) => AudioBuffer;
+  distortionLowEQ: BiquadFilterNode;
+  distortionHighEQ: BiquadFilterNode;
 };
 
 type SynthState = {
@@ -101,6 +103,8 @@ function createSynthContext(context: AudioContext): SynthContext {
     reverbNode: effects.reverbNode,
     reverbEQ: effects.reverbEQ,
     createImpulseResponse: effects.createImpulseResponse,
+    distortionLowEQ: effects.distortionLowEQ,
+    distortionHighEQ: effects.distortionHighEQ,
   };
 }
 
@@ -174,6 +178,8 @@ function createInitialState(): SynthState {
       },
       distortion: {
         outputGain: 0,
+        lowEQ: 50,
+        highEQ: 50,
       },
       delay: {
         amount: 0,
@@ -522,6 +528,16 @@ function updateSettings(
       const logMix = Math.pow(mix, 2);
       synthContext.dryGain.gain.value = 1 - logMix;
       synthContext.wetGain.gain.value = logMix;
+    }
+    if (newSettings.distortion.lowEQ !== undefined) {
+      // Map EQ value from 0-100 to -12 to +12 dB
+      const eqValue = (newSettings.distortion.lowEQ - 50) * (24 / 100);
+      synthContext.distortionLowEQ.gain.value = eqValue;
+    }
+    if (newSettings.distortion.highEQ !== undefined) {
+      // Map EQ value from 0-100 to -12 to +12 dB
+      const eqValue = (newSettings.distortion.highEQ - 50) * (24 / 100);
+      synthContext.distortionHighEQ.gain.value = eqValue;
     }
   }
 

@@ -12,6 +12,8 @@ type EffectsProps = {
   delayTime: number;
   delayFeedback: number;
   distortionAmount: number;
+  distortionLowEQ: number;
+  distortionHighEQ: number;
   onReverbAmountChange: (amount: number) => void;
   onReverbDecayChange: (decay: number) => void;
   onReverbEqChange: (eq: number) => void;
@@ -19,6 +21,8 @@ type EffectsProps = {
   onDelayTimeChange: (time: number) => void;
   onDelayFeedbackChange: (feedback: number) => void;
   onDistortionAmountChange: (amount: number) => void;
+  onDistortionLowEQChange: (value: number) => void;
+  onDistortionHighEQChange: (value: number) => void;
 };
 
 function Effects({
@@ -29,6 +33,8 @@ function Effects({
   delayTime,
   delayFeedback,
   distortionAmount,
+  distortionLowEQ,
+  distortionHighEQ,
   onReverbAmountChange,
   onReverbDecayChange,
   onReverbEqChange,
@@ -36,6 +42,8 @@ function Effects({
   onDelayTimeChange,
   onDelayFeedbackChange,
   onDistortionAmountChange,
+  onDistortionLowEQChange,
+  onDistortionHighEQChange,
 }: EffectsProps): React.ReactElement {
   return (
     <div className={styles.column}>
@@ -59,7 +67,11 @@ function Effects({
       <span className={styles.horizontalIndent}></span>
       <Distortion
         amount={distortionAmount}
+        lowEQ={distortionLowEQ}
+        highEQ={distortionHighEQ}
         onAmountChange={onDistortionAmountChange}
+        onLowEQChange={onDistortionLowEQChange}
+        onHighEQChange={onDistortionHighEQChange}
       />
       <span className={styles.horizontalIndent}></span>
     </div>
