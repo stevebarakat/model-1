@@ -54,8 +54,8 @@ export const ROUTING_LABELS: Record<number, ReactElement> = {
 };
 
 export const WAVEFORM_ICONS: Record<number, ReactElement> = {
-  0: <Triangle size={10} strokeWidth={3} />,
-  1: <Activity size={10} strokeWidth={3} />,
-  2: <Square size={10} strokeWidth={3} />,
-  3: <AudioWaveform size={10} strokeWidth={3} />,
+  0: <Triangle size={9} strokeWidth={3} />,
+  1: <Activity size={9} strokeWidth={3} />,
+  2: <Square size={9} strokeWidth={3} />,
+  3: <AudioWaveform size={9} strokeWidth={3} />,
 };
