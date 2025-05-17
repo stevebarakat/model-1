@@ -9,6 +9,7 @@ import OscillatorBank from "../OscillatorBank";
 import Modifiers from "../Modifiers";
 import Effects from "../Effects";
 import Noise from "../Noise/Noise";
+import Spacer from "../Spacer";
 
 type SynthControlsProps = {
   oscillators: {
@@ -245,6 +246,7 @@ function SynthControls({
           })
         }
       />
+      <Spacer />
     </>
   );
 }
