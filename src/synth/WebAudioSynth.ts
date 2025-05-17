@@ -252,6 +252,13 @@ function createOscillatorChain(
   gain: GainNode | null;
   panner: StereoPannerNode | null;
 } {
+  console.log("createOscillatorChain called with:", {
+    baseFrequency,
+    lastFrequency,
+    glide,
+    oscSettings,
+  });
+
   if ((oscSettings.volume ?? 0) <= 0) {
     return {
       oscillator: null,
@@ -264,9 +271,14 @@ function createOscillatorChain(
   const frequencyOffset = Math.pow(2, oscSettings.frequency / 12);
   const finalFrequency = baseFrequency * rangeMultiplier * frequencyOffset;
   const startFrequency =
-    glide > 0 && lastFrequency
-      ? lastFrequency * rangeMultiplier * frequencyOffset
-      : finalFrequency;
+    glide > 0 && lastFrequency ? lastFrequency : finalFrequency;
+
+  console.log("Frequency calculations:", {
+    rangeMultiplier,
+    frequencyOffset,
+    finalFrequency,
+    startFrequency,
+  });
 
   const oscillator = createOscillator(
     context,
@@ -286,7 +298,14 @@ function createOscillatorChain(
   oscillator.start(startTime);
 
   if (glide > 0 && lastFrequency) {
-    const glideTime = glide * 0.5;
+    // Convert glide value (0-1) to time in seconds (0-2)
+    const glideTime = glide * 2;
+    console.log("Applying glide:", {
+      glideTime,
+      startFrequency,
+      finalFrequency,
+    });
+    oscillator.frequency.setValueAtTime(startFrequency, startTime);
     oscillator.frequency.linearRampToValueAtTime(
       finalFrequency,
       startTime + glideTime
@@ -744,13 +763,18 @@ function updateSettings(
 function triggerAttack(
   state: SynthState,
   synthContext: SynthContext,
-  note: Note
+  note: Note,
+  lastFrequency: number | null = null
 ): void {
   const now = synthContext.context.currentTime;
 
-  // If there's a current note, release it first
-  if (state.currentNote) {
-    triggerRelease(state, synthContext, state.currentNote);
+  // Store the current note's frequency before any changes
+  if (!lastFrequency && state.currentNote && state.noteData) {
+    const activeOsc = state.noteData.oscillators[0];
+    if (activeOsc) {
+      lastFrequency = activeOsc.frequency.value;
+      console.log("Using current oscillator frequency:", lastFrequency);
+    }
   }
 
   state.noteState = {
@@ -761,10 +785,6 @@ function triggerAttack(
   };
   state.currentNote = note;
 
-  const lastFrequency = state.currentNote
-    ? noteToFrequency(state.currentNote, state.settings.tune)
-    : null;
-
   const hasActiveOscillators = state.settings.oscillators.some(
     (osc: { volume?: number }) => (osc.volume ?? 0) > 0
   );
@@ -773,6 +793,7 @@ function triggerAttack(
   }
 
   const targetFrequency = noteToFrequency(note, state.settings.tune);
+  console.log("Target frequency:", targetFrequency);
 
   // Create main audio chain
   const noteGain = createGainNode(synthContext.context, 0);
@@ -1018,10 +1039,32 @@ function handleNoteTransition(
   fromNote: Note | null,
   toNote: Note
 ): void {
-  if (fromNote) {
-    triggerRelease(state, synthContext, fromNote);
+  console.log("handleNoteTransition called with:", {
+    fromNote,
+    toNote,
+    glide: state.settings.glide,
+  });
+
+  // Get the current note's frequency before any changes
+  let lastFrequency = null;
+  if (state.currentNote && state.noteData) {
+    // Get the actual current frequency from the first active oscillator
+    const activeOsc = state.noteData.oscillators[0];
+    if (activeOsc) {
+      lastFrequency = activeOsc.frequency.value;
+      console.log("Current oscillator frequency:", lastFrequency);
+    }
   }
-  triggerAttack(state, synthContext, toNote);
+
+  // Calculate the target frequency
+  const targetFrequency = noteToFrequency(toNote, state.settings.tune);
+  console.log("Target frequency:", targetFrequency);
+
+  // Start the new note with the last frequency
+  triggerAttack(state, synthContext, toNote, lastFrequency);
+
+  // Don't release the previous note - let it fade out naturally
+  // The glide will handle the transition between notes
 }
 
 function dispose(state: SynthState, synthContext: SynthContext): void {

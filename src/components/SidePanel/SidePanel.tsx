@@ -23,6 +23,7 @@ function TopControls({
   glide,
   onGlideChange,
 }: TopControlsProps) {
+  console.log("Glide value in TopControls:", glide);
   return (
     <div className={styles.topControls}>
       <Knob
@@ -40,7 +41,10 @@ function TopControls({
         max={1}
         step={0.01}
         label="Glide"
-        onChange={onGlideChange}
+        onChange={(value) => {
+          console.log("Glide knob value:", value);
+          onGlideChange(value);
+        }}
       />
     </div>
   );

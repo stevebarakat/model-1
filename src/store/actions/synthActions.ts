@@ -15,7 +15,10 @@ export function createSynthActions(
     setTune: (value) => set({ tune: value }),
     setModMix: (value) => set({ modMix: value }),
     setCurrentOctave: (value) => set({ currentOctave: value }),
-    setGlide: (value) => set({ glide: value }),
+    setGlide: (value) => {
+      console.log("Setting glide value in store:", value);
+      set({ glide: value });
+    },
     updateOscillator: (id, settings) =>
       set((state: SynthState) => ({
         oscillators: {

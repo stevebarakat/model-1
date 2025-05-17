@@ -1,6 +1,6 @@
 import { useCallback, useState, useEffect } from "react";
 import { MutableRefObject } from "react";
-import { createSynth } from "../synth/WebAudioSynth";
+import createSynth from "../synth/WebAudioSynth";
 
 type Note = string;
 
@@ -33,7 +33,8 @@ export function useKeyboardHandling({
       });
 
       if (isMouseDown && lastPlayedNote && lastPlayedNote !== note) {
-        keyboardRef.current.synth?.handleNoteTransition(lastPlayedNote, note);
+        const currentNote = lastPlayedNote;
+        keyboardRef.current.synth?.handleNoteTransition(currentNote, note);
       } else {
         keyboardRef.current.synth?.triggerAttack(note);
       }

@@ -59,6 +59,7 @@ function App() {
   // Update synth settings when keyboard ref is available
   useEffect(() => {
     if (keyboardRef.current.synth) {
+      console.log("Glide value being passed to synth:", glide);
       keyboardRef.current.synth.updateSettings({
         oscillators: [
           {
