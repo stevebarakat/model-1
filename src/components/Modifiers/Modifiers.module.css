@@ -1,6 +1,6 @@
 .sectionTitle {
   font-size: 1rem;
-  color: var(--color-text-secondary);
+  color: var(--color-text-primary);
   padding: var(--spacing-xs);
   background-color: hsla(0, 0%, 100%, 0.1);
   border-radius: var(--border-radius-md);

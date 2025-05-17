@@ -4,8 +4,8 @@
   --color-amber: hsl(45deg 40% 20%);
   --color-emerald: hsl(160deg 40% 20%);
   --color-background: hsl(0deg 0% 10%);
-  --color-text-primary: hsl(220deg 13% 90%);
-  --color-text-secondary: hsl(220deg 13% 70%);
+  --color-text-primary: hsl(220deg 13% 100% / 45%);
+  --color-text-secondary: hsl(220deg 13% 100% / 60%);
   --color-off-black: hsl(217deg 32% 5%);
 
   /* Synth UI Colors */
