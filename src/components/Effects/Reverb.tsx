@@ -3,10 +3,12 @@ import styles from "./Effects.module.css";
 
 type ReverbProps = {
   amount: number;
+  decay: number;
   onAmountChange: (value: number) => void;
+  onDecayChange: (value: number) => void;
 };
 
-function Reverb({ amount, onAmountChange }: ReverbProps) {
+function Reverb({ amount, decay, onAmountChange, onDecayChange }: ReverbProps) {
   return (
     <div className={styles.row}>
       <Knob
@@ -16,6 +18,15 @@ function Reverb({ amount, onAmountChange }: ReverbProps) {
         label="Reverb"
         unit="%"
         onChange={onAmountChange}
+      />
+      <Knob
+        value={decay}
+        min={0.1}
+        max={5}
+        step={0.1}
+        label="Decay"
+        unit="s"
+        onChange={onDecayChange}
       />
     </div>
   );

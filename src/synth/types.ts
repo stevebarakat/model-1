@@ -18,6 +18,7 @@ export type SynthSettings = {
     range: RangeType;
     volume: number;
     detune: number;
+    pan?: number;
   }>;
   noise: {
     volume: number;
@@ -51,6 +52,7 @@ export type SynthSettings = {
   };
   reverb: {
     amount: number;
+    decay: number;
   };
   distortion: {
     outputGain: number;
@@ -82,13 +84,12 @@ export type NoteData = {
 };
 
 export type OscillatorSettings = {
-  type?: OscillatorType;
-  range: RangeType;
+  waveform: OscillatorType;
   frequency: number;
+  range: RangeType;
+  volume: number;
   detune: number;
   pan?: number;
-  volume: number;
-  waveform?: OscillatorType;
 };
 
 export type RangeType = "32" | "16" | "8" | "4" | "2";

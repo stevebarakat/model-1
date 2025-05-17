@@ -32,21 +32,21 @@ export function createInitialState(): Omit<
         waveform: "triangle",
         range: "4",
         detune: 0,
-        volume: 0,
+        volume: 0.7,
       },
       osc2: {
         frequency: 0,
         waveform: "triangle",
         range: "4",
         detune: 0,
-        volume: 0,
+        volume: 0.7,
       },
       osc3: {
         frequency: 0,
         waveform: "triangle",
         range: "4",
         detune: 0,
-        volume: 0,
+        volume: 0.7,
       },
     },
     mixer: {
@@ -86,7 +86,7 @@ export function createInitialState(): Omit<
       },
     },
     effects: {
-      reverb: { amount: 0 },
+      reverb: { amount: 0, decay: 1.5 },
       distortion: { outputGain: 0 },
       delay: { amount: 0 },
     },

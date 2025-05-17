@@ -15,19 +15,25 @@ export function setupEffects(context: AudioContext) {
   const reverbGain = context.createGain();
   reverbGain.gain.value = 0;
 
-  const sampleRate = context.sampleRate;
-  const length = sampleRate * 1.5;
-  const impulse = context.createBuffer(2, length, sampleRate);
-  const leftChannel = impulse.getChannelData(0);
-  const rightChannel = impulse.getChannelData(1);
+  // Create impulse response with configurable decay
+  function createImpulseResponse(decay: number) {
+    const sampleRate = context.sampleRate;
+    const length = sampleRate * decay;
+    const impulse = context.createBuffer(2, length, sampleRate);
+    const leftChannel = impulse.getChannelData(0);
+    const rightChannel = impulse.getChannelData(1);
 
-  for (let i = 0; i < length; i++) {
-    const decay = Math.exp((-3 * i) / length);
-    leftChannel[i] = (Math.random() * 2 - 1) * decay;
-    rightChannel[i] = (Math.random() * 2 - 1) * decay;
+    for (let i = 0; i < length; i++) {
+      const decayFactor = Math.exp((-3 * i) / length);
+      leftChannel[i] = (Math.random() * 2 - 1) * decayFactor;
+      rightChannel[i] = (Math.random() * 2 - 1) * decayFactor;
+    }
+
+    return impulse;
   }
 
-  reverbNode.buffer = impulse;
+  // Set initial impulse response
+  reverbNode.buffer = createImpulseResponse(1.5);
 
   const tuna = new Tuna(context);
   const distortion = new tuna.Overdrive({
@@ -77,5 +83,7 @@ export function setupEffects(context: AudioContext) {
     reverbGain,
     dryGain,
     wetGain,
+    reverbNode,
+    createImpulseResponse,
   };
 }

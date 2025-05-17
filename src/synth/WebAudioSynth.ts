@@ -20,6 +20,8 @@ type SynthContext = {
   noiseNode: AudioWorkletNode | null;
   noiseGain: GainNode;
   noisePanner: StereoPannerNode;
+  reverbNode: ConvolverNode;
+  createImpulseResponse: (decay: number) => AudioBuffer;
 };
 
 type SynthState = {
@@ -68,28 +70,31 @@ type OscillatorChain = {
   panner: StereoPannerNode | null;
 };
 
-function createSynthContext(): SynthContext {
-  const context = new AudioContext();
-  const { masterGain, delayGain, reverbGain, dryGain, wetGain } =
-    setupEffects(context);
+function createSynthContext(context: AudioContext): SynthContext {
+  // Use setupEffects to create the effects chain
+  const effects = setupEffects(context);
+
+  // Create noise-related nodes
   const noiseGain = context.createGain();
   const noisePanner = context.createStereoPanner();
-  noiseGain.connect(noisePanner);
-  noisePanner.connect(masterGain);
 
-  // Ensure master gain is connected to destination
-  masterGain.connect(context.destination);
+  // Start the audio context if it's not already running
+  if (context.state === "suspended") {
+    context.resume();
+  }
 
   return {
     context,
-    masterGain,
-    delayGain,
-    reverbGain,
-    dryGain,
-    wetGain,
+    masterGain: effects.masterGain,
+    delayGain: effects.delayGain,
+    reverbGain: effects.reverbGain,
+    dryGain: effects.dryGain,
+    wetGain: effects.wetGain,
     noiseNode: null,
     noiseGain,
     noisePanner,
+    reverbNode: effects.reverbNode,
+    createImpulseResponse: effects.createImpulseResponse,
   };
 }
 
@@ -511,7 +516,14 @@ function updateSettings(
   }
 
   if (newSettings.reverb) {
-    synthContext.reverbGain.gain.value = newSettings.reverb.amount / 100;
+    if (newSettings.reverb.amount !== undefined) {
+      synthContext.reverbGain.gain.value = newSettings.reverb.amount / 100;
+    }
+    if (newSettings.reverb.decay !== undefined && synthContext.reverbNode) {
+      synthContext.reverbNode.buffer = synthContext.createImpulseResponse(
+        newSettings.reverb.decay
+      );
+    }
   }
 
   if (newSettings.delay) {
@@ -963,7 +975,7 @@ function dispose(state: SynthState, synthContext: SynthContext): void {
 
 // Factory function to create a synth
 export default async function createSynth() {
-  const synthContext = createSynthContext();
+  const synthContext = createSynthContext(new AudioContext());
   const state = createInitialState();
 
   // Load both noise processors
