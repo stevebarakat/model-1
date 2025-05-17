@@ -1,6 +1,8 @@
 :root {
   /* Color System */
-  --color-primary: hsl(51deg 100% 50%);
+  --color-red: hsl(350deg 40% 20%);
+  --color-amber: hsl(45deg 40% 20%);
+  --color-emerald: hsl(160deg 40% 20%);
   --color-background: hsl(0deg 0% 10%);
   --color-text-primary: hsl(220deg 13% 90%);
   --color-text-secondary: hsl(220deg 13% 70%);
@@ -9,12 +11,6 @@
   /* Synth UI Colors */
   --synth-border: hsl(217deg 30% 40% / 40%);
   --synth-bg: hsl(217deg 39% 15%);
-
-  /* Control Colors */
-  --control-bg: hsl(217deg 32% 3%);
-  --control-border: hsl(217deg 30% 40% / 40%);
-  --control-hover: hsl(217deg 32% 8%);
-  --control-active: hsl(217deg 32% 12%);
 
   /* Spacing System */
   --spacing-xs: 0.25rem;

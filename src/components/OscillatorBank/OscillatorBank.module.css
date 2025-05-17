@@ -17,8 +17,22 @@
   gap: var(--spacing-md);
   padding: var(--spacing-sm);
   padding-bottom: var(--spacing-lg);
+  padding-left: calc(
+    var(--spacing-sm) + 16px
+  ); /* Add extra padding for left screw */
+  padding-right: calc(
+    var(--spacing-sm) + 16px
+  ); /* Add extra padding for right screw */
   &:first-of-type {
     background-color: hsl(350deg 40% 20% / 90%); /* Deep red */
+    background: linear-gradient(
+      0deg,
+      hsl(350deg 40% 20% / 90%),
+      hsl(350deg 40% 25%),
+      hsl(350deg 40% 30%),
+      hsl(350deg 40% 25%),
+      hsl(350deg 40% 20% / 90%)
+    );
   }
   &:first-of-type:before {
     display: block;
@@ -60,6 +74,14 @@
   }
   &:nth-of-type(2) {
     background-color: hsl(45deg 40% 20% / 90%); /* Amber */
+    background: linear-gradient(
+      0deg,
+      hsl(45deg 40% 20% / 90%),
+      hsl(45deg 40% 25%),
+      hsl(45deg 40% 30%),
+      hsl(45deg 40% 25%),
+      hsl(45deg 40% 20% / 90%)
+    );
   }
   &:nth-of-type(2):before {
     display: block;
@@ -102,7 +124,55 @@
   }
   &:last-of-type {
     background-color: hsl(160deg 40% 20% / 90%); /* Emerald */
+    background: linear-gradient(
+      0deg,
+      hsl(160deg 40% 20% / 90%),
+      hsl(160deg 40% 25%),
+      hsl(160deg 40% 30%),
+      hsl(160deg 40% 25%),
+      hsl(160deg 40% 20% / 90%)
+    );
   }
+}
+
+/* Screw decorations */
+.screw {
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  background: radial-gradient(
+    circle at center,
+    hsl(217deg 20% 30%) 0%,
+    hsl(217deg 20% 15%) 30%,
+    hsl(217deg 20% 10%) 60%,
+    hsl(217deg 20% 5%) 100%
+  );
+  border-radius: 50%;
+  z-index: 101;
+}
+
+.screwTopLeft {
+  composes: screw;
+  top: 4px;
+  left: 4px;
+}
+
+.screwTopRight {
+  composes: screw;
+  top: 4px;
+  right: 4px;
+}
+
+.screwBottomLeft {
+  composes: screw;
+  bottom: 4px;
+  left: 4px;
+}
+
+.screwBottomRight {
+  composes: screw;
+  bottom: 4px;
+  right: 4px;
 }
 
 .horizontalIndent {
