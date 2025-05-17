@@ -49,7 +49,7 @@ type SynthControlsProps = {
     };
   };
   effects: {
-    reverb: { amount: number; decay: number };
+    reverb: { amount: number; decay: number; eq: number };
     delay: { amount: number };
     distortion: { outputGain: number };
   };
@@ -212,6 +212,7 @@ function SynthControls({
       <Effects
         reverbAmount={effects.reverb.amount}
         reverbDecay={effects.reverb.decay}
+        reverbEq={effects.reverb.eq}
         delayAmount={effects.delay.amount}
         distortionAmount={effects.distortion.outputGain}
         onReverbAmountChange={(value) =>
@@ -219,6 +220,9 @@ function SynthControls({
         }
         onReverbDecayChange={(value) =>
           onEffectsChange({ reverb: { ...effects.reverb, decay: value } })
+        }
+        onReverbEqChange={(value) =>
+          onEffectsChange({ reverb: { ...effects.reverb, eq: value } })
         }
         onDelayAmountChange={(value) =>
           onEffectsChange({ delay: { amount: value } })

@@ -21,6 +21,7 @@ type SynthContext = {
   noiseGain: GainNode;
   noisePanner: StereoPannerNode;
   reverbNode: ConvolverNode;
+  reverbEQ: BiquadFilterNode;
   createImpulseResponse: (decay: number) => AudioBuffer;
 };
 
@@ -94,6 +95,7 @@ function createSynthContext(context: AudioContext): SynthContext {
     noiseGain,
     noisePanner,
     reverbNode: effects.reverbNode,
+    reverbEQ: effects.reverbEQ,
     createImpulseResponse: effects.createImpulseResponse,
   };
 }
@@ -523,6 +525,11 @@ function updateSettings(
       synthContext.reverbNode.buffer = synthContext.createImpulseResponse(
         newSettings.reverb.decay
       );
+    }
+    if (newSettings.reverb.eq !== undefined) {
+      // Map EQ value from 0-100 to -12 to +12 dB
+      const eqValue = (newSettings.reverb.eq - 50) * (24 / 100);
+      synthContext.reverbEQ.gain.value = eqValue;
     }
   }
 

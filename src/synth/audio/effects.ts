@@ -15,6 +15,12 @@ export function setupEffects(context: AudioContext) {
   const reverbGain = context.createGain();
   reverbGain.gain.value = 0;
 
+  // Add EQ filter for reverb
+  const reverbEQ = context.createBiquadFilter();
+  reverbEQ.type = "lowshelf";
+  reverbEQ.frequency.value = 1000;
+  reverbEQ.gain.value = 0;
+
   // Create impulse response with configurable decay
   function createImpulseResponse(decay: number) {
     const sampleRate = context.sampleRate;
@@ -70,7 +76,9 @@ export function setupEffects(context: AudioContext) {
   wetGain.connect(reverbNode);
   delayGain.connect(reverbNode);
 
-  reverbNode.connect(reverbGain);
+  // Connect reverb through EQ
+  reverbNode.connect(reverbEQ);
+  reverbEQ.connect(reverbGain);
   reverbGain.connect(context.destination);
 
   dryGain.connect(context.destination);
@@ -84,6 +92,7 @@ export function setupEffects(context: AudioContext) {
     dryGain,
     wetGain,
     reverbNode,
+    reverbEQ,
     createImpulseResponse,
   };
 }

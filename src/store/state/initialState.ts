@@ -86,7 +86,7 @@ export function createInitialState(): Omit<
       },
     },
     effects: {
-      reverb: { amount: 0, decay: 1.5 },
+      reverb: { amount: 0, decay: 1.5, eq: 50 },
       distortion: { outputGain: 0 },
       delay: { amount: 0 },
     },
