@@ -5,12 +5,11 @@ type ArrowKnobProps = {
   value: number;
   min: number;
   max: number;
-  step?: number;
-  label: string;
+  step: number;
+  label?: string;
   unit?: string;
   onChange: (value: number) => void;
-  valueLabels?: Record<number, string | React.ReactElement>;
-  logarithmic?: boolean;
+  valueLabels: Record<number, string | React.ReactElement>;
 };
 
 type MousePosition = {
@@ -18,22 +17,9 @@ type MousePosition = {
   clientX: number;
 };
 
-function getRotation(
-  value: number,
-  min: number,
-  max: number,
-  logarithmic: boolean
-): number {
+function getRotation(value: number, min: number, max: number): number {
   const range = max - min;
-  let percentage;
-  if (logarithmic) {
-    const logMin = Math.log(min);
-    const logMax = Math.log(max);
-    const logValue = Math.log(value);
-    percentage = (logValue - logMin) / (logMax - logMin);
-  } else {
-    percentage = (value - min) / range;
-  }
+  const percentage = (value - min) / range;
   return percentage * 120 - 60; // -60 to +60 degrees (top 120° arc)
 }
 
@@ -83,7 +69,6 @@ function ArrowKnob({
   unit = "",
   onChange,
   valueLabels,
-  logarithmic = false,
 }: ArrowKnobProps): React.ReactElement {
   const knobRef = useRef<HTMLDivElement>(null);
   const [isDragging, setIsDragging] = useState(false);
@@ -93,7 +78,7 @@ function ArrowKnob({
   const [isRightSide, setIsRightSide] = useState(false);
   const hasLabel = label !== "";
 
-  const rotation = getRotation(value, min, max, logarithmic);
+  const rotation = getRotation(value, min, max);
   const displayValue = getDisplayValue(value, step, unit, valueLabels);
   const ariaValueText =
     typeof displayValue === "string"
@@ -123,32 +108,15 @@ function ArrowKnob({
       const sensitivity = 1.0;
       const deltaY = (startY - e.clientY) * sensitivity;
       const range = max - min;
-      let newValue;
-
-      // Use the stored isRightSide value instead of calculating it during drag
       const adjustedDeltaY = isRightSide ? -deltaY : deltaY;
-
-      if (logarithmic) {
-        const logMin = Math.log(min);
-        const logMax = Math.log(max);
-        const logRange = logMax - logMin;
-        const logStartValue = Math.log(startValue);
-        const logDelta = (adjustedDeltaY / 100) * logRange;
-        const logNewValue = Math.min(
-          logMax,
-          Math.max(logMin, logStartValue + logDelta)
-        );
-        newValue = Math.exp(logNewValue);
-      } else {
-        newValue = Math.min(
-          max,
-          Math.max(min, startValue + (adjustedDeltaY / 100) * range)
-        );
-      }
+      const newValue = Math.min(
+        max,
+        Math.max(min, startValue + (adjustedDeltaY / 100) * range)
+      );
 
       onChange(Number(newValue.toFixed(1)));
     },
-    [min, max, startY, startValue, onChange, logarithmic, isRightSide]
+    [min, max, startY, startValue, onChange, isRightSide]
   );
 
   const handleKeyDown = useCallback(
@@ -214,7 +182,7 @@ function ArrowKnob({
     >
       {/* Value labels around the knob */}
       {stepValues.map((v) => {
-        const angle = getRotation(v, min, max, logarithmic);
+        const angle = getRotation(v, min, max);
         const { left, top } = getLabelPosition(
           angle,
           labelRadius,

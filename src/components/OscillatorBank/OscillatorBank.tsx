@@ -76,7 +76,6 @@ function OscillatorControls({
           min={0}
           max={4}
           step={1}
-          label={showLabels ? "Range" : ""}
           valueLabels={{
             0: "32 '",
             1: "16 '",
@@ -113,7 +112,6 @@ function OscillatorControls({
           min={0}
           max={3}
           step={1}
-          label={showLabels ? "Wave" : ""}
           valueLabels={WAVEFORM_ICONS}
           onChange={(value) => onChange("waveform", valueToWaveform(value))}
         />
