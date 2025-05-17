@@ -35,7 +35,7 @@ function Noise({
         <div className={styles.screwBottomLeft} />
         <div className={styles.screwBottomRight} />
         <Knob
-          size="medium"
+          size="small"
           value={volume}
           min={0}
           max={1}
@@ -52,7 +52,7 @@ function Noise({
           bottomLabel="Pink"
         />
         <Knob
-          size="medium"
+          size="small"
           value={pan}
           min={-1}
           max={1}
@@ -61,7 +61,7 @@ function Noise({
           onChange={onPanChange}
         />
         <Knob
-          size="medium"
+          size="small"
           value={tone}
           min={440}
           max={20000}
