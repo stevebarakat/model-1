@@ -1,4 +1,5 @@
 import Knob from "../Knob/Knob";
+import styles from "./Mixer.module.css";
 
 type MixerProps = {
   osc1Volume: number;
@@ -73,10 +74,10 @@ function Mixer({
   onOsc3PanChange,
 }: MixerProps) {
   return (
-    <div className="box filled">
+    <div className="box">
       <div className="section">
         <div className="row">
-          <div className="column">
+          <div className={styles.column}>
             <OscillatorControls
               volume={osc1Volume}
               pan={osc1Pan}

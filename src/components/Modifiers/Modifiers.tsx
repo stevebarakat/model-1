@@ -163,6 +163,43 @@ function Modifiers({
               onChange={(value) => onLfoWaveformChange(valueToWaveform(value))}
             />
           </div>
+          <div className="row">
+            <Knob
+              value={lfoRate}
+              min={0.1}
+              max={20}
+              step={0.1}
+              label="Rate"
+              unit="Hz"
+              onChange={onLfoRateChange}
+            />
+            <Knob
+              label="Routing"
+              value={routingToValue(lfoRouting)}
+              onChange={(value) => onLfoRoutingChange(valueToRouting(value))}
+              min={0}
+              max={15}
+              step={1}
+              valueLabels={ROUTING_LABELS}
+            />
+            <Knob
+              value={lfoDepth}
+              min={0}
+              max={1}
+              step={0.01}
+              label="Depth"
+              onChange={onLfoDepthChange}
+            />
+            <ArrowKnob
+              value={waveformToValue(lfoWaveform)}
+              min={0}
+              max={3}
+              step={1}
+              label="Wave"
+              valueLabels={WAVEFORM_ICONS}
+              onChange={(value) => onLfoWaveformChange(valueToWaveform(value))}
+            />
+          </div>
         </div>
         <span className="section-title">Envelope | Filter | LFO</span>
       </div>
