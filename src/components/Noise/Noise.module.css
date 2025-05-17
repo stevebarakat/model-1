@@ -1,7 +1,7 @@
 .column {
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-sm);
+  gap: var(--spacing-xs);
   background-color: hsl(320deg 70% 25% / 90%); /* Hot pink */
   background: linear-gradient(
     0deg,
@@ -12,7 +12,7 @@
     hsl(320deg 70% 25% / 90%)
   );
   position: relative;
-  padding: 8px 20px 7px;
+  padding: 8px 20px;
 }
 
 .spacer {
