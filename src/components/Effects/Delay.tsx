@@ -20,6 +20,11 @@ function Delay({
 }: DelayProps) {
   return (
     <div className={styles.row}>
+      <div className={styles.screwTopLeft} />
+      <div className={styles.screwTopRight} />
+      <div className={styles.screwBottomLeft} />
+      <div className={styles.screwBottomRight} />
+      {/* <div className={styles.sectionTitle}>Delay</div> */}
       <Knob
         value={amount}
         min={0}

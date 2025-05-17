@@ -20,6 +20,11 @@ function Reverb({
 }: ReverbProps) {
   return (
     <div className={styles.row}>
+      <div className={styles.screwTopLeft} />
+      <div className={styles.screwTopRight} />
+      <div className={styles.screwBottomLeft} />
+      <div className={styles.screwBottomRight} />
+      {/* <div className={styles.sectionTitle}>Reverb</div> */}
       <Knob
         value={amount}
         min={0}
