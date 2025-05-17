@@ -121,9 +121,12 @@ function Knob({
         );
       }
 
-      onChange(Number(newValue.toFixed(1)));
+      // Round to the nearest step
+      const steps = Math.round(newValue / step);
+      newValue = steps * step;
+      onChange(Number(newValue.toFixed(step >= 1 ? 0 : 2)));
     },
-    [min, max, startY, startValue, onChange, logarithmic, isRightSide]
+    [min, max, startY, startValue, onChange, logarithmic, isRightSide, step]
   );
 
   const handleKeyDown = useCallback(
