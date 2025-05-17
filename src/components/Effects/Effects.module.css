@@ -18,7 +18,7 @@
   justify-content: space-between;
   gap: var(--spacing-xs);
   width: 100%;
-  padding: var(--spacing-sm);
+  padding: var(--spacing-xs);
   padding-left: calc(
     var(--spacing-sm) + 16px
   ); /* Add extra padding for left screw */
