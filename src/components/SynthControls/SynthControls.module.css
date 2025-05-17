@@ -19,5 +19,10 @@
   font-weight: 600;
   color: var(--color-text-secondary);
   background-color: hsl(217deg 20% 10%);
+  background: linear-gradient(
+    180deg,
+    hsl(217deg 20% 5% / 50%),
+    hsl(217deg 20% 0% / 0%)
+  );
   padding: var(--spacing-sm);
 }

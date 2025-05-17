@@ -37,7 +37,7 @@ function OscillatorControls({
 }: OscillatorControlsProps) {
   return (
     <>
-      <div className="row">
+      <div className={styles.row}>
         <Knob
           value={volume}
           min={0}

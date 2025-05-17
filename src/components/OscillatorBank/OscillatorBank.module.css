@@ -46,11 +46,11 @@
     width: 10px;
     background: linear-gradient(
       270deg,
-      hsl(350deg 40% 20% / 90%),
-      hsl(350deg 40% 20%),
-      hsl(350deg 40% 5%),
-      hsl(217, 21%, 10%),
-      hsl(217 21% 10% / 90%)
+      hsl(350deg 40% 20% / 40%),
+      hsl(350deg 40% 20% / 50%),
+      hsl(350deg 40% 5% / 50%),
+      hsl(217 21% 10% / 50%),
+      hsl(217 21% 10% / 40%)
     );
   }
   &:first-of-type:after {
@@ -65,10 +65,10 @@
     width: 10px;
     background: linear-gradient(
       90deg,
-      hsl(350deg 40% 20% / 90%),
-      hsl(350deg 40% 20%),
-      hsl(350deg 40% 5%),
-      hsl(217, 21%, 10%),
+      hsl(350deg 40% 20% / 40%),
+      hsl(350deg 40% 20% / 50%),
+      hsl(350deg 40% 5% / 50%),
+      hsl(217 21% 10% / 50%),
       hsl(217 21% 10% / 90%)
     );
   }
@@ -95,11 +95,11 @@
     width: 10px;
     background: linear-gradient(
       270deg,
-      hsl(45deg 40% 20% / 90%),
-      hsl(45deg 40% 20%),
-      hsl(45deg 40% 5%),
-      hsl(217, 21%, 10%),
-      hsl(217 21% 10% / 90%)
+      hsl(45deg 40% 20% / 40%),
+      hsl(45deg 40% 20% / 50%),
+      hsl(45deg 40% 5% / 50%),
+      hsl(217 21% 10% / 50%),
+      hsl(217 21% 10% / 40%)
     );
   }
   &:nth-of-type(2):after {
@@ -115,11 +115,11 @@
     border-radius: 0 var(--border-radius-sm) var(--border-radius-sm) 0;
     background: linear-gradient(
       90deg,
-      hsl(45deg 40% 20% / 90%),
-      hsl(45deg 40% 20%),
-      hsl(45deg 40% 5%),
-      hsl(217, 21%, 10%),
-      hsl(217 21% 10% / 90%)
+      hsl(45deg 40% 20% / 40%),
+      hsl(45deg 40% 20% / 50%),
+      hsl(45deg 40% 5% / 50%),
+      hsl(217 21% 10% / 50%),
+      hsl(217 21% 10% / 40%)
     );
   }
   &:last-of-type {
@@ -133,6 +133,44 @@
       hsl(160deg 40% 20% / 90%)
     );
   }
+  &:last-of-type:before {
+    display: block;
+    position: absolute;
+    top: 0;
+    left: -6px;
+    z-index: 100;
+    height: 103%;
+    content: "";
+    display: block;
+    width: 10px;
+    background: linear-gradient(
+      270deg,
+      hsl(160deg 40% 20% / 40%),
+      hsl(160deg 40% 20% / 50%),
+      hsl(160deg 40% 5% / 50%),
+      hsl(217 21% 10% / 50%),
+      hsl(217 21% 10% / 40%)
+    );
+  }
+  &:last-of-type:after {
+    display: block;
+    position: absolute;
+    top: 0;
+    right: -6px;
+    z-index: 100;
+    height: 103%;
+    content: "";
+    display: block;
+    width: 10px;
+    background: linear-gradient(
+      90deg,
+      hsl(160deg 40% 20% / 40%),
+      hsl(160deg 40% 20% / 50%),
+      hsl(160deg 40% 5% / 50%),
+      hsl(217 21% 10% / 50%),
+      hsl(217 21% 10% / 40%)
+    );
+  }
 }
 
 /* Screw decorations */
@@ -142,13 +180,38 @@
   height: 12px;
   background: radial-gradient(
     circle at center,
-    hsl(217deg 20% 30%) 0%,
-    hsl(217deg 20% 15%) 30%,
-    hsl(217deg 20% 10%) 60%,
-    hsl(217deg 20% 5%) 100%
+    hsl(217deg 20% 25%) 0%,
+    hsl(217deg 20% 20%) 30%,
+    hsl(217deg 20% 15%) 60%,
+    hsl(217deg 20% 10%) 100%
   );
   border-radius: 50%;
   z-index: 101;
+}
+
+.screw::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) rotate(45deg);
+  width: 6px;
+  height: 6px;
+  background: linear-gradient(
+      90deg,
+      transparent 40%,
+      hsl(217deg 20% 5% / 80%) 40%,
+      hsl(217deg 20% 5% / 80%) 60%,
+      transparent 60%
+    ),
+    linear-gradient(
+      0deg,
+      transparent 40%,
+      hsl(217deg 20% 5% / 80%) 40%,
+      hsl(217deg 20% 5% / 80%) 60%,
+      transparent 60%
+    );
+  border-radius: 1px;
 }
 
 .screwTopLeft {
