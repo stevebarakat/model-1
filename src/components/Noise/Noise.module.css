@@ -89,10 +89,10 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: var(--spacing-md);
+  gap: var(--spacing-xs);
   padding-bottom: var(--spacing-lg);
-  padding-left: var(--spacing-lg);
-  padding-right: var(--spacing-lg);
+  /* padding-left: var(--spacing-lg);
+  padding-right: var(--spacing-lg); */
   position: relative;
 }
 
