@@ -46,6 +46,5 @@
 }
 
 .switchThumb.checked {
-  background: hotpink;
   transform: translateX(15px);
 }

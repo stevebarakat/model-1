@@ -66,7 +66,7 @@ function Noise({
         <div className={styles.row}>
           <Knob
             value={tone}
-            min={20}
+            min={440}
             max={20000}
             step={1}
             label="Freq"

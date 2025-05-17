@@ -3,13 +3,12 @@ import {
   FilterType,
   WaveformType,
   LFORouting,
-} from "@/synth/types";
+} from "@/synth/types/index";
 import Mixer from "../Mixer";
 import OscillatorBank from "../OscillatorBank";
 import Modifiers from "../Modifiers";
 import Effects from "../Effects";
 import Noise from "../Noise/Noise";
-import styles from "./SynthControls.module.css";
 
 type SynthControlsProps = {
   oscillators: {

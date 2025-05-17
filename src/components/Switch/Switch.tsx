@@ -8,6 +8,13 @@ type SwitchProps = {
 };
 
 function Switch({ checked, onCheckedChange, label, className }: SwitchProps) {
+  const isPink = label === "Pink";
+  const pinkStyle =
+    "linear-gradient(to left, hsl(320deg 70% 45% / 90%), hsl(320deg 70% 35% / 90%))";
+  const thumbStyle = {
+    background: checked && isPink ? pinkStyle : "",
+  };
+
   return (
     <div className={styles.switchContainer}>
       {label && <label className={styles.switchLabel}>{label}</label>}
@@ -19,6 +26,7 @@ function Switch({ checked, onCheckedChange, label, className }: SwitchProps) {
       >
         <div
           className={`${styles.switchThumb} ${checked ? styles.checked : ""}`}
+          style={thumbStyle}
         />
       </button>
     </div>

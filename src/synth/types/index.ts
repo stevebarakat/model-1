@@ -1,7 +1,15 @@
 export type Note = string;
 export type OscillatorType = "sine" | "square" | "sawtooth" | "triangle";
 export type RangeType = "32" | "16" | "8" | "4" | "2";
-export type FilterType = BiquadFilterType;
+export type FilterType =
+  | "lowpass"
+  | "highpass"
+  | "bandpass"
+  | "notch"
+  | "allpass"
+  | "lowshelf"
+  | "highshelf"
+  | "peaking";
 export type NoteData = {
   oscillators: OscillatorNode[];
   oscillatorGains: GainNode[];
