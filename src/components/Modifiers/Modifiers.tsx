@@ -101,7 +101,6 @@ function Modifiers({
           min={0}
           max={3}
           step={1}
-          label="Type"
           valueLabels={{
             0: "LPF",
             1: "HPF",
@@ -174,7 +173,6 @@ function Modifiers({
           min={0}
           max={3}
           step={1}
-          label="Wave"
           valueLabels={WAVEFORM_ICONS}
           onChange={(value) => onLfoWaveformChange(valueToWaveform(value))}
         />
