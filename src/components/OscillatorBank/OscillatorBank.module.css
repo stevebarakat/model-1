@@ -14,8 +14,8 @@
 .row {
   position: relative;
   display: flex;
-  gap: var(--spacing-md);
-  padding: var(--spacing-sm);
+  gap: var(--spacing-xs);
+  padding: var(--spacing-xs);
   padding-left: calc(
     var(--spacing-sm) + 16px
   ); /* Add extra padding for left screw */

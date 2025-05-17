@@ -105,7 +105,7 @@ function ArrowKnob({
 
   const handleMouseMove = useCallback(
     (e: MousePosition): void => {
-      const sensitivity = 1.0;
+      const sensitivity = 2.0;
       const deltaY = (startY - e.clientY) * sensitivity;
       const range = max - min;
       const adjustedDeltaY = isRightSide ? -deltaY : deltaY;

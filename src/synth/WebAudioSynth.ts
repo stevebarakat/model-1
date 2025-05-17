@@ -272,12 +272,23 @@ function createOscillatorChain(
   oscillator.start(startTime);
 
   if (glide > 0 && lastFrequency) {
-    // Convert glide value (0-1) to time in seconds (0-2)
+    // Convert glide value (0-0.5) to time in seconds (0-1)
     const glideTime = glide * 2;
-    oscillator.frequency.setValueAtTime(startFrequency, startTime);
+    const currentTime = context.currentTime;
+
+    // Ensure we're not scheduling in the past
+    const scheduleTime = Math.max(currentTime, startTime);
+
+    // Cancel any existing scheduled changes
+    oscillator.frequency.cancelScheduledValues(scheduleTime);
+
+    // Set the current value
+    oscillator.frequency.setValueAtTime(startFrequency, scheduleTime);
+
+    // Schedule the glide
     oscillator.frequency.linearRampToValueAtTime(
       finalFrequency,
-      startTime + glideTime
+      scheduleTime + glideTime
     );
   }
 
