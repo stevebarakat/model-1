@@ -38,7 +38,7 @@
   display: block;
   width: 15px;
   height: 15px;
-  background: linear-gradient(to left, hsl(0deg 0% 90%), hsl(0deg 0% 70%));
+  background: linear-gradient(to left, hsl(0deg 0% 75%), hsl(0deg 0% 55%));
   border: 1px solid rgb(0 0 0 / 10%);
   border-radius: 2px;
   transition: var(--transition-fast);

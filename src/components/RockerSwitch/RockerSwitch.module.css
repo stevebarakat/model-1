@@ -12,10 +12,11 @@
   flex-direction: column;
   align-items: center;
   color: var(--color-text-secondary);
-  font-size: var(--font-size-sm);
+  font-size: var(--font-size-md);
+  letter-spacing: 0.05em;
   text-transform: uppercase;
   margin-bottom: 1.5em;
-  margin-top: 1px;
+  margin-top: -0.5em;
 }
 
 .control {
@@ -23,7 +24,7 @@
   display: inline-block;
   box-sizing: border-box;
   width: 2.5em;
-  height: 1.25em;
+  height: 1em;
   vertical-align: middle;
   border: 0.25em solid #fafafa;
   border-radius: 0.15em;
@@ -95,13 +96,16 @@
 }
 
 .dark .control {
-  border: 0.25em solid #0a0a0a;
+  border-top: 2px solid #0a0a0a;
+  border-bottom: 2px solid #0a0a0a;
+  border-left: 1px solid #0a0a0a;
+  border-right: 2px solid #0a0a0a;
   background-color: #0a0a0a;
 }
 
 .dark .control::before,
 .dark .control::after {
-  border: 0.025em solid #1a1a1a;
+  border: none;
 }
 
 .dark .control::before {
