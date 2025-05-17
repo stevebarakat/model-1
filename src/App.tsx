@@ -7,6 +7,7 @@ import SidePanel from "./components/SidePanel";
 import { useSynthStore } from "./store/synthStore";
 import styles from "./styles/App.module.css";
 import "./styles/variables.css";
+import RightPanel from "./components/RightPanel";
 
 function App() {
   const {
@@ -174,6 +175,21 @@ function App() {
             octaveRange={{ min: currentOctave - 1, max: currentOctave + 2 }}
             synth={keyboardRef.current.synth}
           />
+
+          {/* <RightPanel
+            pitchWheel={pitchWheel}
+            modWheel={modWheel}
+            onPitchWheelChange={setPitchWheel}
+            onModWheelChange={(value) => {
+              setModWheel(value);
+              updateMixer({ modMix: value });
+            }}
+            onPitchWheelReset={() => setPitchWheel(50)}
+            glide={glide}
+            onGlideChange={setGlide}
+            tune={tune}
+            onTuneChange={setTune}
+          /> */}
         </div>
       </div>
     </div>

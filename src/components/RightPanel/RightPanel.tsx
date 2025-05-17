@@ -1,6 +1,6 @@
 import Knob from "../Knob";
 import ModWheel from "../ModWheel";
-import styles from "./SidePanel.module.css";
+import styles from "./RightPanel.module.css";
 
 type TopControlsProps = {
   tune: number;
@@ -78,9 +78,9 @@ function ModWheels({
   );
 }
 
-type SidePanelProps = TopControlsProps & ModWheelsProps;
+type RightPanelProps = TopControlsProps & ModWheelsProps;
 
-function SidePanel(props: SidePanelProps) {
+function RightPanel(props: RightPanelProps) {
   return (
     <div className={styles.sidePanel}>
       <div className={styles.horizontalIndent} />
@@ -88,17 +88,15 @@ function SidePanel(props: SidePanelProps) {
       <div className={styles.screwTopRight} />
       <div className={styles.screwBottomLeft} />
       <div className={styles.screwBottomRight} />
-
-      <ModWheels
-        pitchWheel={props.pitchWheel}
-        modWheel={props.modWheel}
-        onPitchWheelChange={props.onPitchWheelChange}
-        onModWheelChange={props.onModWheelChange}
-        onPitchWheelReset={props.onPitchWheelReset}
+      <TopControls
+        tune={props.tune}
+        onTuneChange={props.onTuneChange}
+        glide={props.glide}
+        onGlideChange={props.onGlideChange}
       />
       <div className={styles.horizontalIndent} />
     </div>
   );
 }
 
-export default SidePanel;
+export default RightPanel;

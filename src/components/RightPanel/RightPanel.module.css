@@ -3,7 +3,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin: 6px 0;
+  margin: 12px 0;
   background: hsla(160, 12%, 5%, 0.5);
 }
 
@@ -12,7 +12,6 @@
   flex-direction: row;
   justify-content: center;
   width: 100%;
-  margin-top: var(--spacing-lg);
 }
 
 .modWheelwell {
@@ -20,6 +19,15 @@
   justify-content: center;
   align-items: center;
   width: 50px;
+}
+
+.topControls {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  gap: var(--spacing-sm);
+  margin-top: var(--spacing-lg);
 }
 
 /* Screw decorations */
@@ -65,25 +73,25 @@
 
 .screwTopLeft {
   composes: screw;
-  top: 12px;
+  top: 8px;
   left: 4px;
 }
 
 .screwTopRight {
   composes: screw;
-  top: 12px;
+  top: 8px;
   right: 4px;
 }
 
 .screwBottomLeft {
   composes: screw;
-  bottom: 12px;
+  bottom: 4px;
   left: 4px;
 }
 
 .screwBottomRight {
   composes: screw;
-  bottom: 12px;
+  bottom: 4px;
   right: 4px;
 }
 

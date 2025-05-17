@@ -8,7 +8,7 @@
   width: 1.5ch;
   border-radius: var(--border-radius-md);
   position: relative;
-  top: var(--spacing-xs);
+  margin-right: var(--spacing-xs);
 }
 
 .row {
