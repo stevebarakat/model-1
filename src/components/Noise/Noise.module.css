@@ -9,7 +9,7 @@
     hsl(320deg 70% 25% / 90%)
   );
   position: relative;
-  padding: 12px; /* just enough for screws */
+  padding: 8px 12px;
 }
 
 .spacer {
@@ -87,7 +87,7 @@
 
 .row {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: center;
   gap: var(--spacing-sm);
   padding-bottom: var(--spacing-lg);

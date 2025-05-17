@@ -48,7 +48,8 @@ function Noise({
             onCheckedChange={(checked) =>
               onTypeChange(checked ? "pink" : "white")
             }
-            label={type === "pink" ? "Pink" : "White"}
+            topLabel="White"
+            bottomLabel="Pink"
           />
         </div>
         <span className={styles.spacer}></span>
@@ -73,7 +74,11 @@ function Noise({
             onChange={onToneChange}
             logarithmic={true}
           />
-          <Switch checked={sync} onCheckedChange={onSyncChange} label="Sync" />
+          <Switch
+            checked={sync}
+            onCheckedChange={onSyncChange}
+            topLabel="Sync"
+          />
         </div>
       </div>
       <span className={styles.horizontalIndent}></span>

@@ -4,9 +4,20 @@
   align-items: center;
 }
 
-.switchLabel {
+.topLabel {
   margin-top: 1px;
-  padding-bottom: var(--spacing-lg);
+  padding-bottom: var(--spacing-sm);
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-md);
+  text-align: center;
+  text-transform: uppercase;
+  white-space: nowrap;
+  user-select: none;
+}
+
+.bottomLabel {
+  /* margin-top: 1px; */
+  /* padding-bottom: var(--spacing-lg); */
   color: var(--color-text-secondary);
   font-size: var(--font-size-md);
   text-align: center;
