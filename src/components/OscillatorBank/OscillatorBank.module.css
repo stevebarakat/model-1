@@ -12,6 +12,7 @@
 }
 
 .row {
+  position: relative;
   display: flex;
   gap: var(--spacing-md);
   padding: var(--spacing-sm);
@@ -19,8 +20,85 @@
   &:first-of-type {
     background-color: hsl(350deg 40% 20% / 90%); /* Deep red */
   }
+  &:first-of-type:before {
+    display: block;
+    position: absolute;
+    top: 0;
+    left: -6px;
+    z-index: 100;
+    height: 103%;
+    content: "";
+    display: block;
+    width: 10px;
+    background: linear-gradient(
+      270deg,
+      hsl(350deg 40% 20% / 90%),
+      hsl(350deg 40% 20%),
+      hsl(350deg 40% 5%),
+      hsl(217, 21%, 10%),
+      hsl(217 21% 10% / 90%)
+    );
+  }
+  &:first-of-type:after {
+    display: block;
+    position: absolute;
+    top: 0;
+    right: -6px;
+    z-index: 100;
+    height: 103%;
+    content: "";
+    display: block;
+    width: 10px;
+    background: linear-gradient(
+      90deg,
+      hsl(350deg 40% 20% / 90%),
+      hsl(350deg 40% 20%),
+      hsl(350deg 40% 5%),
+      hsl(217, 21%, 10%),
+      hsl(217 21% 10% / 90%)
+    );
+  }
   &:nth-of-type(2) {
     background-color: hsl(45deg 40% 20% / 90%); /* Amber */
+  }
+  &:nth-of-type(2):before {
+    display: block;
+    position: absolute;
+    top: 0;
+    left: -6px;
+    z-index: 100;
+    height: 103%;
+    content: "";
+    display: block;
+    width: 10px;
+    background: linear-gradient(
+      270deg,
+      hsl(45deg 40% 20% / 90%),
+      hsl(45deg 40% 20%),
+      hsl(45deg 40% 5%),
+      hsl(217, 21%, 10%),
+      hsl(217 21% 10% / 90%)
+    );
+  }
+  &:nth-of-type(2):after {
+    display: block;
+    position: absolute;
+    top: 0;
+    right: -6px;
+    z-index: 100;
+    height: 103%;
+    content: "";
+    display: block;
+    width: 10px;
+    border-radius: 0 var(--border-radius-sm) var(--border-radius-sm) 0;
+    background: linear-gradient(
+      90deg,
+      hsl(45deg 40% 20% / 90%),
+      hsl(45deg 40% 20%),
+      hsl(45deg 40% 5%),
+      hsl(217, 21%, 10%),
+      hsl(217 21% 10% / 90%)
+    );
   }
   &:last-of-type {
     background-color: hsl(160deg 40% 20% / 90%); /* Emerald */
@@ -50,7 +128,6 @@
       hsl(350deg 40% 20%),
       hsl(350deg 40% 20% / 90%)
     );
-    background-color: hsl(350deg 40% 20% / 90%); /* Deep red */
   }
   &:nth-of-type(2) {
     background: linear-gradient(
@@ -61,9 +138,7 @@
       hsl(45deg 40% 20%),
       hsl(45deg 40% 20% / 90%)
     );
-    background-color: hsl(45deg 40% 20% / 90%); /* Amber */
   }
   &:last-of-type {
-    background-color: hsl(160deg 40% 20% / 90%); /* Emerald */
   }
 }

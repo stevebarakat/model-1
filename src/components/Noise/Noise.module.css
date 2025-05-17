@@ -1,11 +1,9 @@
 .column > div {
   display: flex;
-  /* flex-direction: column; */
   gap: var(--spacing-md);
   padding: var(--spacing-sm);
   padding-bottom: var(--spacing-lg);
-  /* border-radius: var(--border-radius-sm); */
-  /* margin-bottom: var(--spacing-sm); */
+  justify-content: center;
   &:first-of-type {
     background-color: hsl(350deg 40% 20% / 90%); /* Deep red */
   }

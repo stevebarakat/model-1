@@ -46,14 +46,18 @@ function Noise({
           label={type === "pink" ? "Pink" : "White"}
         />
       </div>
-      <Knob
-        value={pan}
-        min={-1}
-        max={1}
-        step={0.01}
-        label="Pan"
-        onChange={onPanChange}
-      />
+      <span className={styles.horizontalIndent}></span>
+      <div className="row">
+        <Knob
+          value={pan}
+          min={-1}
+          max={1}
+          step={0.01}
+          label="Pan"
+          onChange={onPanChange}
+        />
+      </div>
+      <span className={styles.horizontalIndent}></span>
       <div className="row">
         <Knob
           value={tone}
@@ -66,6 +70,7 @@ function Noise({
         />
         <Switch checked={sync} onCheckedChange={onSyncChange} label="Sync" />
       </div>
+      <span className={styles.horizontalIndent}></span>
     </div>
   );
 }
