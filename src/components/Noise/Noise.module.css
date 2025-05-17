@@ -1,4 +1,7 @@
 .column {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
   background-color: hsl(320deg 70% 25% / 90%); /* Hot pink */
   background: linear-gradient(
     0deg,
@@ -9,16 +12,15 @@
     hsl(320deg 70% 25% / 90%)
   );
   position: relative;
-  padding: 8px 12px;
+  padding: 8px 20px 0 16px;
 }
 
 .spacer {
   display: block;
-  margin-bottom: -2px;
   width: 100%;
-  height: 8px;
+  height: 4.5px;
   align-self: flex-end;
-  background-color: hsl(320deg 70% 25% / 0%); /* Hot pink */
+  background-color: hsl(320deg 70% 25% / 0%);
 }
 
 .screw {
