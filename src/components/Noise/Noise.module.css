@@ -18,22 +18,6 @@
   }
 }
 
-.row {
-  display: flex;
-  gap: var(--spacing-md);
-  padding: var(--spacing-sm);
-  padding-bottom: var(--spacing-lg);
-  &:first-of-type {
-    background-color: hsl(350deg 40% 20% / 90%); /* Deep red */
-  }
-  &:nth-of-type(2) {
-    background-color: hsl(45deg 40% 20% / 90%); /* Amber */
-  }
-  &:last-of-type {
-    background-color: hsl(160deg 40% 20% / 90%); /* Emerald */
-  }
-}
-
 .horizontalIndent {
   display: block;
   margin-bottom: -2px;

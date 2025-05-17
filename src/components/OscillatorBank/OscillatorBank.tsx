@@ -128,30 +128,25 @@ function OscillatorBank({
   onOsc3Change,
 }: OscillatorBankProps) {
   return (
-    <div className="bo">
-      <div className="secton">
-        <div className="colun">
-          <OscillatorControls
-            osc={osc1}
-            onChange={onOsc1Change}
-            showLabels={true}
-            oscillatorNumber={1}
-          />
-          <OscillatorControls
-            osc={osc2}
-            onChange={onOsc2Change}
-            showLabels={false}
-            oscillatorNumber={2}
-          />
-          <OscillatorControls
-            osc={osc3}
-            onChange={onOsc3Change}
-            showLabels={false}
-            oscillatorNumber={3}
-          />
-        </div>
-        {/* <span className="section-title">Oscillator Bank</span> */}
-      </div>
+    <div>
+      <OscillatorControls
+        osc={osc1}
+        onChange={onOsc1Change}
+        showLabels={true}
+        oscillatorNumber={1}
+      />
+      <OscillatorControls
+        osc={osc2}
+        onChange={onOsc2Change}
+        showLabels={false}
+        oscillatorNumber={2}
+      />
+      <OscillatorControls
+        osc={osc3}
+        onChange={onOsc3Change}
+        showLabels={false}
+        oscillatorNumber={3}
+      />
     </div>
   );
 }
