@@ -1,4 +1,5 @@
 import Knob from "../Knob";
+import styles from "./Effects.module.css";
 
 type DistortionProps = {
   amount: number;
@@ -7,14 +8,16 @@ type DistortionProps = {
 
 function Distortion({ amount, onAmountChange }: DistortionProps) {
   return (
-    <Knob
-      value={amount}
-      min={0}
-      max={100}
-      label="Fuzz"
-      unit="%"
-      onChange={onAmountChange}
-    />
+    <div className={styles.row}>
+      <Knob
+        value={amount}
+        min={0}
+        max={100}
+        label="Fuzz"
+        unit="%"
+        onChange={onAmountChange}
+      />
+    </div>
   );
 }
 

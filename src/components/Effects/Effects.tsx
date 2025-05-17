@@ -2,6 +2,7 @@ import React from "react";
 import Reverb from "./Reverb";
 import Delay from "./Delay";
 import Distortion from "./Distortion";
+import styles from "./Effects.module.css";
 
 type EffectsProps = {
   reverbAmount: number;
@@ -21,18 +22,16 @@ function Effects({
   onDistortionAmountChange,
 }: EffectsProps): React.ReactElement {
   return (
-    <div className="box">
-      <div className="section">
-        <div className="column">
-          <Reverb amount={reverbAmount} onAmountChange={onReverbAmountChange} />
-          <Delay amount={delayAmount} onAmountChange={onDelayAmountChange} />
-          <Distortion
-            amount={distortionAmount}
-            onAmountChange={onDistortionAmountChange}
-          />
-        </div>
-        <span className="section-title">FX</span>
-      </div>
+    <div className={styles.column}>
+      <Reverb amount={reverbAmount} onAmountChange={onReverbAmountChange} />
+      <span className={styles.horizontalIndent}></span>
+      <Delay amount={delayAmount} onAmountChange={onDelayAmountChange} />
+      <span className={styles.horizontalIndent}></span>
+      <Distortion
+        amount={distortionAmount}
+        onAmountChange={onDistortionAmountChange}
+      />
+      <span className={styles.horizontalIndent}></span>
     </div>
   );
 }

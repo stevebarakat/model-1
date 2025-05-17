@@ -202,7 +202,7 @@ function SynthControls({
           onModifiersChange({ lfo: { ...modifiers.lfo, routing: value } })
         }
       />
-      <div className={styles.indent}></div>
+      {/* <div className={styles.indent}></div> */}
       <Effects
         reverbAmount={effects.reverb.amount}
         delayAmount={effects.delay.amount}
