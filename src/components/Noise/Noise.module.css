@@ -1,7 +1,7 @@
 .column {
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-xs);
+  gap: var(--spacing-sm);
   background-color: hsl(320deg 70% 25% / 90%); /* Hot pink */
   background: linear-gradient(
     0deg,
@@ -12,7 +12,7 @@
     hsl(320deg 70% 25% / 90%)
   );
   position: relative;
-  padding: 8px 20px 0 16px;
+  padding: 8px 20px 8px 16px;
 }
 
 .spacer {
@@ -91,8 +91,8 @@
   display: flex;
   align-items: flex-start;
   justify-content: center;
-  gap: var(--spacing-sm);
-  padding-bottom: var(--spacing-lg);
+  /* gap: var(--spacing-sm); */
+  /* padding-bottom: var(--spacing-lg); */
   position: relative;
 }
 

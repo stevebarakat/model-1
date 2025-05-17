@@ -34,52 +34,43 @@ function Noise({
         <div className={styles.screwTopRight} />
         <div className={styles.screwBottomLeft} />
         <div className={styles.screwBottomRight} />
-        <div className={styles.row}>
-          <Knob
-            value={volume}
-            min={0}
-            max={1}
-            step={0.01}
-            label="Noise"
-            onChange={onVolumeChange}
-          />
-          <Switch
-            checked={type === "pink"}
-            onCheckedChange={(checked) =>
-              onTypeChange(checked ? "pink" : "white")
-            }
-            topLabel="White"
-            bottomLabel="Pink"
-          />
-        </div>
-        <span className={styles.spacer}></span>
-        <div className={styles.row}>
-          <Knob
-            value={pan}
-            min={-1}
-            max={1}
-            step={0.01}
-            label="Pan"
-            onChange={onPanChange}
-          />
-        </div>
-        <span className={styles.spacer}></span>
-        <div className={styles.row}>
-          <Knob
-            value={tone}
-            min={440}
-            max={20000}
-            step={1}
-            label="Freq"
-            onChange={onToneChange}
-            logarithmic={true}
-          />
-          <Switch
-            checked={sync}
-            onCheckedChange={onSyncChange}
-            topLabel="Sync"
-          />
-        </div>
+        <Knob
+          size="medium"
+          value={volume}
+          min={0}
+          max={1}
+          step={0.01}
+          label="Noise"
+          onChange={onVolumeChange}
+        />
+        <Switch
+          checked={type === "pink"}
+          onCheckedChange={(checked) =>
+            onTypeChange(checked ? "pink" : "white")
+          }
+          topLabel="White"
+          bottomLabel="Pink"
+        />
+        <Knob
+          size="medium"
+          value={pan}
+          min={-1}
+          max={1}
+          step={0.01}
+          label="Pan"
+          onChange={onPanChange}
+        />
+        <Knob
+          size="medium"
+          value={tone}
+          min={440}
+          max={20000}
+          step={1}
+          label="Freq"
+          onChange={onToneChange}
+          logarithmic={true}
+        />
+        <Switch checked={sync} onCheckedChange={onSyncChange} topLabel="Sync" />
       </div>
       <span className={styles.horizontalIndent}></span>
     </div>

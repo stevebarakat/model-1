@@ -36,9 +36,9 @@ function Switch({
           style={thumbStyle}
         />
       </button>
-      {bottomLabel && (
+      {/* {bottomLabel && (
         <label className={styles.bottomLabel}>{bottomLabel}</label>
-      )}
+      )} */}
     </div>
   );
 }
