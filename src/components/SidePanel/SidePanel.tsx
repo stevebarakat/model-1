@@ -83,6 +83,11 @@ type SidePanelProps = TopControlsProps & ModWheelsProps;
 function SidePanel(props: SidePanelProps) {
   return (
     <div className={styles.sidePanel}>
+      <div className={styles.horizontalIndent} />
+      <div className={styles.screwTopLeft} />
+      <div className={styles.screwTopRight} />
+      <div className={styles.screwBottomLeft} />
+      <div className={styles.screwBottomRight} />
       <TopControls
         tune={props.tune}
         onTuneChange={props.onTuneChange}
@@ -96,6 +101,7 @@ function SidePanel(props: SidePanelProps) {
         onModWheelChange={props.onModWheelChange}
         onPitchWheelReset={props.onPitchWheelReset}
       />
+      <div className={styles.horizontalIndent} />
     </div>
   );
 }

@@ -10,7 +10,6 @@
     left: 12px;
     width: 1.5%;
     height: 100%;
-    height: 210px;
     background: linear-gradient(
       270deg,
       hsl(217deg 50% 0% / 0%) 0%,
@@ -25,7 +24,6 @@
     bottom: 1px;
     width: 1.5%;
     height: 100%;
-    height: 210px;
     background: linear-gradient(
       90deg,
       hsl(217deg 50% 0% / 0%) 0%,
@@ -39,7 +37,7 @@
 .keyboard {
   padding: 0 3px 4px;
   background: var(--color-off-black);
-  border-radius: 0 0 4px 4px;
+  border-radius: 0 0 4px 0;
   box-shadow: 0 4px 6px -1px hsl(217deg 30% 25%),
     0 4px 6px -1px hsl(217deg 50% 10%);
 
@@ -100,7 +98,7 @@
 
 .whiteKey {
   flex: 1;
-  height: 194px;
+  height: 232px;
   background: linear-gradient(180deg, hsl(0deg 0% 100%), hsl(0deg 0% 80%));
   border-bottom: 3px solid hsl(0deg 0% 35%);
   border-radius: 0 0 5px 5px;
@@ -142,7 +140,7 @@
 .blackKey {
   position: absolute;
   z-index: 20;
-  height: 125px;
+  height: 134px;
   background: linear-gradient(
     to bottom,
     hsl(217deg 13% 15%),

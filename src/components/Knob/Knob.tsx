@@ -61,7 +61,7 @@ function Knob({
   onChange,
   valueLabels,
   logarithmic = false,
-  size = "medium",
+  size = "large",
   displayMode = "replace",
 }: KnobProps): React.ReactElement {
   const knobRef = useRef<HTMLDivElement>(null);
