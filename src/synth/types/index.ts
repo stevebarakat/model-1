@@ -88,12 +88,18 @@ export type SynthSettings = {
   };
   reverb: {
     amount: number;
+    decay: number;
+    eq: number;
   };
   distortion: {
     outputGain: number;
+    lowEQ: number;
+    highEQ: number;
   };
   delay: {
     amount: number;
+    time: number;
+    feedback: number;
   };
 };
 

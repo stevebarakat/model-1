@@ -409,34 +409,49 @@ function updateLFOGains(
   baseCutoff: number,
   currentTime: number
 ): void {
-  const smoothingTime = 0.01;
+  const smoothingTime = 0.2; // Much longer smoothing time
+  const delayTime = 0.02; // Small delay before applying changes
 
   const lfoGainConfigs = [
     {
       gain: noteData.lfoGains.filterCutoff.gain,
-      multiplier: baseCutoff,
+      multiplier: baseCutoff * 0.02, // Further reduce filter cutoff modulation to 2%
       name: "filterCutoff",
     },
     {
       gain: noteData.lfoGains.filterResonance.gain,
-      multiplier: 30,
+      multiplier: 0.5, // Reduce resonance modulation to 0.5
       name: "filterResonance",
     },
     {
       gain: noteData.lfoGains.oscillatorPitch.gain,
-      multiplier: 100,
+      multiplier: 0.5, // Reduce pitch modulation to 0.5
       name: "oscillatorPitch",
     },
     {
       gain: noteData.lfoGains.oscillatorVolume.gain,
-      multiplier: 1,
+      multiplier: 0.05, // Reduce volume modulation to 0.05
       name: "oscillatorVolume",
     },
   ];
 
   lfoGainConfigs.forEach(({ gain, multiplier }) => {
     const targetValue = modAmount * lfoDepth * multiplier;
-    gain.setTargetAtTime(targetValue, currentTime, smoothingTime);
+
+    // Cancel any scheduled changes
+    gain.cancelScheduledValues(currentTime);
+
+    // Set current value
+    gain.setValueAtTime(gain.value, currentTime);
+
+    // Add a small delay before starting the change
+    gain.setValueAtTime(gain.value, currentTime + delayTime);
+
+    // Use linearRampToValueAtTime for smoother transitions
+    gain.linearRampToValueAtTime(
+      targetValue,
+      currentTime + delayTime + smoothingTime
+    );
   });
 }
 
@@ -930,6 +945,16 @@ function triggerRelease(
     }
   };
 
+  // Smoothly fade out LFO modulation
+  if (state.noteData.lfo) {
+    const releaseTime = now + state.settings.envelope.release;
+    Object.values(state.noteData.lfoGains).forEach((gain) => {
+      gain.gain.cancelScheduledValues(now);
+      gain.gain.setValueAtTime(gain.gain.value, now);
+      gain.gain.linearRampToValueAtTime(0, releaseTime);
+    });
+  }
+
   if (state.noteData.gainNode) {
     handleRelease(state.noteData.gainNode, state.noteData.gainNode.gain.value);
   }
@@ -948,9 +973,9 @@ function triggerRelease(
     );
   }
 
-  // Disconnect LFO connections
-  state.noteData.lfo.stop();
-  Object.values(state.noteData.lfoGains).forEach((gain) => gain.disconnect());
+  // Schedule LFO stop after release
+  const releaseTime = now + state.settings.envelope.release;
+  state.noteData.lfo.stop(releaseTime);
 
   // Cleanup function to handle node disconnection
   const disconnectNode = (node: AudioNode | null, nodeName: string) => {
