@@ -77,6 +77,7 @@ function Modifiers({
         <div className={styles.screwTopRight} />
         <div className={styles.screwBottomLeft} />
         <div className={styles.screwBottomRight} />
+        <div className={styles.sectionTitle}>Env</div>
         <ADSR
           attack={attackTime}
           decay={decayTime}
@@ -94,6 +95,7 @@ function Modifiers({
         <div className={styles.screwTopRight} />
         <div className={styles.screwBottomLeft} />
         <div className={styles.screwBottomRight} />
+        <div className={styles.sectionTitle}>Filter</div>
         <ArrowKnob
           value={filterTypeToValue(filterType)}
           min={0}
@@ -140,6 +142,7 @@ function Modifiers({
         <div className={styles.screwTopRight} />
         <div className={styles.screwBottomLeft} />
         <div className={styles.screwBottomRight} />
+        <div className={styles.sectionTitle}>LFO</div>
         <Knob
           value={lfoRate}
           min={0.1}
