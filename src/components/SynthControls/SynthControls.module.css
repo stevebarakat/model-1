@@ -9,3 +9,15 @@
     hsl(217deg 50% 25%)
   );
 }
+
+.sectionTitle {
+  text-orientation: upright;
+  writing-mode: vertical-rl;
+  text-align: center;
+  text-transform: uppercase;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+  background-color: hsl(217deg 20% 10%);
+  padding: var(--spacing-sm);
+}

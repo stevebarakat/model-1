@@ -150,7 +150,7 @@ function OscillatorBank({
             oscillatorNumber={3}
           />
         </div>
-        <span className="section-title">Oscillator Bank</span>
+        {/* <span className="section-title">Oscillator Bank</span> */}
       </div>
     </div>
   );

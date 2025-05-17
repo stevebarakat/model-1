@@ -36,26 +36,29 @@ function OscillatorControls({
   showPanLabels = true,
 }: OscillatorControlsProps) {
   return (
-    <div className="row">
-      <Knob
-        value={volume}
-        min={0}
-        max={1}
-        step={0.01}
-        label={showVolumeLabels ? label : ""}
-        onChange={onVolumeChange}
-        displayMode={!showVolumeLabels ? "always" : "replace"}
-      />
-      <Knob
-        value={pan}
-        min={-1}
-        max={1}
-        step={0.01}
-        label={showPanLabels ? "Pan" : ""}
-        onChange={onPanChange}
-        displayMode={!showPanLabels ? "always" : "replace"}
-      />
-    </div>
+    <>
+      <div className="row">
+        <Knob
+          value={volume}
+          min={0}
+          max={1}
+          step={0.01}
+          label={showVolumeLabels ? label : ""}
+          onChange={onVolumeChange}
+          displayMode={!showVolumeLabels ? "always" : "replace"}
+        />
+        <Knob
+          value={pan}
+          min={-1}
+          max={1}
+          step={0.01}
+          label={showPanLabels ? "Pan" : ""}
+          onChange={onPanChange}
+          displayMode={!showPanLabels ? "always" : "replace"}
+        />
+      </div>
+      <span className={styles.horizontalIndent}></span>
+    </>
   );
 }
 
@@ -74,41 +77,34 @@ function Mixer({
   onOsc3PanChange,
 }: MixerProps) {
   return (
-    <div className="bx">
-      <div className="sction">
-        <div className="ow">
-          <div className={styles.column}>
-            <OscillatorControls
-              volume={osc1Volume}
-              pan={osc1Pan}
-              label="Osc 1"
-              onVolumeChange={onOsc1VolumeChange}
-              onPanChange={onOsc1PanChange}
-              showVolumeLabels={true}
-              showPanLabels={true}
-            />
-            <OscillatorControls
-              volume={osc2Volume}
-              pan={osc2Pan}
-              label="Osc 2"
-              onVolumeChange={onOsc2VolumeChange}
-              onPanChange={onOsc2PanChange}
-              showVolumeLabels={true}
-              showPanLabels={false}
-            />
-            <OscillatorControls
-              volume={osc3Volume}
-              pan={osc3Pan}
-              label="Osc 3"
-              onVolumeChange={onOsc3VolumeChange}
-              onPanChange={onOsc3PanChange}
-              showVolumeLabels={true}
-              showPanLabels={false}
-            />
-          </div>
-        </div>
-        <span className="section-title">Mixer</span>
-      </div>
+    <div className={styles.column}>
+      <OscillatorControls
+        volume={osc1Volume}
+        pan={osc1Pan}
+        label="Osc 1"
+        onVolumeChange={onOsc1VolumeChange}
+        onPanChange={onOsc1PanChange}
+        showVolumeLabels={true}
+        showPanLabels={true}
+      />
+      <OscillatorControls
+        volume={osc2Volume}
+        pan={osc2Pan}
+        label="Osc 2"
+        onVolumeChange={onOsc2VolumeChange}
+        onPanChange={onOsc2PanChange}
+        showVolumeLabels={true}
+        showPanLabels={false}
+      />
+      <OscillatorControls
+        volume={osc3Volume}
+        pan={osc3Pan}
+        label="Osc 3"
+        onVolumeChange={onOsc3VolumeChange}
+        onPanChange={onOsc3PanChange}
+        showVolumeLabels={true}
+        showPanLabels={false}
+      />
     </div>
   );
 }

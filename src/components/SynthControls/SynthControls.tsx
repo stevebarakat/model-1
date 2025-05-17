@@ -106,6 +106,7 @@ function SynthControls({
 
   return (
     <>
+      <div className={styles.sectionTitle}>Oscillators</div>
       <OscillatorBank
         osc1={oscillators.osc1}
         osc2={oscillators.osc2}
@@ -115,6 +116,7 @@ function SynthControls({
         onOsc3Change={handleOsc3Change}
       />
       <div className={styles.indent}></div>
+      <span className={styles.sectionTitle}>Mixer</span>
       <Mixer
         osc1Volume={mixer.osc1Volume}
         osc2Volume={mixer.osc2Volume}

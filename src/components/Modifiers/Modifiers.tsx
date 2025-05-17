@@ -70,7 +70,7 @@ function Modifiers({
   const cutoffMax = isBandpassOrNotch ? 3000 : 20000;
 
   return (
-    <div className="box filled">
+    <div className="box">
       <div className="section">
         <div className="column">
           <div className="row">
@@ -124,43 +124,6 @@ function Modifiers({
               step={0.01}
               label="Contour"
               onChange={onContourAmountChange}
-            />
-          </div>
-          <div className="row">
-            <Knob
-              value={lfoRate}
-              min={0.1}
-              max={20}
-              step={0.1}
-              label="Rate"
-              unit="Hz"
-              onChange={onLfoRateChange}
-            />
-            <Knob
-              label="Routing"
-              value={routingToValue(lfoRouting)}
-              onChange={(value) => onLfoRoutingChange(valueToRouting(value))}
-              min={0}
-              max={15}
-              step={1}
-              valueLabels={ROUTING_LABELS}
-            />
-            <Knob
-              value={lfoDepth}
-              min={0}
-              max={1}
-              step={0.01}
-              label="Depth"
-              onChange={onLfoDepthChange}
-            />
-            <ArrowKnob
-              value={waveformToValue(lfoWaveform)}
-              min={0}
-              max={3}
-              step={1}
-              label="Wave"
-              valueLabels={WAVEFORM_ICONS}
-              onChange={(value) => onLfoWaveformChange(valueToWaveform(value))}
             />
           </div>
           <div className="row">
