@@ -9,11 +9,15 @@ type EffectsProps = {
   reverbDecay: number;
   reverbEq: number;
   delayAmount: number;
+  delayTime: number;
+  delayFeedback: number;
   distortionAmount: number;
   onReverbAmountChange: (amount: number) => void;
   onReverbDecayChange: (decay: number) => void;
   onReverbEqChange: (eq: number) => void;
   onDelayAmountChange: (amount: number) => void;
+  onDelayTimeChange: (time: number) => void;
+  onDelayFeedbackChange: (feedback: number) => void;
   onDistortionAmountChange: (amount: number) => void;
 };
 
@@ -22,11 +26,15 @@ function Effects({
   reverbDecay,
   reverbEq,
   delayAmount,
+  delayTime,
+  delayFeedback,
   distortionAmount,
   onReverbAmountChange,
   onReverbDecayChange,
   onReverbEqChange,
   onDelayAmountChange,
+  onDelayTimeChange,
+  onDelayFeedbackChange,
   onDistortionAmountChange,
 }: EffectsProps): React.ReactElement {
   return (
@@ -40,7 +48,14 @@ function Effects({
         onEqChange={onReverbEqChange}
       />
       <span className={styles.horizontalIndent}></span>
-      <Delay amount={delayAmount} onAmountChange={onDelayAmountChange} />
+      <Delay
+        amount={delayAmount}
+        delayTime={delayTime}
+        feedback={delayFeedback}
+        onAmountChange={onDelayAmountChange}
+        onDelayTimeChange={onDelayTimeChange}
+        onFeedbackChange={onDelayFeedbackChange}
+      />
       <span className={styles.horizontalIndent}></span>
       <Distortion
         amount={distortionAmount}

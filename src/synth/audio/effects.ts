@@ -88,6 +88,8 @@ export function setupEffects(context: AudioContext) {
   return {
     masterGain,
     delayGain,
+    delayNode,
+    delayFeedback,
     reverbGain,
     dryGain,
     wetGain,

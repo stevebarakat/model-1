@@ -14,6 +14,8 @@ type SynthContext = {
   context: AudioContext;
   masterGain: GainNode;
   delayGain: GainNode;
+  delayNode: DelayNode;
+  delayFeedback: GainNode;
   reverbGain: GainNode;
   dryGain: GainNode;
   wetGain: GainNode;
@@ -88,6 +90,8 @@ function createSynthContext(context: AudioContext): SynthContext {
     context,
     masterGain: effects.masterGain,
     delayGain: effects.delayGain,
+    delayNode: effects.delayNode,
+    delayFeedback: effects.delayFeedback,
     reverbGain: effects.reverbGain,
     dryGain: effects.dryGain,
     wetGain: effects.wetGain,
@@ -165,12 +169,16 @@ function createInitialState(): SynthState {
       },
       reverb: {
         amount: 0,
+        decay: 0.5,
+        eq: 0,
       },
       distortion: {
         outputGain: 0,
       },
       delay: {
         amount: 0,
+        time: 0.3,
+        feedback: 0.3,
       },
     },
     activeNotes: new Map(),
@@ -534,7 +542,15 @@ function updateSettings(
   }
 
   if (newSettings.delay) {
-    synthContext.delayGain.gain.value = newSettings.delay.amount / 100;
+    if (newSettings.delay.amount !== undefined) {
+      synthContext.delayGain.gain.value = newSettings.delay.amount / 100;
+    }
+    if (newSettings.delay.time !== undefined) {
+      synthContext.delayNode.delayTime.value = newSettings.delay.time;
+    }
+    if (newSettings.delay.feedback !== undefined) {
+      synthContext.delayFeedback.gain.value = newSettings.delay.feedback / 100;
+    }
   }
 
   if (newSettings.noise) {

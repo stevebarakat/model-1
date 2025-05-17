@@ -71,9 +71,9 @@ export type SynthState = {
 
   // Effects state
   effects: {
-    reverb: { amount: number; decay: number };
+    reverb: { amount: number; decay: number; eq: number };
     distortion: { outputGain: number };
-    delay: { amount: number };
+    delay: { amount: number; time: number; feedback: number };
   };
 };
 

@@ -60,6 +60,8 @@ export type SynthSettings = {
   };
   delay: {
     amount: number;
+    time: number;
+    feedback: number;
   };
 };
 
