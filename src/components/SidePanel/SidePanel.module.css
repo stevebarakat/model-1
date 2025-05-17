@@ -3,8 +3,16 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin: 6px 0;
-  background: hsla(160, 12%, 5%, 0.5);
+  margin: 6px 0 12px;
+  background-color: hsl(217deg 10% 10% / 90%); /* Dark metallic black */
+  background: linear-gradient(
+    0deg,
+    hsl(217deg 10% 10% / 90%),
+    hsl(217deg 10% 15%),
+    hsl(217deg 10% 20%),
+    hsl(217deg 10% 15%),
+    hsl(217deg 10% 10% / 90%)
+  );
 }
 
 .modWheels {
@@ -12,14 +20,14 @@
   flex-direction: row;
   justify-content: center;
   width: 100%;
-  margin-top: var(--spacing-lg);
+  margin: 28px 0;
 }
 
 .modWheelwell {
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 50px;
+  width: 40px;
 }
 
 /* Screw decorations */
@@ -77,13 +85,13 @@
 
 .screwBottomLeft {
   composes: screw;
-  bottom: 12px;
+  bottom: 6px;
   left: 4px;
 }
 
 .screwBottomRight {
   composes: screw;
-  bottom: 12px;
+  bottom: 6px;
   right: 4px;
 }
 
