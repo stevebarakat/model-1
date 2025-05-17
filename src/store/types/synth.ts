@@ -5,7 +5,7 @@ export type Note = string;
 
 export type SynthState = {
   // Keyboard state
-  activeKeys: Set<Note>;
+  activeKeys: Note | null;
   keyboardRef: {
     synth: Awaited<
       ReturnType<typeof import("@/synth/WebAudioSynth").createSynth>
@@ -82,7 +82,9 @@ export type SynthState = {
 };
 
 export type SynthActions = {
-  setActiveKeys: (keys: Set<Note> | ((prev: Set<Note>) => Set<Note>)) => void;
+  setActiveKeys: (
+    key: Note | null | ((prev: Note | null) => Note | null)
+  ) => void;
   setKeyboardRef: (ref: {
     synth: Awaited<
       ReturnType<typeof import("@/synth/WebAudioSynth").createSynth>

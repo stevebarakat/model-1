@@ -8,8 +8,10 @@ interface KeyboardHandlingProps {
   keyboardRef: MutableRefObject<{
     synth: Awaited<ReturnType<typeof createSynth>> | null;
   }>;
-  activeKeys: Set<Note>;
-  setActiveKeys: (fn: (prev: Set<Note>) => Set<Note>) => void;
+  activeKeys: Note | null;
+  setActiveKeys: (
+    key: Note | null | ((prev: Note | null) => Note | null)
+  ) => void;
   currentOctave: number;
   setCurrentOctave: (octave: number) => void;
 }
@@ -26,39 +28,27 @@ export function useKeyboardHandling({
 
   const handleKeyDown = useCallback(
     (note: Note) => {
-      setActiveKeys((prev: Set<Note>) => {
-        const newSet = new Set(prev);
-        newSet.add(note);
-        return newSet;
-      });
-
-      if (isMouseDown && lastPlayedNote && lastPlayedNote !== note) {
-        const currentNote = lastPlayedNote;
-        keyboardRef.current.synth?.handleNoteTransition(currentNote, note);
-      } else {
-        keyboardRef.current.synth?.triggerAttack(note);
+      // If there's already a note playing, release it first
+      if (activeKeys) {
+        keyboardRef.current.synth?.triggerRelease(activeKeys);
       }
+
+      setActiveKeys(note);
+      keyboardRef.current.synth?.triggerAttack(note);
       setLastPlayedNote(note);
     },
-    [setActiveKeys, isMouseDown, lastPlayedNote, keyboardRef]
+    [setActiveKeys, keyboardRef, activeKeys]
   );
 
   const handleKeyUp = useCallback(
     (note: Note) => {
-      setActiveKeys((prev: Set<Note>) => {
-        const newSet = new Set(prev);
-        newSet.delete(note);
-        return newSet;
-      });
-
-      if (!isMouseDown || note === lastPlayedNote) {
+      if (note === activeKeys) {
+        setActiveKeys(null);
         keyboardRef.current.synth?.triggerRelease(note);
-        if (note === lastPlayedNote) {
-          setLastPlayedNote(null);
-        }
+        setLastPlayedNote(null);
       }
     },
-    [setActiveKeys, isMouseDown, lastPlayedNote, keyboardRef]
+    [setActiveKeys, keyboardRef, activeKeys]
   );
 
   const handleMouseDown = useCallback(() => {
@@ -67,11 +57,12 @@ export function useKeyboardHandling({
 
   const handleMouseUp = useCallback(() => {
     setIsMouseDown(false);
-    activeKeys.forEach((note) => {
-      keyboardRef.current.synth?.triggerRelease(note);
-    });
+    if (activeKeys) {
+      keyboardRef.current.synth?.triggerRelease(activeKeys);
+      setActiveKeys(null);
+    }
     setLastPlayedNote(null);
-  }, [activeKeys, keyboardRef]);
+  }, [activeKeys, keyboardRef, setActiveKeys]);
 
   useEffect(() => {
     const baseKeyboardMap: { [key: string]: string } = {
@@ -94,12 +85,12 @@ export function useKeyboardHandling({
       if (!e.key) return;
 
       if (e.key === "+" || e.key === "=") {
-        activeKeys.forEach((note) => handleKeyUp(note));
+        if (activeKeys) handleKeyUp(activeKeys);
         setCurrentOctave(Math.min(currentOctave + 1, 7));
         return;
       }
       if (e.key === "-" || e.key === "_") {
-        activeKeys.forEach((note) => handleKeyUp(note));
+        if (activeKeys) handleKeyUp(activeKeys);
         setCurrentOctave(Math.max(currentOctave - 1, 1));
         return;
       }

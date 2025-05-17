@@ -5,9 +5,9 @@ export function createSynthActions(
   set: Parameters<StateCreator<SynthState & SynthActions>>[0]
 ): SynthActions {
   return {
-    setActiveKeys: (keys) =>
+    setActiveKeys: (key) =>
       set((state: SynthState) => ({
-        activeKeys: typeof keys === "function" ? keys(state.activeKeys) : keys,
+        activeKeys: typeof key === "function" ? key(state.activeKeys) : key,
       })),
     setKeyboardRef: (ref) => set({ keyboardRef: ref }),
     setPitchWheel: (value) => set({ pitchWheel: value }),

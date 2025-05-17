@@ -172,7 +172,7 @@ function App() {
 
           <Keyboard
             ref={keyboardRef}
-            activeKeys={Array.from(activeKeys)}
+            activeKeys={activeKeys}
             onKeyDown={handleKeyDown}
             onKeyUp={handleKeyUp}
             onMouseDown={handleMouseDown}

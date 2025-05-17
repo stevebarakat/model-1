@@ -12,7 +12,7 @@ type Note = {
 };
 
 type KeyboardProps = {
-  activeKeys?: string[];
+  activeKeys?: string | null;
   octaveRange?: { min: number; max: number };
   onKeyDown?: (note: string) => void;
   onKeyUp?: (note: string) => void;
@@ -66,7 +66,7 @@ function generateKeyboardKeys(octaveRange: {
 
 function Keyboard(
   {
-    activeKeys = [],
+    activeKeys = null,
     octaveRange = { min: 3, max: 6 },
     onKeyDown = () => {},
     onKeyUp = () => {},
@@ -98,14 +98,18 @@ function Keyboard(
 
   function handleMouseUp(): void {
     setIsMouseDown(false);
-    activeKeys.forEach(onKeyUp);
+    if (activeKeys) {
+      onKeyUp(activeKeys);
+    }
     onMouseUp();
   }
 
   function handleMouseLeave(): void {
     if (isMouseDown) {
       setIsMouseDown(false);
-      activeKeys.forEach(onKeyUp);
+      if (activeKeys) {
+        onKeyUp(activeKeys);
+      }
       onMouseUp();
     }
   }
@@ -140,7 +144,7 @@ function Keyboard(
     return keys
       .filter((key) => !key.isSharp)
       .map((key, index) => {
-        const isActive = activeKeys.includes(key.note);
+        const isActive = activeKeys === key.note;
 
         return (
           <div
@@ -166,7 +170,7 @@ function Keyboard(
     return keys
       .filter((key) => key.isSharp)
       .map((key, index) => {
-        const isActive = activeKeys.includes(key.note);
+        const isActive = activeKeys === key.note;
         const keyIndex = keys.findIndex((k) => k.note === key.note);
         const whiteKeysBefore = keys
           .slice(0, keyIndex)
