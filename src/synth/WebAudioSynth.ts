@@ -252,59 +252,28 @@ function createOscillatorChain(
   gain: GainNode | null;
   panner: StereoPannerNode | null;
 } {
-  console.log("createOscillatorChain called with:", {
-    baseFrequency,
-    lastFrequency,
-    glide,
-    oscSettings,
-  });
-
-  if ((oscSettings.volume ?? 0) <= 0) {
-    return {
-      oscillator: null,
-      gain: null,
-      panner: null,
-    };
-  }
-
   const rangeMultiplier = getRangeMultiplier(oscSettings.range);
   const frequencyOffset = Math.pow(2, oscSettings.frequency / 12);
   const finalFrequency = baseFrequency * rangeMultiplier * frequencyOffset;
-  const startFrequency =
-    glide > 0 && lastFrequency ? lastFrequency : finalFrequency;
+  const startFrequency = lastFrequency
+    ? lastFrequency * rangeMultiplier * frequencyOffset
+    : finalFrequency;
 
-  console.log("Frequency calculations:", {
-    rangeMultiplier,
-    frequencyOffset,
-    finalFrequency,
-    startFrequency,
-  });
+  const oscillator = context.createOscillator();
+  const gainNode = context.createGain();
+  const panNode = context.createStereoPanner();
 
-  const oscillator = createOscillator(
-    context,
-    {
-      ...oscSettings,
-      type: oscSettings.waveform,
-    },
-    startFrequency
-  );
+  oscillator.type = (oscSettings.waveform ?? "sine") as OscillatorType;
+  oscillator.frequency.value = startFrequency;
+  panNode.pan.value = oscSettings.pan ?? 0;
 
-  const gain = createGainNode(context, oscSettings.volume ?? 0);
-  const panner = context.createStereoPanner();
-  panner.pan.value = oscSettings.pan ?? 0;
-
-  oscillator.connect(gain);
-  gain.connect(panner);
+  oscillator.connect(gainNode);
+  gainNode.connect(panNode);
   oscillator.start(startTime);
 
   if (glide > 0 && lastFrequency) {
     // Convert glide value (0-1) to time in seconds (0-2)
     const glideTime = glide * 2;
-    console.log("Applying glide:", {
-      glideTime,
-      startFrequency,
-      finalFrequency,
-    });
     oscillator.frequency.setValueAtTime(startFrequency, startTime);
     oscillator.frequency.linearRampToValueAtTime(
       finalFrequency,
@@ -312,7 +281,7 @@ function createOscillatorChain(
     );
   }
 
-  return { oscillator, gain, panner };
+  return { oscillator, gain: gainNode, panner: panNode };
 }
 
 function createNoiseChain(
@@ -773,7 +742,6 @@ function triggerAttack(
     const activeOsc = state.noteData.oscillators[0];
     if (activeOsc) {
       lastFrequency = activeOsc.frequency.value;
-      console.log("Using current oscillator frequency:", lastFrequency);
     }
   }
 
@@ -793,7 +761,6 @@ function triggerAttack(
   }
 
   const targetFrequency = noteToFrequency(note, state.settings.tune);
-  console.log("Target frequency:", targetFrequency);
 
   // Create main audio chain
   const noteGain = createGainNode(synthContext.context, 0);
@@ -1039,12 +1006,6 @@ function handleNoteTransition(
   fromNote: Note | null,
   toNote: Note
 ): void {
-  console.log("handleNoteTransition called with:", {
-    fromNote,
-    toNote,
-    glide: state.settings.glide,
-  });
-
   // Get the current note's frequency before any changes
   let lastFrequency = null;
   if (state.currentNote && state.noteData) {
@@ -1052,19 +1013,16 @@ function handleNoteTransition(
     const activeOsc = state.noteData.oscillators[0];
     if (activeOsc) {
       lastFrequency = activeOsc.frequency.value;
-      console.log("Current oscillator frequency:", lastFrequency);
     }
   }
 
   // Calculate the target frequency
   const targetFrequency = noteToFrequency(toNote, state.settings.tune);
-  console.log("Target frequency:", targetFrequency);
 
   // Start the new note with the last frequency
   triggerAttack(state, synthContext, toNote, lastFrequency);
 
   // Don't release the previous note - let it fade out naturally
-  // The glide will handle the transition between notes
 }
 
 function dispose(state: SynthState, synthContext: SynthContext): void {

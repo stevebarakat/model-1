@@ -59,7 +59,6 @@ function App() {
   // Update synth settings when keyboard ref is available
   useEffect(() => {
     if (keyboardRef.current.synth) {
-      console.log("Glide value being passed to synth:", glide);
       keyboardRef.current.synth.updateSettings({
         oscillators: [
           {
@@ -161,11 +160,6 @@ function App() {
             onPitchWheelReset={() => setPitchWheel(50)}
             glide={glide}
             onGlideChange={setGlide}
-            currentOctave={currentOctave}
-            onOctaveChange={setCurrentOctave}
-            onOctaveChangeStart={() => {
-              activeKeys.forEach((note) => handleKeyUp(note));
-            }}
             tune={tune}
             onTuneChange={setTune}
           />
