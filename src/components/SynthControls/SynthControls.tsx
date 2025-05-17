@@ -147,7 +147,7 @@ function SynthControls({
         onToneChange={(value: number) => onNoiseChange({ tone: value })}
         onSyncChange={(value: boolean) => onNoiseChange({ sync: value })}
       />
-      <div className={styles.indent}></div>
+      {/* <div className={styles.indent}></div> */}
       <Modifiers
         cutoff={modifiers.cutoff}
         resonance={modifiers.resonance}

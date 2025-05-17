@@ -1,11 +1,286 @@
-.section {
+.row {
+  position: relative;
   display: flex;
-  flex-direction: column;
-  padding: var(--spacing-md);
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-md);
+  width: 100%;
+  padding: var(--spacing-sm);
+  padding-bottom: var(--spacing-lg);
+  padding-left: calc(
+    var(--spacing-sm) + 16px
+  ); /* Add extra padding for left screw */
+  padding-right: calc(
+    var(--spacing-sm) + 16px
+  ); /* Add extra padding for right screw */
+  &:first-of-type {
+    background-color: hsl(350deg 40% 20% / 90%); /* Deep red */
+    background: linear-gradient(
+      0deg,
+      hsl(350deg 40% 20% / 90%),
+      hsl(350deg 40% 25%),
+      hsl(350deg 40% 30%),
+      hsl(350deg 40% 25%),
+      hsl(350deg 40% 20% / 90%)
+    );
+    &:before {
+      display: block;
+      position: absolute;
+      top: 0;
+      left: -6px;
+      z-index: 100;
+      height: 103%;
+      content: "";
+      display: block;
+      width: 10px;
+      background: linear-gradient(
+        270deg,
+        hsl(350deg 40% 20% / 20%) 0%,
+        hsl(350deg 40% 30% / 30%) 20%,
+        hsl(350deg 40% 20% / 40%) 40%,
+        hsl(350deg 40% 0% / 50%) 50%,
+        hsl(350deg 40% 20% / 40%) 60%,
+        hsl(350deg 40% 30% / 30%) 80%,
+        hsl(350deg 40% 20% / 20%) 100%
+      );
+    }
+    &:after {
+      display: block;
+      position: absolute;
+      top: 0;
+      right: -6px;
+      z-index: 100;
+      height: 103%;
+      content: "";
+      display: block;
+      width: 10px;
+      background: linear-gradient(
+        270deg,
+        hsl(360deg 40% 20% / 20%) 0%,
+        hsl(360deg 40% 30% / 30%) 20%,
+        hsl(360deg 40% 20% / 40%) 40%,
+        hsl(360deg 40% 0% / 50%) 50%,
+        hsl(350deg 40% 20% / 40%) 60%,
+        hsl(350deg 40% 30% / 30%) 80%,
+        hsl(350deg 40% 20% / 20%) 100%
+      );
+    }
+  }
+  &:nth-of-type(2) {
+    background-color: hsl(45deg 40% 20% / 90%); /* Amber */
+    background: linear-gradient(
+      0deg,
+      hsl(45deg 40% 20% / 90%),
+      hsl(45deg 40% 25%),
+      hsl(45deg 40% 30%),
+      hsl(45deg 40% 25%),
+      hsl(45deg 40% 20% / 90%)
+    );
+    &:before {
+      display: block;
+      position: absolute;
+      top: 0;
+      left: -6px;
+      z-index: 100;
+      height: 103%;
+      content: "";
+      display: block;
+      width: 10px;
+      background: linear-gradient(
+        270deg,
+        hsl(45deg 40% 20% / 20%) 0%,
+        hsl(45deg 40% 30% / 30%) 20%,
+        hsl(45deg 40% 20% / 40%) 40%,
+        hsl(45deg 40% 0% / 50%) 50%,
+        hsl(350deg 40% 20% / 40%) 60%,
+        hsl(350deg 40% 30% / 30%) 80%,
+        hsl(350deg 40% 20% / 20%) 100%
+      );
+    }
+    &:after {
+      display: block;
+      position: absolute;
+      top: 0;
+      right: -6px;
+      z-index: 100;
+      height: 103%;
+      content: "";
+      display: block;
+      width: 10px;
+      background: linear-gradient(
+        270deg,
+        hsl(360deg 40% 20% / 20%) 0%,
+        hsl(360deg 40% 30% / 30%) 20%,
+        hsl(360deg 40% 20% / 40%) 40%,
+        hsl(360deg 40% 0% / 50%) 50%,
+        hsl(45deg 40% 20% / 40%) 60%,
+        hsl(45deg 40% 30% / 30%) 80%,
+        hsl(45deg 40% 20% / 20%) 100%
+      );
+    }
+  }
+  &:last-of-type {
+    background-color: hsl(160deg 40% 20% / 90%); /* Emerald */
+    background: linear-gradient(
+      0deg,
+      hsl(160deg 40% 20% / 90%),
+      hsl(160deg 40% 25%),
+      hsl(160deg 40% 30%),
+      hsl(160deg 40% 25%),
+      hsl(160deg 40% 20% / 90%)
+    );
+    &:before {
+      display: block;
+      position: absolute;
+      top: 0;
+      left: -6px;
+      z-index: 100;
+      height: 103%;
+      content: "";
+      display: block;
+      width: 10px;
+      background: linear-gradient(
+        270deg,
+        hsl(160deg 40% 20% / 20%) 0%,
+        hsl(160deg 40% 30% / 30%) 20%,
+        hsl(160deg 40% 20% / 40%) 40%,
+        hsl(160deg 40% 0% / 50%) 50%,
+        hsl(350deg 40% 20% / 40%) 60%,
+        hsl(350deg 40% 30% / 30%) 80%,
+        hsl(350deg 40% 20% / 20%) 100%
+      );
+    }
+    &:after {
+      display: block;
+      position: absolute;
+      top: 0;
+      right: -6px;
+      z-index: 100;
+      height: 103%;
+      content: "";
+      display: block;
+      width: 10px;
+      background: linear-gradient(
+        270deg,
+        hsl(360deg 40% 20% / 20%) 0%,
+        hsl(360deg 40% 30% / 30%) 20%,
+        hsl(360deg 40% 20% / 40%) 40%,
+        hsl(360deg 40% 0% / 50%) 50%,
+        hsl(160deg 40% 20% / 40%) 60%,
+        hsl(160deg 40% 30% / 30%) 80%,
+        hsl(160deg 40% 20% / 20%) 100%
+      );
+    }
+  }
 }
 
-.column {
-  display: flex;
-  flex-direction: column;
-  gap: var(--spacing-sm);
+/* Screw decorations */
+.screw {
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  background: radial-gradient(
+    circle at center,
+    hsl(217deg 20% 25%) 0%,
+    hsl(217deg 20% 20%) 30%,
+    hsl(217deg 20% 15%) 60%,
+    hsl(217deg 20% 10%) 100%
+  );
+  border-radius: 50%;
+  z-index: 101;
+}
+
+.screw::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) rotate(45deg);
+  width: 6px;
+  height: 6px;
+  background: linear-gradient(
+      90deg,
+      transparent 40%,
+      hsl(217deg 20% 5% / 80%) 40%,
+      hsl(217deg 20% 5% / 80%) 60%,
+      transparent 60%
+    ),
+    linear-gradient(
+      0deg,
+      transparent 40%,
+      hsl(217deg 20% 5% / 80%) 40%,
+      hsl(217deg 20% 5% / 80%) 60%,
+      transparent 60%
+    );
+  border-radius: 1px;
+}
+
+.screwTopLeft {
+  composes: screw;
+  top: 4px;
+  left: 4px;
+}
+
+.screwTopRight {
+  composes: screw;
+  top: 4px;
+  right: 4px;
+}
+
+.screwBottomLeft {
+  composes: screw;
+  bottom: 4px;
+  left: 4px;
+}
+
+.screwBottomRight {
+  composes: screw;
+  bottom: 4px;
+  right: 4px;
+}
+
+.horizontalIndent {
+  display: block;
+  margin-bottom: -2px;
+  width: 100%;
+  height: 8px;
+  align-self: flex-end;
+  background: linear-gradient(
+    0deg,
+    hsl(217deg 20% 25% / 50%),
+    hsl(217deg 40% 25%),
+    hsl(217deg 10% 5%),
+    hsl(217deg 30% 20%),
+    hsl(217deg 50% 25%)
+  );
+  &:first-of-type {
+    background: linear-gradient(
+      0deg,
+      hsl(45deg 40% 20% / 90%),
+      hsl(45deg 40% 20%),
+      hsl(45deg 40% 5%),
+      hsl(350deg 40% 20%),
+      hsl(350deg 40% 20% / 90%)
+    );
+  }
+  &:nth-of-type(2) {
+    background: linear-gradient(
+      0deg,
+      hsl(160deg 40% 20% / 90%),
+      hsl(160deg 40% 20%),
+      hsl(45deg 40% 5%),
+      hsl(45deg 40% 20%),
+      hsl(45deg 40% 20% / 90%)
+    );
+  }
+  &:last-of-type {
+    background: linear-gradient(
+      0deg,
+      hsl(350deg 40% 0% / 0%),
+      hsl(350deg 40% 0% / 10%),
+      hsl(350deg 40% 5%),
+      hsl(160deg 40% 20%),
+      hsl(160deg 40% 20% / 90%)
+    );
+  }
 }
