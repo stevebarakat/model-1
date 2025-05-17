@@ -106,7 +106,6 @@ function SynthControls({
 
   return (
     <>
-      {/* <div className={styles.sectionTitle}>Oscillators</div> */}
       <OscillatorBank
         osc1={oscillators.osc1}
         osc2={oscillators.osc2}
@@ -115,8 +114,6 @@ function SynthControls({
         onOsc2Change={handleOsc2Change}
         onOsc3Change={handleOsc3Change}
       />
-      {/* <div className={styles.indent}></div> */}
-      {/* <span className={styles.sectionTitle}>Mixer</span> */}
       <Mixer
         osc1Volume={mixer.osc1Volume}
         osc2Volume={mixer.osc2Volume}
@@ -137,8 +134,6 @@ function SynthControls({
         onOsc2PanChange={(value: number) => handleOsc2Change("pan", value)}
         onOsc3PanChange={(value: number) => handleOsc3Change("pan", value)}
       />
-      {/* <div className={styles.indent}></div> */}
-      {/* <div className={styles.sectionTitle}>Noise</div> */}
       <Noise
         volume={noise.volume}
         pan={noise.pan}
@@ -153,7 +148,6 @@ function SynthControls({
         onToneChange={(value: number) => onNoiseChange({ tone: value })}
         onSyncChange={(value: boolean) => onNoiseChange({ sync: value })}
       />
-      {/* <div className={styles.indent}></div> */}
       <Modifiers
         cutoff={modifiers.cutoff}
         resonance={modifiers.resonance}
@@ -208,7 +202,6 @@ function SynthControls({
           onModifiersChange({ lfo: { ...modifiers.lfo, routing: value } })
         }
       />
-      {/* <div className={styles.indent}></div> */}
       <Effects
         reverbAmount={effects.reverb.amount}
         reverbDecay={effects.reverb.decay}
