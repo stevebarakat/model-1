@@ -27,6 +27,14 @@ type SynthContext = {
   createImpulseResponse: (decay: number) => AudioBuffer;
   distortionLowEQ: BiquadFilterNode;
   distortionHighEQ: BiquadFilterNode;
+  distortion: AudioNode & {
+    drive: number;
+    outputGain: number;
+    curveAmount: number;
+    algorithmIndex: number;
+    bypass: number;
+  };
+  compressor: DynamicsCompressorNode;
 };
 
 type SynthState = {
@@ -106,6 +114,8 @@ function createSynthContext(context: AudioContext): SynthContext {
     createImpulseResponse: effects.createImpulseResponse,
     distortionLowEQ: effects.distortionLowEQ,
     distortionHighEQ: effects.distortionHighEQ,
+    distortion: effects.distortion,
+    compressor: effects.compressor,
   };
 }
 
@@ -585,13 +595,27 @@ function updateSettings(
       synthContext.dryGain.gain.value = 1 - logMix;
       synthContext.wetGain.gain.value = logMix;
 
-      // Clean up distortion nodes when disabled
+      // Only disconnect if mix is 0, otherwise ensure connection
       if (mix === 0) {
         try {
           synthContext.distortionLowEQ.disconnect();
           synthContext.distortionHighEQ.disconnect();
+          synthContext.distortion.disconnect();
+          synthContext.compressor.disconnect();
         } catch (e) {
           console.warn("Error cleaning up distortion:", e);
+        }
+      } else {
+        // Reconnect if needed
+        try {
+          // Reconnect the full distortion chain
+          synthContext.masterGain.connect(synthContext.distortionLowEQ);
+          synthContext.distortionLowEQ.connect(synthContext.distortion);
+          synthContext.distortion.connect(synthContext.distortionHighEQ);
+          synthContext.distortionHighEQ.connect(synthContext.compressor);
+          synthContext.compressor.connect(synthContext.wetGain);
+        } catch (e) {
+          console.warn("Error reconnecting distortion:", e);
         }
       }
     }
@@ -610,13 +634,21 @@ function updateSettings(
       const amount = newSettings.reverb.amount / 100;
       synthContext.reverbGain.gain.value = amount;
 
-      // Clean up reverb nodes when disabled
+      // Only disconnect if amount is 0, otherwise ensure connection
       if (amount === 0) {
         try {
           synthContext.reverbNode.disconnect();
           synthContext.reverbEQ.disconnect();
         } catch (e) {
           console.warn("Error cleaning up reverb:", e);
+        }
+      } else {
+        // Reconnect if needed
+        try {
+          synthContext.reverbNode.connect(synthContext.reverbEQ);
+          synthContext.reverbEQ.connect(synthContext.reverbGain);
+        } catch (e) {
+          console.warn("Error reconnecting reverb:", e);
         }
       }
     }
@@ -636,13 +668,22 @@ function updateSettings(
       const amount = newSettings.delay.amount / 100;
       synthContext.delayGain.gain.value = amount;
 
-      // Clean up delay nodes when disabled
+      // Only disconnect if amount is 0, otherwise ensure connection
       if (amount === 0) {
         try {
           synthContext.delayNode.disconnect();
           synthContext.delayFeedback.disconnect();
         } catch (e) {
           console.warn("Error cleaning up delay:", e);
+        }
+      } else {
+        // Reconnect if needed
+        try {
+          synthContext.delayNode.connect(synthContext.delayGain);
+          synthContext.delayNode.connect(synthContext.delayFeedback);
+          synthContext.delayFeedback.connect(synthContext.delayNode);
+        } catch (e) {
+          console.warn("Error reconnecting delay:", e);
         }
       }
     }

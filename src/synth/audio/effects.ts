@@ -111,5 +111,7 @@ export function setupEffects(context: AudioContext) {
     createImpulseResponse,
     distortionLowEQ,
     distortionHighEQ,
+    distortion,
+    compressor,
   };
 }
