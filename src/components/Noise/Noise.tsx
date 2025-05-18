@@ -26,12 +26,12 @@ function Noise({
   onSyncChange,
 }: NoiseProps) {
   return (
-    <div style={{ display: "flex", flexDirection: "column" }}>
-      <div className={styles.column}>
-        <div className={styles.screwTopLeft} />
-        <div className={styles.screwTopRight} />
-        <div className={styles.screwBottomLeft} />
-        <div className={styles.screwBottomRight} />
+    <div className={styles.column}>
+      <div className={styles.screwTopLeft} />
+      <div className={styles.screwTopRight} />
+      <div className={styles.screwBottomLeft} />
+      <div className={styles.screwBottomRight} />
+      <div className="column">
         <Knob
           value={volume}
           min={0}
@@ -47,19 +47,18 @@ function Noise({
           }
           label={type === "pink" ? "Pink" : "White"}
         />
-
-        <Knob
-          value={tone}
-          min={440}
-          max={20000}
-          step={1}
-          label="Freq"
-          onChange={onToneChange}
-          logarithmic={true}
-        />
-        <Switch checked={sync} onCheckedChange={onSyncChange} label="Sync" />
       </div>
-      <span className={styles.horizontalIndent}></span>
+
+      <Knob
+        value={tone}
+        min={440}
+        max={20000}
+        step={1}
+        label="Freq"
+        onChange={onToneChange}
+        logarithmic={true}
+      />
+      <Switch checked={sync} onCheckedChange={onSyncChange} label="Sync" />
     </div>
   );
 }

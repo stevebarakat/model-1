@@ -78,7 +78,7 @@ function ADSR({
   };
 
   return (
-    <div className="row">
+    <>
       {Object.entries(adsrControls).map(([param, config]) => (
         <Knob
           key={param}
@@ -86,7 +86,7 @@ function ADSR({
           onChange={handleChange(param as ADSRParam)}
         />
       ))}
-    </div>
+    </>
   );
 }
 

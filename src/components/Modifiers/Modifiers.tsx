@@ -71,7 +71,7 @@ function Modifiers({
   const cutoffMax = isBandpassOrNotch ? 3000 : 20000;
 
   return (
-    <div className="column">
+    <div>
       <div className={styles.row}>
         <div className={styles.screwTopLeft} />
         <div className={styles.screwTopRight} />

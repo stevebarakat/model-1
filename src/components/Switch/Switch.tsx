@@ -10,7 +10,7 @@ type SwitchProps = {
 function Switch({ checked, onCheckedChange, label, className }: SwitchProps) {
   return (
     <div className={styles.switchContainer}>
-      {label && <label className={styles.topLabel}>{label}</label>}
+      {label && <label className={styles.switchLabel}>{label}</label>}
       <button
         className={`${styles.switchRoot} ${className || ""}`}
         role="switch"
