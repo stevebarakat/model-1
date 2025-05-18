@@ -272,8 +272,8 @@ function createOscillatorChain(
   oscillator.start(startTime);
 
   if (glide > 0 && lastFrequency) {
-    // Convert glide value (0-0.5) to time in seconds (0-1)
-    const glideTime = glide * 2;
+    // Convert glide value (0-0.5) to time in seconds (0-2)
+    const glideTime = glide * 4; // Increased from 2 to 4 to make glide more noticeable
     const currentTime = context.currentTime;
 
     // Ensure we're not scheduling in the past
