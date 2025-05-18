@@ -53,7 +53,6 @@ function OscillatorControls({
   osc,
   onChange,
   showLabels = true,
-  oscillatorNumber,
 }: {
   osc: OscillatorSettings;
   onChange: (
@@ -61,7 +60,6 @@ function OscillatorControls({
     value: OscillatorSettings[keyof OscillatorSettings]
   ) => void;
   showLabels?: boolean;
-  oscillatorNumber: number;
 }) {
   return (
     <>
@@ -70,7 +68,6 @@ function OscillatorControls({
         <div className={styles.screwTopRight} />
         <div className={styles.screwBottomLeft} />
         <div className={styles.screwBottomRight} />
-        {/* <div className={styles.oscillatorNumber}>{oscillatorNumber}</div> */}
         <ArrowKnob
           value={rangeToValue(osc.range)}
           min={0}
@@ -135,19 +132,16 @@ function OscillatorBank({
         osc={osc1}
         onChange={onOsc1Change}
         showLabels={true}
-        oscillatorNumber={1}
       />
       <OscillatorControls
         osc={osc2}
         onChange={onOsc2Change}
         showLabels={false}
-        oscillatorNumber={2}
       />
       <OscillatorControls
         osc={osc3}
         onChange={onOsc3Change}
         showLabels={false}
-        oscillatorNumber={3}
       />
     </div>
   );
