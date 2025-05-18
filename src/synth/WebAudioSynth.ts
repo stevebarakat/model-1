@@ -36,6 +36,7 @@ type SynthState = {
   settings: SynthSettings;
   activeNotes: Map<Note, NoteData>;
   noteStates: Map<Note, NoteState>;
+  lastPlayedFrequency: number | null;
 };
 
 type LFORouting = {
@@ -189,6 +190,7 @@ function createInitialState(): SynthState {
     },
     activeNotes: new Map(),
     noteStates: new Map(),
+    lastPlayedFrequency: null,
   };
 }
 
@@ -255,9 +257,12 @@ function createOscillatorChain(
   const rangeMultiplier = getRangeMultiplier(oscSettings.range);
   const frequencyOffset = Math.pow(2, oscSettings.frequency / 12);
   const finalFrequency = baseFrequency * rangeMultiplier * frequencyOffset;
-  const startFrequency = lastFrequency
-    ? lastFrequency * rangeMultiplier * frequencyOffset
-    : finalFrequency;
+
+  // Only use lastFrequency for glide if it's valid and glide is enabled
+  const startFrequency =
+    glide > 0 && lastFrequency
+      ? lastFrequency * rangeMultiplier * frequencyOffset
+      : finalFrequency;
 
   const oscillator = context.createOscillator();
   const gainNode = context.createGain();
@@ -750,6 +755,12 @@ function triggerAttack(
 
   // Clean up any existing note data before creating new one
   if (state.noteData) {
+    // Store the current frequency before cleanup
+    const currentFreq = state.noteData.oscillators[0]?.frequency.value;
+    if (currentFreq) {
+      state.lastPlayedFrequency = currentFreq;
+    }
+
     // Stop and disconnect existing oscillators
     state.noteData.oscillators.forEach((osc) => {
       if (osc) {
@@ -780,6 +791,9 @@ function triggerAttack(
   }
 
   const targetFrequency = noteToFrequency(note, state.settings.tune);
+
+  // Use lastPlayedFrequency for glide if available and no explicit lastFrequency
+  const glideStartFrequency = lastFrequency ?? state.lastPlayedFrequency;
 
   // Create main audio chain
   const noteGain = createGainNode(synthContext.context, 0);
@@ -840,7 +854,7 @@ function triggerAttack(
         oscSettings,
         targetFrequency,
         now,
-        lastFrequency,
+        glideStartFrequency,
         state.settings.glide
       );
     }
@@ -1035,6 +1049,21 @@ function handleNoteTransition(
     if (activeOsc) {
       lastFrequency = activeOsc.frequency.value;
     }
+  }
+
+  // Clean up any existing note data before starting new note
+  if (state.noteData) {
+    state.noteData.oscillators.forEach((osc) => {
+      if (osc) {
+        try {
+          osc.stop();
+          osc.disconnect();
+        } catch (e) {
+          console.warn("Error cleaning up oscillator:", e);
+        }
+      }
+    });
+    state.noteData = null;
   }
 
   // Start the new note with the last frequency

@@ -29,18 +29,13 @@ export function useKeyboardHandling({
   const handleKeyDown = useCallback(
     (note: Note) => {
       if (keyboardRef.current.synth) {
-        if (activeKeys) {
-          // Use handleNoteTransition for smooth glide between notes
-          keyboardRef.current.synth.handleNoteTransition(activeKeys, note);
-        } else {
-          // If no active key, just trigger attack
-          keyboardRef.current.synth.triggerAttack(note);
-        }
+        // Always use triggerAttack, which will now use the last played frequency for glide
+        keyboardRef.current.synth.triggerAttack(note);
       }
       setActiveKeys(note);
       setLastPlayedNote(note);
     },
-    [setActiveKeys, keyboardRef, activeKeys]
+    [setActiveKeys, keyboardRef]
   );
 
   const handleKeyUp = useCallback(
