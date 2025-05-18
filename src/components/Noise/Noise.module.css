@@ -5,14 +5,6 @@
   gap: var(--spacing-md);
   padding: 4px 20px;
   background: linear-gradient(
-    0deg,
-    hsl(320deg 70% 25% / 90%),
-    hsl(320deg 70% 30%),
-    hsl(320deg 70% 35%),
-    hsl(320deg 70% 30%),
-    hsl(320deg 70% 25% / 90%)
-  );
-  background: linear-gradient(
     to bottom,
     hsl(220deg 80% 5%) 0%,
     hsl(220deg 80% 15%) 0.5%,

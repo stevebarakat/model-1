@@ -14,169 +14,68 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: var(--spacing-md);
-  padding: var(--spacing-xs);
+  gap: var(--spacing-xs);
+  padding-top: var(--spacing-xs);
+  padding-bottom: var(--spacing-sm);
   padding-right: calc(var(--spacing-sm) + 16px);
   padding-left: calc(var(--spacing-sm) + 16px);
   width: 100%;
 
   &:first-of-type {
     background: linear-gradient(
-      0deg,
-      hsl(270deg 40% 20% / 90%),
-      hsl(270deg 40% 25%),
-      hsl(270deg 40% 30%),
-      hsl(270deg 40% 25%),
-      hsl(270deg 40% 20% / 90%)
+      to bottom,
+      hsl(270deg 40% 5%) 0%,
+      hsl(270deg 40% 15%) 0.5%,
+      hsl(270deg 40% 25%) 1%,
+      hsl(270deg 40% 30%) 1.5%,
+      hsl(270deg 40% 32.5% / 90%) 3%,
+      hsl(270deg 40% 35%) 5%,
+      hsl(270deg 40% 20% / 90%) 94%,
+      hsl(270deg 40% 18.5%) 98.5%,
+      hsl(270deg 40% 15%) 99%,
+      hsl(270deg 40% 10%) 99.5%,
+      hsl(270deg 40% 5%) 100%
     );
-    background-color: hsl(270deg 40% 20% / 90%); /* Deep purple */
-    &::before {
-      position: absolute;
-      top: 0;
-      left: -6px;
-      z-index: 100;
-      display: block;
-      width: 10px;
-      height: 103%;
-      background: linear-gradient(
-        270deg,
-        hsl(270deg 40% 20% / 20%) 0%,
-        hsl(270deg 40% 30% / 30%) 20%,
-        hsl(270deg 40% 20% / 40%) 40%,
-        hsl(270deg 40% 0% / 50%) 50%,
-        hsl(270deg 40% 20% / 40%) 60%,
-        hsl(270deg 40% 30% / 30%) 80%,
-        hsl(270deg 40% 20% / 20%) 100%
-      );
-      content: "";
-    }
-
-    &::after {
-      position: absolute;
-      top: 0;
-      right: -6px;
-      z-index: 100;
-      display: block;
-      width: 10px;
-      height: 103%;
-      background: linear-gradient(
-        270deg,
-        hsl(270deg 40% 20% / 20%) 0%,
-        hsl(270deg 40% 30% / 30%) 20%,
-        hsl(270deg 40% 20% / 40%) 40%,
-        hsl(270deg 40% 0% / 50%) 50%,
-        hsl(270deg 40% 20% / 40%) 60%,
-        hsl(270deg 40% 30% / 30%) 80%,
-        hsl(270deg 40% 20% / 20%) 100%
-      );
-      content: "";
-    }
+    box-shadow: inset 1px 0 2px hsl(0deg 0% 5% / 100%),
+      inset -1px 0 2px hsl(0deg 0% 5% / 100%);
   }
 
   &:nth-of-type(2) {
     background: linear-gradient(
-      0deg,
-      hsl(210deg 50% 20% / 90%),
-      hsl(210deg 50% 25%),
-      hsl(210deg 50% 30%),
-      hsl(210deg 50% 25%),
-      hsl(210deg 50% 20% / 90%)
+      to bottom,
+      hsl(210deg 50% 5%) 0%,
+      hsl(210deg 50% 15%) 0.5%,
+      hsl(210deg 50% 25%) 1%,
+      hsl(210deg 50% 30%) 1.5%,
+      hsl(210deg 50% 32.5% / 90%) 3%,
+      hsl(210deg 50% 35%) 5%,
+      hsl(210deg 50% 20% / 90%) 94%,
+      hsl(210deg 50% 18.5%) 98.5%,
+      hsl(210deg 50% 15%) 99%,
+      hsl(210deg 50% 10%) 99.5%,
+      hsl(210deg 50% 5%) 100%
     );
-    background-color: hsl(210deg 50% 20% / 90%); /* Vibrant blue */
-    &::before {
-      position: absolute;
-      top: 0;
-      left: -6px;
-      z-index: 100;
-      display: block;
-      width: 10px;
-      height: 103%;
-      background: linear-gradient(
-        270deg,
-        hsl(210deg 50% 20% / 20%) 0%,
-        hsl(210deg 50% 30% / 30%) 20%,
-        hsl(210deg 50% 20% / 40%) 40%,
-        hsl(210deg 50% 0% / 50%) 50%,
-        hsl(210deg 50% 20% / 40%) 60%,
-        hsl(210deg 50% 30% / 30%) 80%,
-        hsl(210deg 50% 20% / 20%) 100%
-      );
-      content: "";
-    }
-
-    &::after {
-      position: absolute;
-      top: 0;
-      right: -6px;
-      z-index: 100;
-      display: block;
-      width: 10px;
-      height: 103%;
-      background: linear-gradient(
-        270deg,
-        hsl(210deg 50% 20% / 20%) 0%,
-        hsl(210deg 50% 30% / 30%) 20%,
-        hsl(210deg 50% 20% / 40%) 40%,
-        hsl(210deg 50% 0% / 50%) 50%,
-        hsl(210deg 50% 20% / 40%) 60%,
-        hsl(210deg 50% 30% / 30%) 80%,
-        hsl(210deg 50% 20% / 20%) 100%
-      );
-      content: "";
-    }
+    box-shadow: inset 1px 0 2px hsl(0deg 0% 5% / 100%),
+      inset -1px 0 2px hsl(0deg 0% 5% / 100%);
   }
 
   &:last-of-type {
     background: linear-gradient(
-      0deg,
-      hsl(15deg 50% 20% / 90%),
-      hsl(15deg 50% 25%),
-      hsl(15deg 50% 30%),
-      hsl(15deg 50% 25%),
-      hsl(15deg 50% 20% / 90%)
+      to bottom,
+      hsl(15deg 50% 5%) 0%,
+      hsl(15deg 50% 15%) 0.5%,
+      hsl(15deg 50% 25%) 1%,
+      hsl(15deg 50% 30%) 1.5%,
+      hsl(15deg 50% 32.5% / 90%) 3%,
+      hsl(15deg 50% 35%) 5%,
+      hsl(15deg 50% 20% / 90%) 94%,
+      hsl(15deg 50% 18.5%) 98.5%,
+      hsl(15deg 50% 15%) 99%,
+      hsl(15deg 50% 10%) 99.5%,
+      hsl(15deg 50% 5%) 100%
     );
-    background-color: hsl(15deg 50% 20% / 90%); /* Warm reddish-orange */
-    &::before {
-      position: absolute;
-      top: 0;
-      left: -6px;
-      z-index: 100;
-      display: block;
-      width: 10px;
-      height: 103%;
-      background: linear-gradient(
-        270deg,
-        hsl(15deg 50% 20% / 20%) 0%,
-        hsl(15deg 50% 30% / 30%) 20%,
-        hsl(15deg 50% 20% / 40%) 40%,
-        hsl(15deg 50% 0% / 50%) 50%,
-        hsl(15deg 50% 20% / 40%) 60%,
-        hsl(15deg 50% 30% / 30%) 80%,
-        hsl(15deg 50% 20% / 20%) 100%
-      );
-      content: "";
-    }
-
-    &::after {
-      position: absolute;
-      top: 0;
-      right: -6px;
-      z-index: 100;
-      display: block;
-      width: 10px;
-      height: 103%;
-      background: linear-gradient(
-        270deg,
-        hsl(15deg 50% 20% / 20%) 0%,
-        hsl(15deg 50% 30% / 30%) 20%,
-        hsl(15deg 50% 20% / 40%) 40%,
-        hsl(15deg 50% 0% / 50%) 50%,
-        hsl(15deg 50% 20% / 40%) 60%,
-        hsl(15deg 50% 30% / 30%) 80%,
-        hsl(15deg 50% 20% / 20%) 100%
-      );
-      content: "";
-    }
+    box-shadow: inset 1px 0 2px hsl(0deg 0% 5% / 100%),
+      inset -1px 0 2px hsl(0deg 0% 5% / 100%);
   }
 }
 
@@ -243,53 +142,4 @@
   right: 4px;
   bottom: 4px;
   composes: screw;
-}
-
-.horizontalIndent {
-  display: block;
-  margin-bottom: -2px;
-  width: 100%;
-  height: 8px;
-  align-self: flex-end;
-  background: linear-gradient(
-    0deg,
-    hsl(217deg 20% 25% / 50%),
-    hsl(217deg 40% 25%),
-    hsl(217deg 10% 5%),
-    hsl(217deg 30% 20%),
-    hsl(217deg 50% 25%)
-  );
-
-  &:first-of-type {
-    background: linear-gradient(
-      0deg,
-      hsl(15deg 50% 20% / 90%),
-      hsl(15deg 50% 20%),
-      hsl(15deg 50% 5%),
-      hsl(270deg 40% 20%),
-      hsl(270deg 40% 20% / 90%)
-    );
-  }
-
-  &:nth-of-type(2) {
-    background: linear-gradient(
-      0deg,
-      hsl(270deg 40% 20% / 90%),
-      hsl(270deg 40% 20%),
-      hsl(15deg 50% 5%),
-      hsl(210deg 50% 20%),
-      hsl(210deg 50% 20% / 90%)
-    );
-  }
-
-  &:last-of-type {
-    background: linear-gradient(
-      0deg,
-      hsl(210deg 50% 0% / 0%),
-      hsl(210deg 50% 0% / 10%),
-      hsl(210deg 50% 5%),
-      hsl(15deg 50% 20%),
-      hsl(15deg 50% 20% / 90%)
-    );
-  }
 }
