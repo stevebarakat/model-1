@@ -276,9 +276,9 @@ function createOscillatorChain(
   gainNode.connect(panNode);
   oscillator.start(startTime);
 
+  // Only apply glide if it's enabled
   if (glide > 0 && lastFrequency) {
     // Convert glide value (0-10) to time in seconds using logarithmic scale
-    // This gives more precise control at lower values and wider range at higher values
     const glideTime = Math.pow(10, glide / 5) * 0.02; // Scale 0-10 to approximately 0.02-2 seconds
     const currentTime = context.currentTime;
 
@@ -296,6 +296,9 @@ function createOscillatorChain(
       finalFrequency,
       scheduleTime + glideTime
     );
+  } else {
+    // If glide is disabled, set frequency immediately
+    oscillator.frequency.value = finalFrequency;
   }
 
   return { oscillator, gain: gainNode, panner: panNode };
@@ -394,6 +397,24 @@ function updateModulation(
     return;
   }
 
+  // If modulation is disabled (modAmount is 0), stop and cleanup LFO
+  if (modAmount === 0) {
+    try {
+      state.noteData.lfo.stop();
+      state.noteData.lfo.disconnect();
+      Object.values(state.noteData.lfoGains).forEach((gain) => {
+        gain.disconnect();
+      });
+      // Create a new LFO that's stopped
+      const stoppedLFO = synthContext.context.createOscillator();
+      stoppedLFO.stop();
+      state.noteData.lfo = stoppedLFO;
+    } catch (e) {
+      console.warn("Error cleaning up LFO:", e);
+    }
+    return;
+  }
+
   // Always reconnect LFO with current routing
   reconnectLFO(state.noteData, state.settings.lfo.routing);
 
@@ -470,7 +491,7 @@ function updateSettings(
   if (state.noteData) {
     if (newSettings.oscillators && Array.isArray(newSettings.oscillators)) {
       const oscillators = newSettings.oscillators;
-      const noteData = state.noteData; // Create a local reference to avoid null checks
+      const noteData = state.noteData;
 
       // Update pan settings
       noteData.oscillators.forEach(
@@ -495,13 +516,22 @@ function updateSettings(
             const volume = oscSettings.volume ?? 0;
 
             if (volume === 0 && osc) {
-              osc.stop();
-              osc.disconnect();
-              if (noteData.oscillatorGains[index]) {
-                noteData.oscillatorGains[index].disconnect();
+              try {
+                osc.stop();
+                osc.disconnect();
+                if (noteData.oscillatorGains[index]) {
+                  noteData.oscillatorGains[index].disconnect();
+                }
+                if (noteData.oscillatorPanners[index]) {
+                  noteData.oscillatorPanners[index].disconnect();
+                }
+                noteData.oscillators[index] = null as unknown as OscillatorNode;
+                noteData.oscillatorGains[index] = null as unknown as GainNode;
+                noteData.oscillatorPanners[index] =
+                  null as unknown as StereoPannerNode;
+              } catch (e) {
+                console.warn("Error cleaning up oscillator:", e);
               }
-              noteData.oscillators[index] = null as unknown as OscillatorNode;
-              noteData.oscillatorGains[index] = null as unknown as GainNode;
             } else if (volume > 0 && !osc) {
               const newOsc = createOscillator(
                 synthContext.context,
@@ -509,13 +539,18 @@ function updateSettings(
                 noteToFrequency(state.currentNote!, state.settings.tune)
               );
               const newGain = createGainNode(synthContext.context, volume);
+              const newPanner = synthContext.context.createStereoPanner();
+              newPanner.pan.value = oscSettings.pan ?? 0;
+
               newOsc.connect(newGain);
+              newGain.connect(newPanner);
               if (noteData.gainNode) {
-                newGain.connect(noteData.gainNode);
+                newPanner.connect(noteData.gainNode);
               }
               newOsc.start();
               noteData.oscillators[index] = newOsc;
               noteData.oscillatorGains[index] = newGain;
+              noteData.oscillatorPanners[index] = newPanner;
             } else if (osc && volume > 0) {
               osc.type = oscSettings.waveform;
               const rangeMultiplier = getRangeMultiplier(oscSettings.range);
@@ -542,20 +577,29 @@ function updateSettings(
     updateModulation(synthContext, state, modAmount);
   }
 
+  // Handle effects cleanup when amount is 0
   if (newSettings.distortion) {
     if (newSettings.distortion.outputGain !== undefined) {
       const mix = newSettings.distortion.outputGain / 100;
       const logMix = Math.pow(mix, 2);
       synthContext.dryGain.gain.value = 1 - logMix;
       synthContext.wetGain.gain.value = logMix;
+
+      // Clean up distortion nodes when disabled
+      if (mix === 0) {
+        try {
+          synthContext.distortionLowEQ.disconnect();
+          synthContext.distortionHighEQ.disconnect();
+        } catch (e) {
+          console.warn("Error cleaning up distortion:", e);
+        }
+      }
     }
     if (newSettings.distortion.lowEQ !== undefined) {
-      // Map EQ value from 0-100 to -12 to +12 dB
       const eqValue = (newSettings.distortion.lowEQ - 50) * (24 / 100);
       synthContext.distortionLowEQ.gain.value = eqValue;
     }
     if (newSettings.distortion.highEQ !== undefined) {
-      // Map EQ value from 0-100 to -12 to +12 dB
       const eqValue = (newSettings.distortion.highEQ - 50) * (24 / 100);
       synthContext.distortionHighEQ.gain.value = eqValue;
     }
@@ -563,7 +607,18 @@ function updateSettings(
 
   if (newSettings.reverb) {
     if (newSettings.reverb.amount !== undefined) {
-      synthContext.reverbGain.gain.value = newSettings.reverb.amount / 100;
+      const amount = newSettings.reverb.amount / 100;
+      synthContext.reverbGain.gain.value = amount;
+
+      // Clean up reverb nodes when disabled
+      if (amount === 0) {
+        try {
+          synthContext.reverbNode.disconnect();
+          synthContext.reverbEQ.disconnect();
+        } catch (e) {
+          console.warn("Error cleaning up reverb:", e);
+        }
+      }
     }
     if (newSettings.reverb.decay !== undefined && synthContext.reverbNode) {
       synthContext.reverbNode.buffer = synthContext.createImpulseResponse(
@@ -571,7 +626,6 @@ function updateSettings(
       );
     }
     if (newSettings.reverb.eq !== undefined) {
-      // Map EQ value from 0-100 to -12 to +12 dB
       const eqValue = (newSettings.reverb.eq - 50) * (24 / 100);
       synthContext.reverbEQ.gain.value = eqValue;
     }
@@ -579,7 +633,18 @@ function updateSettings(
 
   if (newSettings.delay) {
     if (newSettings.delay.amount !== undefined) {
-      synthContext.delayGain.gain.value = newSettings.delay.amount / 100;
+      const amount = newSettings.delay.amount / 100;
+      synthContext.delayGain.gain.value = amount;
+
+      // Clean up delay nodes when disabled
+      if (amount === 0) {
+        try {
+          synthContext.delayNode.disconnect();
+          synthContext.delayFeedback.disconnect();
+        } catch (e) {
+          console.warn("Error cleaning up delay:", e);
+        }
+      }
     }
     if (newSettings.delay.time !== undefined) {
       synthContext.delayNode.delayTime.value = newSettings.delay.time;
@@ -600,6 +665,19 @@ function updateSettings(
     if (newSettings.noise.volume !== undefined) {
       const newVolume = newSettings.noise.volume;
       synthContext.noiseGain.gain.value = newVolume;
+
+      // Clean up noise nodes when disabled
+      if (newVolume === 0) {
+        try {
+          if (synthContext.noiseNode) {
+            synthContext.noiseNode.disconnect();
+          }
+          synthContext.noiseGain.disconnect();
+          synthContext.noisePanner.disconnect();
+        } catch (e) {
+          console.warn("Error cleaning up noise:", e);
+        }
+      }
     }
     if (newSettings.noise.pan !== undefined) {
       synthContext.noisePanner.pan.value = newSettings.noise.pan;
@@ -617,16 +695,12 @@ function updateSettings(
         let freq;
 
         if (state.settings.noise.sync) {
-          // When sync is enabled, use tone as a multiplier of the note frequency
-          // Map tone (20-20000) to a multiplier (0.045-45)
           const toneMultiplier = state.settings.noise.tone / 440;
           freq = noteFreq * toneMultiplier;
         } else {
-          // When sync is disabled, use tone directly as the filter frequency
           freq = state.settings.noise.tone;
         }
 
-        // Ensure frequency is within valid range
         freq = Math.max(20, Math.min(freq, 20000));
         state.noteData.noiseFilter.frequency.value = freq;
       }
