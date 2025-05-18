@@ -1,7 +1,7 @@
 import Knob from "../Knob/Knob";
 import styles from "./Mixer.module.css";
 
-type MixerProps = {
+export type MixerProps = {
   osc1Volume: number;
   osc2Volume: number;
   osc3Volume: number;
@@ -38,10 +38,6 @@ function OscillatorControls({
   return (
     <>
       <div className={styles.row}>
-        <div className={styles.screwTopLeft} />
-        <div className={styles.screwTopRight} />
-        <div className={styles.screwBottomLeft} />
-        <div className={styles.screwBottomRight} />
         <Knob
           value={volume}
           min={0}
