@@ -16,14 +16,8 @@
   align-items: center;
   gap: var(--spacing-md);
   padding: var(--spacing-xs);
-  padding-right: calc(
-    var(--spacing-sm) + 16px
-  ); /* Add extra padding for right screw */
-
-  padding-left: calc(
-    var(--spacing-sm) + 16px
-  ); /* Add extra padding for left screw */
-
+  padding-right: calc(var(--spacing-sm) + 16px);
+  padding-left: calc(var(--spacing-sm) + 16px);
   width: 100%;
 
   &:first-of-type {

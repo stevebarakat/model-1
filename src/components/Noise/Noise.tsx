@@ -31,8 +31,9 @@ function Noise({
       <div className={styles.screwTopRight} />
       <div className={styles.screwBottomLeft} />
       <div className={styles.screwBottomRight} />
-      <div className="column">
+      <div className={styles.section}>
         <Knob
+          size="medium"
           value={volume}
           min={0}
           max={1}
@@ -49,16 +50,19 @@ function Noise({
         />
       </div>
 
-      <Knob
-        value={tone}
-        min={440}
-        max={20000}
-        step={1}
-        label="Freq"
-        onChange={onToneChange}
-        logarithmic={true}
-      />
-      <Switch checked={sync} onCheckedChange={onSyncChange} label="Sync" />
+      <div className={styles.section}>
+        <Knob
+          size="medium"
+          value={tone}
+          min={440}
+          max={20000}
+          step={1}
+          label="Freq"
+          onChange={onToneChange}
+          logarithmic={true}
+        />
+        <Switch checked={sync} onCheckedChange={onSyncChange} label="Sync" />
+      </div>
     </div>
   );
 }
