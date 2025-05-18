@@ -280,6 +280,7 @@ function createOscillatorChain(
 
   oscillator.type = (oscSettings.waveform ?? "sine") as OscillatorType;
   oscillator.frequency.value = startFrequency;
+  oscillator.detune.value = oscSettings.detune ?? 0;
   panNode.pan.value = oscSettings.pan ?? 0;
 
   oscillator.connect(gainNode);
