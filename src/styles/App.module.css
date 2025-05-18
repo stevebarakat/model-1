@@ -11,10 +11,10 @@
     hsl(217deg 39% 15%) 99%,
     hsl(0deg 0% 10%) 100%
   );
+  border-right: 2px solid hsl(218deg 33% 22.5%);
+  border-left: 2px solid hsl(218deg 33% 22.5%);
   border-radius: 4px;
 
-  border-left: 2px solid hsl(218, 33%, 22.5%);
-  border-right: 2px solid hsl(218, 33%, 22.5%);
   &::before {
     content: "";
     position: absolute;

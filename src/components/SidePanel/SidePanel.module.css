@@ -4,7 +4,6 @@
   flex-direction: column;
   align-items: center;
   margin: 6px 0 12px;
-  background-color: hsl(217deg 10% 10% / 90%); /* Dark metallic black */
   background: linear-gradient(
     0deg,
     hsl(217deg 10% 10% / 90%),
@@ -13,14 +12,15 @@
     hsl(217deg 10% 15%),
     hsl(217deg 10% 10% / 90%)
   );
+  background-color: hsl(217deg 10% 10% / 90%); /* Dark metallic black */
 }
 
 .modWheels {
   display: flex;
   flex-direction: row;
   justify-content: center;
-  width: 100%;
   margin: 28px 0;
+  width: 100%;
 }
 
 .modWheelwell {
@@ -33,6 +33,7 @@
 /* Screw decorations */
 .screw {
   position: absolute;
+  z-index: 101;
   width: 12px;
   height: 12px;
   background: radial-gradient(
@@ -43,15 +44,12 @@
     hsl(217deg 20% 10%) 100%
   );
   border-radius: 50%;
-  z-index: 101;
 }
 
 .screw::after {
-  content: "";
   position: absolute;
   top: 50%;
   left: 50%;
-  transform: translate(-50%, -50%) rotate(45deg);
   width: 6px;
   height: 6px;
   background: linear-gradient(
@@ -69,6 +67,8 @@
       transparent 60%
     );
   border-radius: 1px;
+  transform: translate(-50%, -50%) rotate(45deg);
+  content: "";
 }
 
 .screwTopLeft {
@@ -90,9 +90,9 @@
 }
 
 .screwBottomRight {
-  composes: screw;
-  bottom: 6px;
   right: 4px;
+  bottom: 6px;
+  composes: screw;
 }
 
 .horizontalIndent {
@@ -107,7 +107,9 @@
     hsl(217deg 30% 20%) 30%,
     hsl(217deg 50% 25%) 40%
   );
+
   &:last-of-type {
+    margin-top: 120px;
     background: linear-gradient(
       0deg,
       hsl(217deg 50% 20% / 50%) 0%,
@@ -116,6 +118,5 @@
       hsl(217deg 50% 25%) 30%,
       hsl(217deg 50% 20% / 50%) 60%
     );
-    margin-top: 120px;
   }
 }

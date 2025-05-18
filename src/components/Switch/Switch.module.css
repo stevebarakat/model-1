@@ -45,11 +45,11 @@
 }
 
 .switchThumb.checked {
-  transform: translateX(15px);
-  background: hsl(330 100% 71%);
+  background: hsl(330deg 100% 71%);
   background: linear-gradient(
     to bottom,
-    hsl(330 100% 75% / 80%),
-    hsl(330 50% 45% / 100%)
+    hsl(330deg 100% 75% / 80%),
+    hsl(330deg 50% 45% / 100%)
   );
+  transform: translateX(15px);
 }

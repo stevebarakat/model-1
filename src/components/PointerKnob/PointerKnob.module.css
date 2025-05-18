@@ -2,8 +2,8 @@
   position: relative;
   display: flex;
   flex-direction: column;
-  align-items: center;
   justify-content: center;
+  align-items: center;
   margin-top: var(--spacing-lg);
   width: 60px;
 }
@@ -12,11 +12,11 @@
   position: relative;
   top: 0;
   left: 0;
+  display: grid;
   width: 30px;
   height: 30px;
-  box-shadow: 0px 1px 5px hsl(0 0% 0% / 0.5);
   border-radius: 50%;
-  display: grid;
+  box-shadow: 0 1px 5px hsl(0deg 0% 0% / 50%);
 }
 
 .dot {
@@ -26,7 +26,7 @@
   z-index: 5;
   width: 1.5px;
   height: 12px;
-  background: hsl(0, 0%, 65%);
+  background: hsl(0deg 0% 65%);
   border-radius: 2px 2px 0 0;
   transform: translate(-50%, -100%);
   content: "";
@@ -35,12 +35,13 @@
 .outerKnob {
   position: absolute;
   z-index: 5;
+  display: grid;
   width: 100%;
   height: 100%;
-  background-color: hsl(260 2% 5%);
+  background-color: hsl(260deg 2% 5%);
   border-radius: 50%;
-  display: grid;
   place-items: center;
+
   /* head */
   &::before {
     position: absolute;
@@ -49,11 +50,12 @@
     z-index: 5;
     width: 10px;
     height: 14px;
-    background: hsl(260 2% 5%);
+    background: hsl(260deg 2% 5%);
     border-radius: 40% 40% 0 0;
     transform: translate(-50%, -100%);
     content: "";
   }
+
   /* tail */
   &::after {
     position: absolute;
@@ -62,7 +64,7 @@
     z-index: 5;
     width: 16px;
     height: 14px;
-    background: hsl(260 2% 5%);
+    background: hsl(260deg 2% 5%);
     border-radius: 0 0 25% 25%;
     transform: translate(-50%, -100%);
     content: "";
@@ -71,14 +73,15 @@
 
 .outerKnobTop {
   position: absolute;
+  top: -1px;
   z-index: 1;
+  display: grid;
   width: 100%;
   height: 100%;
-  background-color: hsl(260 2% 50% / 0.25);
+  background-color: hsl(260deg 2% 50% / 25%);
   border-radius: 50%;
-  display: grid;
   place-items: center;
-  top: -1px;
+
   /* head */
   &::before {
     position: absolute;
@@ -87,11 +90,12 @@
     z-index: 5;
     width: 10px;
     height: 14px;
-    background: hsl(260 2% 50% / 0.25);
+    background: hsl(260deg 2% 50% / 25%);
     border-radius: 40% 40% 0 0;
     transform: translate(-50%, -100%);
     content: "";
   }
+
   /* tail */
   &::after {
     position: absolute;
@@ -100,7 +104,7 @@
     z-index: 5;
     width: 16px;
     height: 14px;
-    background: hsl(260 2% 50% / 0.25);
+    background: hsl(260deg 2% 50% / 25%);
     border-radius: 0 0 25% 25%;
     transform: translate(-50%, -100%);
     content: "";
@@ -110,14 +114,16 @@
 .outerKnobBottom {
   position: absolute;
   z-index: 1;
+  display: grid;
   width: 100%;
   height: 100%;
-  background-color: hsl(260 2% 0% / 0.5);
+  background-color: hsl(260deg 2% 0% / 50%);
+
   /* background-color: red; */
   border-radius: 50%;
-  display: grid;
   place-items: center;
   filter: blur(1px);
+
   /* head */
   &::before {
     position: absolute;
@@ -126,11 +132,12 @@
     z-index: 5;
     width: 10px;
     height: 14px;
-    background: hsl(260 2% 0% / 0.5);
+    background: hsl(260deg 2% 0% / 50%);
     border-radius: 40% 40% 0 0;
     transform: translate(-50%, -100%);
     content: "";
   }
+
   /* tail */
   &::after {
     position: absolute;
@@ -139,7 +146,7 @@
     z-index: 5;
     width: 16px;
     height: 14px;
-    background: hsl(260 2% 0% / 0.5);
+    background: hsl(260deg 2% 0% / 50%);
     border-radius: 0 0 25% 25%;
     transform: translate(-50%, -100%);
     content: "";
@@ -147,11 +154,12 @@
 }
 
 .innerKnob {
+  position: absolute;
+  z-index: 100;
   width: 70%;
   height: 70%;
-  position: absolute;
   border-radius: 50%;
-  z-index: 100;
+
   /* inner shine */
   &::before {
     content: "";
@@ -160,22 +168,24 @@
     height: 100%;
     background-image: conic-gradient(
       from 0deg at 50% 50%,
-      hsl(180, 0%, 68%) 0%,
-      hsl(180, 0%, 30%) 16.5%,
-      hsl(240, 0%, 28%) 16.5%,
-      hsl(240, 0%, 78%) 33%,
-      hsl(180, 0%, 68%) 33%,
-      hsl(180, 0%, 30%) 49.5%,
-      hsl(240, 0%, 28%) 49.5%,
-      hsl(240, 0%, 78%) 66%,
-      hsl(180, 0%, 68%) 66%,
-      hsl(180, 0%, 30%) 83.5%,
-      hsl(240, 0%, 28%) 83.5%,
-      hsl(240, 0%, 78%) 100%
+      hsl(180deg 0% 68%) 0%,
+      hsl(180deg 0% 30%) 16.5%,
+      hsl(240deg 0% 28%) 16.5%,
+      hsl(240deg 0% 78%) 33%,
+      hsl(180deg 0% 68%) 33%,
+      hsl(180deg 0% 30%) 49.5%,
+      hsl(240deg 0% 28%) 49.5%,
+      hsl(240deg 0% 78%) 66%,
+      hsl(180deg 0% 68%) 66%,
+      hsl(180deg 0% 30%) 83.5%,
+      hsl(240deg 0% 28%) 83.5%,
+      hsl(240deg 0% 78%) 100%
     );
+
     /* filter: blur(0.25px); */
     border-radius: 50%;
   }
+
   /* outer shine */
   &::after {
     content: "";
@@ -186,21 +196,23 @@
     height: 95%;
     background-image: conic-gradient(
       from 59.5deg at 50% 50%,
-      hsl(180, 0%, 68%) 0%,
-      hsl(180, 0%, 30%) 16.5%,
-      hsl(240, 0%, 28%) 16.5%,
-      hsl(240, 0%, 78%) 33%,
-      hsl(180, 0%, 68%) 33%,
-      hsl(180, 0%, 30%) 49.5%,
-      hsl(240, 0%, 28%) 49.5%,
-      hsl(240, 0%, 78%) 66%,
-      hsl(180, 0%, 68%) 66%,
-      hsl(180, 0%, 30%) 83.5%,
-      hsl(240, 0%, 28%) 83.5%,
-      hsl(240, 0%, 78%) 100%
+      hsl(180deg 0% 68%) 0%,
+      hsl(180deg 0% 30%) 16.5%,
+      hsl(240deg 0% 28%) 16.5%,
+      hsl(240deg 0% 78%) 33%,
+      hsl(180deg 0% 68%) 33%,
+      hsl(180deg 0% 30%) 49.5%,
+      hsl(240deg 0% 28%) 49.5%,
+      hsl(240deg 0% 78%) 66%,
+      hsl(180deg 0% 68%) 66%,
+      hsl(180deg 0% 30%) 83.5%,
+      hsl(240deg 0% 28%) 83.5%,
+      hsl(240deg 0% 78%) 100%
     );
+
     /* filter: blur(0.5px); */
     border-radius: 50%;
+
     /* box-shadow: inset 0px 1px 1px hsl(0 0% 0%); */
   }
 }

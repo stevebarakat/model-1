@@ -1,14 +1,14 @@
 .oscillatorNumber {
-  font-size: 3rem;
-  color: var(--color-text-primary);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background-color: hsla(0, 0%, 100%, 0.1);
-  width: 1.5ch;
-  border-radius: var(--border-radius-md);
   position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   margin-right: var(--spacing-xs);
+  width: 1.5ch;
+  background-color: hsl(0deg 0% 100% / 10%);
+  border-radius: var(--border-radius-md);
+  color: var(--color-text-primary);
+  font-size: 3rem;
 }
 
 .row {
@@ -16,14 +16,14 @@
   display: flex;
   gap: var(--spacing-sm);
   padding: var(--spacing-xs);
-  padding-left: calc(
-    var(--spacing-sm) + 16px
-  ); /* Add extra padding for left screw */
   padding-right: calc(
     var(--spacing-sm) + 16px
   ); /* Add extra padding for right screw */
+
+  padding-left: calc(
+    var(--spacing-sm) + 16px
+  ); /* Add extra padding for left screw */
   &:first-of-type {
-    background-color: hsl(350deg 40% 20% / 90%); /* Deep red */
     background: linear-gradient(
       0deg,
       hsl(350deg 80% 20% / 90%),
@@ -32,7 +32,9 @@
       hsl(350deg 80% 25%),
       hsl(350deg 80% 20% / 90%)
     );
+    background-color: hsl(350deg 40% 20% / 90%); /* Deep red */
   }
+
   /* &:first-of-type:before {
     display: block;
     position: absolute;
@@ -53,7 +55,6 @@
     );
   } */
   &:nth-of-type(2) {
-    background-color: hsl(45deg 40% 20% / 90%); /* Amber */
     background: linear-gradient(
       0deg,
       hsl(45deg 80% 20% / 90%),
@@ -62,28 +63,29 @@
       hsl(45deg 80% 25%),
       hsl(45deg 80% 20% / 90%)
     );
+    background-color: hsl(45deg 40% 20% / 90%); /* Amber */
   }
-  &:nth-of-type(2):before {
-    display: block;
+
+  &:nth-of-type(2)::before {
     position: absolute;
     top: 0;
     left: -6px;
     z-index: 100;
-    height: 103%;
-    content: "";
     display: block;
     width: 10px;
+    height: 103%;
     background: linear-gradient(
       270deg,
       hsl(45deg 40% 20% / 40%),
       hsl(45deg 40% 20% / 50%),
       hsl(45deg 40% 5% / 50%),
-      hsl(217 21% 10% / 50%),
-      hsl(217 21% 10% / 40%)
+      hsl(217deg 21% 10% / 50%),
+      hsl(217deg 21% 10% / 40%)
     );
+    content: "";
   }
+
   &:last-of-type {
-    background-color: hsl(160deg 40% 20% / 90%); /* Emerald */
     background: linear-gradient(
       0deg,
       hsl(160deg 80% 20% / 90%),
@@ -92,31 +94,33 @@
       hsl(160deg 80% 25%),
       hsl(160deg 80% 20% / 90%)
     );
+    background-color: hsl(160deg 40% 20% / 90%); /* Emerald */
   }
-  &:last-of-type:before {
-    display: block;
+
+  &:last-of-type::before {
     position: absolute;
     top: 0;
     left: -6px;
     z-index: 100;
-    height: 103%;
-    content: "";
     display: block;
     width: 10px;
+    height: 103%;
     background: linear-gradient(
       270deg,
       hsl(160deg 40% 20% / 40%),
       hsl(160deg 40% 20% / 50%),
       hsl(160deg 40% 5% / 50%),
-      hsl(217 21% 10% / 50%),
-      hsl(217 21% 10% / 40%)
+      hsl(217deg 21% 10% / 50%),
+      hsl(217deg 21% 10% / 40%)
     );
+    content: "";
   }
 }
 
 /* Screw decorations */
 .screw {
   position: absolute;
+  z-index: 101;
   width: 12px;
   height: 12px;
   background: radial-gradient(
@@ -127,15 +131,12 @@
     hsl(217deg 20% 10%) 100%
   );
   border-radius: 50%;
-  z-index: 101;
 }
 
 .screw::after {
-  content: "";
   position: absolute;
   top: 50%;
   left: 50%;
-  transform: translate(-50%, -50%) rotate(45deg);
   width: 6px;
   height: 6px;
   background: linear-gradient(
@@ -153,6 +154,8 @@
       transparent 60%
     );
   border-radius: 1px;
+  transform: translate(-50%, -50%) rotate(45deg);
+  content: "";
 }
 
 .screwTopLeft {
@@ -174,9 +177,9 @@
 }
 
 .screwBottomRight {
-  composes: screw;
-  bottom: 4px;
   right: 4px;
+  bottom: 4px;
+  composes: screw;
 }
 
 .horizontalIndent {
@@ -193,6 +196,7 @@
     hsl(217deg 30% 20%),
     hsl(217deg 50% 25%)
   );
+
   &:first-of-type {
     background: linear-gradient(
       0deg,
@@ -203,6 +207,7 @@
       hsl(350deg 80% 20% / 90%)
     );
   }
+
   &:nth-of-type(2) {
     background: linear-gradient(
       0deg,
@@ -213,6 +218,7 @@
       hsl(45deg 80% 20% / 90%)
     );
   }
+
   &:last-of-type {
     background: linear-gradient(
       0deg,

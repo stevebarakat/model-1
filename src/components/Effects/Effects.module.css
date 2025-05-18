@@ -1,32 +1,34 @@
 .sectionTitle {
-  font-size: 1rem;
-  color: var(--color-text-secondary);
-  padding: var(--spacing-xs);
-  background-color: hsla(0, 0%, 100%, 0.1);
-  border-radius: var(--border-radius-md);
   position: relative;
   top: var(--spacing-xs);
+  padding: var(--spacing-xs);
+  background-color: hsl(0deg 0% 100% / 10%);
+  border-radius: var(--border-radius-md);
+  color: var(--color-text-secondary);
+  font-size: 1rem;
+  transform: rotate(180deg);
   writing-mode: vertical-rl;
   text-orientation: sideways;
-  transform: rotate(180deg);
 }
 
 .row {
   position: relative;
   display: flex;
-  align-items: center;
   justify-content: space-between;
+  align-items: center;
   gap: var(--spacing-xs);
-  width: 100%;
   padding: var(--spacing-xs);
-  padding-left: calc(
-    var(--spacing-sm) + 16px
-  ); /* Add extra padding for left screw */
   padding-right: calc(
     var(--spacing-sm) + 16px
   ); /* Add extra padding for right screw */
+
+  padding-left: calc(
+    var(--spacing-sm) + 16px
+  ); /* Add extra padding for left screw */
+
+  width: 100%;
+
   &:first-of-type {
-    background-color: hsl(320deg 40% 20% / 90%); /* Deep rose */
     background: linear-gradient(
       0deg,
       hsl(320deg 40% 20% / 90%),
@@ -35,16 +37,15 @@
       hsl(320deg 40% 25%),
       hsl(320deg 40% 20% / 90%)
     );
-    &:before {
-      display: block;
+    background-color: hsl(320deg 40% 20% / 90%); /* Deep rose */
+    &::before {
       position: absolute;
       top: 0;
       left: -6px;
       z-index: 100;
-      height: 103%;
-      content: "";
       display: block;
       width: 10px;
+      height: 103%;
       background: linear-gradient(
         270deg,
         hsl(320deg 40% 20% / 20%) 0%,
@@ -55,17 +56,17 @@
         hsl(320deg 40% 30% / 30%) 80%,
         hsl(320deg 40% 20% / 20%) 100%
       );
+      content: "";
     }
-    &:after {
-      display: block;
+
+    &::after {
       position: absolute;
       top: 0;
       right: -6px;
       z-index: 100;
-      height: 103%;
-      content: "";
       display: block;
       width: 10px;
+      height: 103%;
       background: linear-gradient(
         270deg,
         hsl(320deg 40% 20% / 20%) 0%,
@@ -76,10 +77,11 @@
         hsl(320deg 40% 30% / 30%) 80%,
         hsl(320deg 40% 20% / 20%) 100%
       );
+      content: "";
     }
   }
+
   &:nth-of-type(2) {
-    background-color: hsl(35deg 50% 20% / 90%); /* Warm amber */
     background: linear-gradient(
       0deg,
       hsl(35deg 50% 20% / 90%),
@@ -88,16 +90,15 @@
       hsl(35deg 50% 25%),
       hsl(35deg 50% 20% / 90%)
     );
-    &:before {
-      display: block;
+    background-color: hsl(35deg 50% 20% / 90%); /* Warm amber */
+    &::before {
       position: absolute;
       top: 0;
       left: -6px;
       z-index: 100;
-      height: 103%;
-      content: "";
       display: block;
       width: 10px;
+      height: 103%;
       background: linear-gradient(
         270deg,
         hsl(35deg 50% 20% / 20%) 0%,
@@ -108,17 +109,17 @@
         hsl(35deg 50% 30% / 30%) 80%,
         hsl(35deg 50% 20% / 20%) 100%
       );
+      content: "";
     }
-    &:after {
-      display: block;
+
+    &::after {
       position: absolute;
       top: 0;
       right: -6px;
       z-index: 100;
-      height: 103%;
-      content: "";
       display: block;
       width: 10px;
+      height: 103%;
       background: linear-gradient(
         270deg,
         hsl(35deg 50% 20% / 20%) 0%,
@@ -129,10 +130,11 @@
         hsl(35deg 50% 30% / 30%) 80%,
         hsl(35deg 50% 20% / 20%) 100%
       );
+      content: "";
     }
   }
+
   &:last-of-type {
-    background-color: hsl(150deg 40% 20% / 90%); /* Rich emerald */
     background: linear-gradient(
       0deg,
       hsl(150deg 40% 20% / 90%),
@@ -141,16 +143,15 @@
       hsl(150deg 40% 25%),
       hsl(150deg 40% 20% / 90%)
     );
-    &:before {
-      display: block;
+    background-color: hsl(150deg 40% 20% / 90%); /* Rich emerald */
+    &::before {
       position: absolute;
       top: 0;
       left: -6px;
       z-index: 100;
-      height: 103%;
-      content: "";
       display: block;
       width: 10px;
+      height: 103%;
       background: linear-gradient(
         270deg,
         hsl(150deg 40% 20% / 20%) 0%,
@@ -161,17 +162,17 @@
         hsl(150deg 40% 30% / 30%) 80%,
         hsl(150deg 40% 20% / 20%) 100%
       );
+      content: "";
     }
-    &:after {
-      display: block;
+
+    &::after {
       position: absolute;
       top: 0;
       right: -6px;
       z-index: 100;
-      height: 103%;
-      content: "";
       display: block;
       width: 10px;
+      height: 103%;
       background: linear-gradient(
         270deg,
         hsl(150deg 40% 20% / 20%) 0%,
@@ -182,6 +183,7 @@
         hsl(150deg 40% 30% / 30%) 80%,
         hsl(150deg 40% 20% / 20%) 100%
       );
+      content: "";
     }
   }
 }
@@ -189,6 +191,7 @@
 /* Screw decorations */
 .screw {
   position: absolute;
+  z-index: 101;
   width: 12px;
   height: 12px;
   background: radial-gradient(
@@ -199,15 +202,12 @@
     hsl(217deg 20% 10%) 100%
   );
   border-radius: 50%;
-  z-index: 101;
 }
 
 .screw::after {
-  content: "";
   position: absolute;
   top: 50%;
   left: 50%;
-  transform: translate(-50%, -50%) rotate(45deg);
   width: 6px;
   height: 6px;
   background: linear-gradient(
@@ -225,6 +225,8 @@
       transparent 60%
     );
   border-radius: 1px;
+  transform: translate(-50%, -50%) rotate(45deg);
+  content: "";
 }
 
 .screwTopLeft {
@@ -246,9 +248,9 @@
 }
 
 .screwBottomRight {
-  composes: screw;
-  bottom: 4px;
   right: 4px;
+  bottom: 4px;
+  composes: screw;
 }
 
 .horizontalIndent {
@@ -265,6 +267,7 @@
     hsl(217deg 30% 20%),
     hsl(217deg 50% 25%)
   );
+
   &:first-of-type {
     background: linear-gradient(
       0deg,
@@ -275,6 +278,7 @@
       hsl(320deg 40% 20% / 90%)
     );
   }
+
   &:nth-of-type(2) {
     background: linear-gradient(
       0deg,
@@ -285,6 +289,7 @@
       hsl(35deg 50% 20% / 90%)
     );
   }
+
   &:last-of-type {
     background: linear-gradient(
       0deg,

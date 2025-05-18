@@ -2,13 +2,14 @@
   display: flex;
   gap: var(--spacing-md);
   padding: var(--spacing-xs);
+  padding-right: calc(var(--spacing-sm) + 16px);
   padding-bottom: var(--spacing-sm);
   padding-left: calc(var(--spacing-sm) + 16px);
-  padding-right: calc(var(--spacing-sm) + 16px);
 }
 
 .screw {
   position: absolute;
+  z-index: 101;
   width: 12px;
   height: 12px;
   background: radial-gradient(
@@ -19,15 +20,12 @@
     hsl(217deg 20% 10%) 100%
   );
   border-radius: 50%;
-  z-index: 101;
 }
 
 .screw::after {
-  content: "";
   position: absolute;
   top: 50%;
   left: 50%;
-  transform: translate(-50%, -50%) rotate(45deg);
   width: 6px;
   height: 6px;
   background: linear-gradient(
@@ -45,6 +43,8 @@
       transparent 60%
     );
   border-radius: 1px;
+  transform: translate(-50%, -50%) rotate(45deg);
+  content: "";
 }
 
 .screwTopLeft {
@@ -66,22 +66,21 @@
 }
 
 .screwBottomRight {
-  composes: screw;
-  bottom: 4px;
   right: 4px;
+  bottom: 4px;
+  composes: screw;
 }
 
 .row {
+  position: relative;
   display: flex;
   gap: var(--spacing-md);
   padding: var(--spacing-sm);
   padding-top: calc(var(--spacing-sm) + 24px);
-  padding-left: calc(var(--spacing-sm) + 24px);
   padding-right: calc(var(--spacing-sm) + 24px);
-  position: relative;
+  padding-left: calc(var(--spacing-sm) + 24px);
+
   &:first-of-type {
-    z-index: 10;
-    background-color: hsl(350deg 40% 20% / 90%); /* Deep red */
     background: linear-gradient(
       to bottom,
       hsl(350deg 80% 5%) 0%,
@@ -96,44 +95,11 @@
       hsl(350deg 80% 10%) 98.5%,
       hsl(350deg 80% 5%) 100%
     );
-    box-shadow: inset 1px 0 2px hsl(0 0% 5% / 100%),
-      inset -1px 0 2px hsl(0 0% 5% / 100%);
-    /* &:before {
-      display: block;
-      position: absolute;
-      top: 2%;
-      left: -6px;
-      z-index: 100;
-      height: 96%;
-      content: "";
-      display: block;
-      width: 100%;
-      box-shadow: inset 6px 0 4px hsl(0 0% 5% / 100%);
-    } */
-    /* &:after {
-      display: block;
-      position: absolute;
-      top: 0;
-      right: -6px;
-      z-index: 100;
-      height: 103%;
-      content: "";
-      display: block;
-      width: 10px;
-      background: linear-gradient(
-        270deg,
-        hsl(360deg 80% 20% / 20%) 0%,
-        hsl(360deg 80% 30% / 30%) 20%,
-        hsl(360deg 80% 20% / 40%) 40%,
-        hsl(360deg 80% 0% / 50%) 50%,
-        hsl(360deg 80% 20% / 40%) 60%,
-        hsl(360deg 80% 30% / 30%) 80%,
-        hsl(360deg 80% 20% / 20%) 100%
-      );
-    } */
+    box-shadow: inset 1px 0 2px hsl(0deg 0% 5% / 100%),
+      inset -1px 0 2px hsl(0deg 0% 5% / 100%);
   }
+
   &:nth-of-type(2) {
-    background-color: hsl(45deg 40% 20% / 90%); /* Amber */
     background: linear-gradient(
       0deg,
       hsl(45deg 80% 20% / 90%),
@@ -142,51 +108,11 @@
       hsl(45deg 80% 25%),
       hsl(45deg 80% 20% / 90%)
     );
-    /* &:before {
-      display: block;
-      position: absolute;
-      top: 0;
-      left: -6px;
-      z-index: 100;
-      height: 103%;
-      content: "";
-      display: block;
-      width: 10px;
-      background: linear-gradient(
-        270deg,
-        hsl(45deg 80% 20% / 20%) 0%,
-        hsl(45deg 80% 30% / 30%) 20%,
-        hsl(45deg 80% 20% / 40%) 40%,
-        hsl(45deg 80% 0% / 50%) 50%,
-        hsl(45deg 80% 20% / 40%) 60%,
-        hsl(45deg 80% 30% / 30%) 80%,
-        hsl(45deg 80% 20% / 20%) 100%
-      );
-    }
-    &:after {
-      display: block;
-      position: absolute;
-      top: 0;
-      right: -6px;
-      z-index: 10;
-      height: 103%;
-      content: "";
-      display: block;
-      width: 10px;
-      background: linear-gradient(
-        270deg,
-        hsl(360deg 80% 20% / 20%) 0%,
-        hsl(360deg 80% 30% / 30%) 20%,
-        hsl(360deg 80% 20% / 40%) 40%,
-        hsl(360deg 80% 0% / 50%) 50%,
-        hsl(45deg 80% 20% / 40%) 60%,
-        hsl(45deg 80% 30% / 30%) 80%,
-        hsl(45deg 80% 20% / 20%) 100%
-      );
-    } */
+    box-shadow: inset 1px 0 2px hsl(0deg 0% 5% / 100%),
+      inset -1px 0 2px hsl(0deg 0% 5% / 100%);
   }
+
   &:last-of-type {
-    background-color: hsl(160deg 40% 20% / 90%); /* Emerald */
     background: linear-gradient(
       0deg,
       hsl(160deg 80% 20% / 90%),
@@ -195,96 +121,7 @@
       hsl(160deg 80% 25%),
       hsl(160deg 40% 20% / 90%)
     );
-    &:before {
-      display: block;
-      position: absolute;
-      top: 0;
-      left: -6px;
-      z-index: 10;
-      height: 103%;
-      content: "";
-      display: block;
-      width: 10px;
-      background: linear-gradient(
-        270deg,
-        hsl(160deg 80% 20% / 20%) 0%,
-        hsl(160deg 80% 30% / 30%) 20%,
-        hsl(160deg 80% 20% / 40%) 40%,
-        hsl(160deg 80% 0% / 50%) 50%,
-        hsl(160deg 80% 20% / 40%) 60%,
-        hsl(160deg 80% 30% / 30%) 80%,
-        hsl(160deg 80% 20% / 20%) 100%
-      );
-    }
-    &:after {
-      display: block;
-      position: absolute;
-      top: 0;
-      right: -6px;
-      z-index: 100;
-      height: 103%;
-      content: "";
-      display: block;
-      width: 10px;
-      background: linear-gradient(
-        270deg,
-        hsl(360deg 40% 20% / 20%) 0%,
-        hsl(360deg 40% 30% / 30%) 20%,
-        hsl(360deg 40% 20% / 40%) 40%,
-        hsl(360deg 40% 0% / 50%) 50%,
-        hsl(160deg 40% 20% / 40%) 60%,
-        hsl(160deg 40% 30% / 30%) 80%,
-        hsl(160deg 40% 20% / 20%) 100%
-      );
-    }
-  }
-}
-
-.horizontalIndent {
-  display: block;
-  margin-bottom: -2px;
-  width: 100%;
-  height: 8px;
-  align-self: flex-end;
-  background: linear-gradient(
-    0deg,
-    hsl(217deg 20% 25% / 50%),
-    hsl(217deg 40% 25%),
-    hsl(217deg 10% 5%),
-    hsl(217deg 30% 20%),
-    hsl(217deg 50% 25%)
-  );
-  &:first-of-type {
-    background: linear-gradient(
-      0deg,
-      hsl(45deg 80% 20% / 90%),
-      hsl(45deg 80% 20%),
-      hsl(45deg 80% 5%),
-      hsl(350deg 80% 20%),
-      hsl(350deg 80% 20% / 90%)
-    );
-    background-color: hsl(350deg 40% 20% / 90%); /* Deep red */
-  }
-  &:nth-of-type(2) {
-    background: linear-gradient(
-      0deg,
-      hsl(160deg 80% 20% / 90%),
-      hsl(160deg 80% 20%),
-      hsl(45deg 80% 5%),
-      hsl(45deg 80% 20%),
-      hsl(45deg 80% 20% / 90%)
-    );
-    background-color: hsl(45deg 40% 20% / 90%); /* Amber */
-  }
-  &:last-of-type {
-    background-color: hsl(160deg 40% 20% / 90%); /* Emerald */
-    background: linear-gradient(
-      0deg,
-      hsl(350deg 80% 0% / 0%),
-      hsl(350deg 80% 0% / 10%),
-      hsl(350deg 80% 5%),
-      hsl(160deg 80% 20%),
-      hsl(160deg 80% 20% / 90%)
-    );
+    box-shadow: inset 1px 0 2px hsl(0deg 0% 5% / 100%),
+      inset -1px 0 2px hsl(0deg 0% 5% / 100%);
   }
 }

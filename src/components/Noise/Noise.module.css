@@ -1,8 +1,9 @@
 .column {
+  position: relative;
   display: flex;
   flex-direction: column;
   gap: var(--spacing-xs);
-  background-color: hsl(320deg 70% 25% / 90%);
+  padding: 4px 20px;
   background: linear-gradient(
     0deg,
     hsl(320deg 70% 25% / 90%),
@@ -11,12 +12,12 @@
     hsl(320deg 70% 30%),
     hsl(320deg 70% 25% / 90%)
   );
-  position: relative;
-  padding: 4px 20px;
+  background-color: hsl(320deg 70% 25% / 90%);
 }
 
 .screw {
   position: absolute;
+  z-index: 101;
   width: 12px;
   height: 12px;
   background: radial-gradient(
@@ -27,15 +28,12 @@
     hsl(217deg 20% 10%) 100%
   );
   border-radius: 50%;
-  z-index: 101;
 }
 
 .screw::after {
-  content: "";
   position: absolute;
   top: 50%;
   left: 50%;
-  transform: translate(-50%, -50%) rotate(45deg);
   width: 6px;
   height: 6px;
   background: linear-gradient(
@@ -53,6 +51,8 @@
       transparent 60%
     );
   border-radius: 1px;
+  transform: translate(-50%, -50%) rotate(45deg);
+  content: "";
 }
 
 .screwTopLeft {
@@ -74,17 +74,17 @@
 }
 
 .screwBottomRight {
-  composes: screw;
-  bottom: 4px;
   right: 4px;
+  bottom: 4px;
+  composes: screw;
 }
 
 .row {
-  display: flex;
-  align-items: flex-start;
-  justify-content: center;
-  gap: var(--spacing-sm);
   position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  gap: var(--spacing-sm);
 }
 
 .horizontalIndent {
