@@ -1,4 +1,5 @@
 .column > div {
+  position: relative;
   display: flex;
   gap: var(--spacing-md);
   padding: var(--spacing-xs);
@@ -8,8 +9,6 @@
 }
 
 .row {
-  position: relative;
-
   &:first-of-type {
     background: linear-gradient(
       to bottom,

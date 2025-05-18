@@ -1,42 +1,67 @@
 .row {
   position: relative;
   display: flex;
-  gap: var(--spacing-sm);
+  gap: var(--spacing-md);
   padding: var(--spacing-xs);
   padding-right: calc(var(--spacing-sm) + 16px);
+  padding-bottom: var(--spacing-sm);
   padding-left: calc(var(--spacing-sm) + 16px);
 
   &:first-of-type {
     background: linear-gradient(
-      0deg,
-      hsl(350deg 80% 20% / 90%),
-      hsl(350deg 80% 25%),
-      hsl(350deg 80% 30%),
-      hsl(350deg 80% 25%),
-      hsl(350deg 80% 20% / 90%)
+      to bottom,
+      hsl(350deg 80% 5%) 0%,
+      hsl(350deg 80% 15%) 1.5%,
+      hsl(350deg 80% 25%) 3%,
+      hsl(350deg 80% 30%) 4.5%,
+      hsl(350deg 80% 32.5% / 90%) 6%,
+      hsl(350deg 80% 35%) 10%,
+      hsl(350deg 80% 20% / 90%) 94%,
+      hsl(350deg 80% 18.5%) 95.5%,
+      hsl(350deg 80% 15%) 97%,
+      hsl(350deg 80% 10%) 98.5%,
+      hsl(350deg 80% 5%) 100%
     );
+    box-shadow: inset 1px 0 2px hsl(0deg 0% 5% / 100%),
+      inset -1px 0 2px hsl(0deg 0% 5% / 100%);
   }
 
   &:nth-of-type(2) {
     background: linear-gradient(
-      0deg,
-      hsl(45deg 80% 20% / 90%),
-      hsl(45deg 80% 25%),
-      hsl(45deg 80% 30%),
-      hsl(45deg 80% 25%),
-      hsl(45deg 80% 20% / 90%)
+      to bottom,
+      hsl(45deg 80% 5%) 0%,
+      hsl(45deg 80% 15%) 1.5%,
+      hsl(45deg 80% 25%) 3%,
+      hsl(45deg 80% 30%) 4.5%,
+      hsl(45deg 80% 32.5% / 90%) 6%,
+      hsl(45deg 80% 35%) 10%,
+      hsl(45deg 80% 20% / 90%) 94%,
+      hsl(45deg 80% 18.5%) 95.5%,
+      hsl(45deg 80% 15%) 97%,
+      hsl(45deg 80% 10%) 98.5%,
+      hsl(45deg 80% 5%) 100%
     );
+    box-shadow: inset 1px 0 2px hsl(0deg 0% 5% / 100%),
+      inset -1px 0 2px hsl(0deg 0% 5% / 100%);
   }
 
   &:last-of-type {
     background: linear-gradient(
-      0deg,
-      hsl(160deg 80% 20% / 90%),
-      hsl(160deg 80% 25%),
-      hsl(160deg 80% 30%),
-      hsl(160deg 80% 25%),
-      hsl(160deg 80% 20% / 90%)
+      to bottom,
+      hsl(160deg 80% 5%) 0%,
+      hsl(160deg 80% 15%) 1.5%,
+      hsl(160deg 80% 25%) 3%,
+      hsl(160deg 80% 30%) 4.5%,
+      hsl(160deg 80% 32.5% / 90%) 6%,
+      hsl(160deg 80% 35%) 10%,
+      hsl(160deg 80% 20% / 90%) 94%,
+      hsl(160deg 80% 18.5%) 95.5%,
+      hsl(160deg 80% 15%) 97%,
+      hsl(160deg 80% 10%) 98.5%,
+      hsl(160deg 80% 5%) 100%
     );
+    box-shadow: inset 1px 0 2px hsl(0deg 0% 5% / 100%),
+      inset -1px 0 2px hsl(0deg 0% 5% / 100%);
   }
 }
 
