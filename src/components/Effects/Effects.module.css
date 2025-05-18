@@ -17,45 +17,67 @@
   justify-content: space-between;
   align-items: center;
   gap: var(--spacing-xs);
-  padding: var(--spacing-xs);
+  padding-top: var(--spacing-xs);
+  padding-bottom: var(--spacing-sm);
   padding-right: calc(var(--spacing-sm) + 16px);
   padding-left: calc(var(--spacing-sm) + 16px);
   width: 100%;
 
   &:first-of-type {
     background: linear-gradient(
-      0deg,
-      hsl(320deg 40% 20% / 90%),
-      hsl(320deg 40% 25%),
-      hsl(320deg 40% 30%),
-      hsl(320deg 40% 25%),
-      hsl(320deg 40% 20% / 90%)
+      to bottom,
+      hsl(320deg 40% 5%) 0%,
+      hsl(320deg 40% 15%) 0.5%,
+      hsl(320deg 40% 25%) 1%,
+      hsl(320deg 40% 30%) 1.5%,
+      hsl(320deg 40% 32.5% / 90%) 3%,
+      hsl(320deg 40% 35%) 5%,
+      hsl(320deg 40% 20% / 90%) 94%,
+      hsl(320deg 40% 18.5%) 98.5%,
+      hsl(320deg 40% 15%) 99%,
+      hsl(320deg 40% 10%) 99.5%,
+      hsl(320deg 40% 5%) 100%
     );
-    background-color: hsl(320deg 40% 20% / 90%); /* Deep rose */
+    box-shadow: inset 1px 0 2px hsl(0deg 0% 5% / 100%),
+      inset -1px 0 2px hsl(0deg 0% 5% / 100%);
   }
 
   &:nth-of-type(2) {
     background: linear-gradient(
-      0deg,
-      hsl(35deg 50% 20% / 90%),
-      hsl(35deg 50% 25%),
-      hsl(35deg 50% 30%),
-      hsl(35deg 50% 25%),
-      hsl(35deg 50% 20% / 90%)
+      to bottom,
+      hsl(35deg 50% 5%) 0%,
+      hsl(35deg 50% 15%) 0.5%,
+      hsl(35deg 50% 25%) 1%,
+      hsl(35deg 50% 30%) 1.5%,
+      hsl(35deg 50% 32.5% / 90%) 3%,
+      hsl(35deg 50% 35%) 5%,
+      hsl(35deg 50% 20% / 90%) 94%,
+      hsl(35deg 50% 18.5%) 98.5%,
+      hsl(35deg 50% 15%) 99%,
+      hsl(35deg 50% 10%) 99.5%,
+      hsl(35deg 50% 5%) 100%
     );
-    background-color: hsl(35deg 50% 20% / 90%); /* Warm amber */
+    box-shadow: inset 1px 0 2px hsl(0deg 0% 5% / 100%),
+      inset -1px 0 2px hsl(0deg 0% 5% / 100%);
   }
 
   &:last-of-type {
     background: linear-gradient(
-      0deg,
-      hsl(150deg 40% 20% / 90%),
-      hsl(150deg 40% 25%),
-      hsl(150deg 40% 30%),
-      hsl(150deg 40% 25%),
-      hsl(150deg 40% 20% / 90%)
+      to bottom,
+      hsl(150deg 40% 5%) 0%,
+      hsl(150deg 40% 15%) 0.5%,
+      hsl(150deg 40% 25%) 1%,
+      hsl(150deg 40% 30%) 1.5%,
+      hsl(150deg 40% 32.5% / 90%) 3%,
+      hsl(150deg 40% 35%) 5%,
+      hsl(150deg 40% 20% / 90%) 94%,
+      hsl(150deg 40% 18.5%) 98.5%,
+      hsl(150deg 40% 15%) 99%,
+      hsl(150deg 40% 10%) 99.5%,
+      hsl(150deg 40% 5%) 100%
     );
-    background-color: hsl(150deg 40% 20% / 90%); /* Rich emerald */
+    box-shadow: inset 1px 0 2px hsl(0deg 0% 5% / 100%),
+      inset -1px 0 2px hsl(0deg 0% 5% / 100%);
   }
 }
 
