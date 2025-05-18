@@ -3,27 +3,21 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin: 12px 0;
-  background: hsla(160, 12%, 5%, 0.5);
-}
-
-.modWheels {
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  width: 100%;
-}
-
-.modWheelwell {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 50px;
+  margin: 6px 0 12px;
+  background-color: hsl(217deg 10% 10% / 90%); /* Dark metallic black */
+  background: linear-gradient(
+    0deg,
+    hsl(217deg 10% 10% / 90%),
+    hsl(217deg 10% 15%),
+    hsl(217deg 10% 20%),
+    hsl(217deg 10% 15%),
+    hsl(217deg 10% 10% / 90%)
+  );
 }
 
 .topControls {
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
   gap: var(--spacing-sm);
@@ -73,25 +67,25 @@
 
 .screwTopLeft {
   composes: screw;
-  top: 8px;
+  top: 12px;
   left: 4px;
 }
 
 .screwTopRight {
   composes: screw;
-  top: 8px;
+  top: 12px;
   right: 4px;
 }
 
 .screwBottomLeft {
   composes: screw;
-  bottom: 4px;
+  bottom: 6px;
   left: 4px;
 }
 
 .screwBottomRight {
   composes: screw;
-  bottom: 4px;
+  bottom: 6px;
   right: 4px;
 }
 

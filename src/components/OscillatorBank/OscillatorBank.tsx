@@ -70,7 +70,7 @@ function OscillatorControls({
         <div className={styles.screwTopRight} />
         <div className={styles.screwBottomLeft} />
         <div className={styles.screwBottomRight} />
-        <div className={styles.oscillatorNumber}>{oscillatorNumber}</div>
+        {/* <div className={styles.oscillatorNumber}>{oscillatorNumber}</div> */}
         <ArrowKnob
           value={rangeToValue(osc.range)}
           min={0}

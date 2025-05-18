@@ -1,13 +1,5 @@
-import Knob from "../Knob";
 import ModWheel from "../ModWheel";
 import styles from "./SidePanel.module.css";
-
-type TopControlsProps = {
-  tune: number;
-  onTuneChange: (value: number) => void;
-  glide: number;
-  onGlideChange: (value: number) => void;
-};
 
 type ModWheelsProps = {
   pitchWheel: number;
@@ -16,35 +8,6 @@ type ModWheelsProps = {
   onModWheelChange: (value: number) => void;
   onPitchWheelReset: () => void;
 };
-
-function TopControls({
-  tune,
-  onTuneChange,
-  glide,
-  onGlideChange,
-}: TopControlsProps) {
-  return (
-    <div className={styles.topControls}>
-      <Knob
-        value={tune}
-        min={-50}
-        max={50}
-        step={1}
-        label="Tune"
-        unit="ct"
-        onChange={onTuneChange}
-      />
-      <Knob
-        value={glide}
-        min={0}
-        max={0.5}
-        step={0.01}
-        label="Glide"
-        onChange={onGlideChange}
-      />
-    </div>
-  );
-}
 
 function ModWheels({
   pitchWheel,
@@ -78,12 +41,11 @@ function ModWheels({
   );
 }
 
-type SidePanelProps = TopControlsProps & ModWheelsProps;
+type SidePanelProps = ModWheelsProps;
 
 function SidePanel(props: SidePanelProps) {
   return (
     <div className={styles.sidePanel}>
-      {/* <div className={styles.horizontalIndent} /> */}
       <div className={styles.screwTopLeft} />
       <div className={styles.screwTopRight} />
       <div className={styles.screwBottomLeft} />

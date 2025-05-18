@@ -176,7 +176,7 @@ function App() {
             synth={keyboardRef.current.synth}
           />
 
-          {/* <RightPanel
+          <RightPanel
             pitchWheel={pitchWheel}
             modWheel={modWheel}
             onPitchWheelChange={setPitchWheel}
@@ -189,7 +189,7 @@ function App() {
             onGlideChange={setGlide}
             tune={tune}
             onTuneChange={setTune}
-          /> */}
+          />
         </div>
       </div>
     </div>

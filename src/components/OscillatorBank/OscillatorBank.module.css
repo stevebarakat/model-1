@@ -14,7 +14,7 @@
 .row {
   position: relative;
   display: flex;
-  gap: var(--spacing-xs);
+  gap: var(--spacing-sm);
   padding: var(--spacing-xs);
   padding-left: calc(
     var(--spacing-sm) + 16px
