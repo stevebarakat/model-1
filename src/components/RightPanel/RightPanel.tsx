@@ -28,8 +28,8 @@ function TopControls({
       <Knob
         value={glide}
         min={0}
-        max={0.5}
-        step={0.01}
+        max={10}
+        step={0.1}
         label="Glide"
         onChange={onGlideChange}
       />
