@@ -83,14 +83,19 @@
     z-index: 100;
     background-color: hsl(350deg 40% 20% / 90%); /* Deep red */
     background: linear-gradient(
-      0deg,
-      hsl(350deg 80% 20% / 90%),
-      hsl(350deg 80% 25%),
-      hsl(350deg 80% 30%),
-      hsl(350deg 80% 25%),
-      hsl(350deg 80% 20% / 90%)
+      to bottom,
+      hsl(350deg 80% 0%) 0%,
+      hsl(350deg 80% 15%) 1.5%,
+      hsl(350deg 80% 25%) 3%,
+      hsl(350deg 80% 30%) 4.5%,
+      hsl(350deg 80% 20% / 90%) 6%,
+      hsl(350deg 80% 20% / 90%) 94%,
+      hsl(350deg 80% 30% / 90%) 95.5%,
+      hsl(350deg 80% 25% / 90%) 97%,
+      hsl(350deg 80% 15% / 90%) 98.5%,
+      hsl(350deg 80% 0% / 90%) 100%
     );
-    &:before {
+    /* &:before {
       display: block;
       position: absolute;
       top: 0;
@@ -131,7 +136,7 @@
         hsl(360deg 80% 30% / 30%) 80%,
         hsl(360deg 80% 20% / 20%) 100%
       );
-    }
+    } */
   }
   &:nth-of-type(2) {
     background-color: hsl(45deg 40% 20% / 90%); /* Amber */

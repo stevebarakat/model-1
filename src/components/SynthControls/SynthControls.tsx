@@ -106,14 +106,6 @@ function SynthControls({
 
   return (
     <>
-      <OscillatorBank
-        osc1={oscillators.osc1}
-        osc2={oscillators.osc2}
-        osc3={oscillators.osc3}
-        onOsc1Change={handleOsc1Change}
-        onOsc2Change={handleOsc2Change}
-        onOsc3Change={handleOsc3Change}
-      />
       <Mixer
         osc1Volume={mixer.osc1Volume}
         osc2Volume={mixer.osc2Volume}
@@ -133,6 +125,14 @@ function SynthControls({
         onOsc1PanChange={(value: number) => handleOsc1Change("pan", value)}
         onOsc2PanChange={(value: number) => handleOsc2Change("pan", value)}
         onOsc3PanChange={(value: number) => handleOsc3Change("pan", value)}
+      />
+      <OscillatorBank
+        osc1={oscillators.osc1}
+        osc2={oscillators.osc2}
+        osc3={oscillators.osc3}
+        onOsc1Change={handleOsc1Change}
+        onOsc2Change={handleOsc2Change}
+        onOsc3Change={handleOsc3Change}
       />
       <Noise
         volume={noise.volume}

@@ -61,7 +61,7 @@ function OscillatorControls({
           displayMode={!showPanLabels ? "always" : "replace"}
         />
       </div>
-      <span className={styles.horizontalIndent}></span>
+      {/* <span className={styles.horizontalIndent}></span> */}
     </>
   );
 }
