@@ -745,6 +745,58 @@ function updateSettings(
   }
 }
 
+function handleNoteTransition(
+  state: SynthState,
+  synthContext: SynthContext,
+  fromNote: Note | null,
+  toNote: Note
+): void {
+  const now = synthContext.context.currentTime;
+
+  // Calculate the last frequency from the fromNote if available
+  let lastFrequency = null;
+  if (fromNote) {
+    lastFrequency = noteToFrequency(fromNote, state.settings.tune);
+  } else if (state.currentNote && state.noteData) {
+    // Fallback to current oscillator frequency if no fromNote
+    const activeOsc = state.noteData.oscillators[0];
+    if (activeOsc) {
+      lastFrequency = activeOsc.frequency.value;
+    }
+  }
+
+  // If we have an existing note, smoothly transition its frequency
+  if (state.noteData && state.currentNote) {
+    const targetFrequency = noteToFrequency(toNote, state.settings.tune);
+
+    // Update all oscillators to the new frequency
+    state.noteData.oscillators.forEach((osc, index) => {
+      if (osc && index < state.settings.oscillators.length) {
+        const oscSettings = state.settings.oscillators[index];
+        const rangeMultiplier = getRangeMultiplier(oscSettings.range);
+        const frequencyOffset = Math.pow(2, oscSettings.frequency / 12);
+        const newFrequency =
+          targetFrequency * rangeMultiplier * frequencyOffset;
+
+        // Cancel any existing scheduled changes
+        osc.frequency.cancelScheduledValues(now);
+
+        // Set the current value
+        osc.frequency.setValueAtTime(osc.frequency.value, now);
+
+        // Schedule the frequency change
+        osc.frequency.linearRampToValueAtTime(newFrequency, now + 0.01);
+      }
+    });
+
+    // Update the current note
+    state.currentNote = toNote;
+  } else {
+    // If no existing note, start a new one
+    triggerAttack(state, synthContext, toNote, lastFrequency);
+  }
+}
+
 function triggerAttack(
   state: SynthState,
   synthContext: SynthContext,
@@ -883,12 +935,9 @@ function triggerAttack(
   filter.connect(filterGain);
   filterGain.connect(synthContext.masterGain);
 
-  // Set up amplitude envelope
+  // Set up amplitude envelope with a very short attack for smooth transitions
   noteGain.gain.setValueAtTime(0, now);
-  noteGain.gain.linearRampToValueAtTime(
-    1,
-    now + state.settings.envelope.attack
-  );
+  noteGain.gain.linearRampToValueAtTime(1, now + 0.001); // 1ms attack
   noteGain.gain.linearRampToValueAtTime(
     state.settings.envelope.sustain,
     now + state.settings.envelope.attack + state.settings.envelope.decay
@@ -998,62 +1047,22 @@ function triggerRelease(
   const releaseTime = now + state.settings.envelope.release;
   state.noteData.lfo.stop(releaseTime);
 
-  // Cleanup function to handle node disconnection
-  const disconnectNode = (node: AudioNode | null, nodeName: string) => {
-    if (!node) return;
-    try {
-      node.disconnect();
-    } catch (e) {
-      console.warn(`Error stopping ${nodeName}:`, e);
-    }
-  };
+  // Create a copy of the note data for cleanup
+  const noteDataToCleanup = { ...state.noteData };
 
   // Schedule cleanup after release
   setTimeout(() => {
-    if (!state.noteState || !state.noteState.isReleased || !state.noteData)
+    // Only cleanup if this is still the note that was released
+    if (
+      !state.noteState ||
+      !state.noteState.isReleased ||
+      state.currentNote !== note
+    ) {
       return;
+    }
 
     // Cleanup oscillators
-    state.noteData.oscillators.forEach((osc) =>
-      disconnectNode(osc, "oscillator")
-    );
-
-    // Cleanup main nodes
-    disconnectNode(state.noteData.gainNode, "gain node");
-    disconnectNode(state.noteData.filterNode, "filter");
-
-    // Cleanup noise nodes
-    disconnectNode(state.noteData.noiseNode, "noise node");
-    disconnectNode(state.noteData.noiseGain, "noise gain");
-    disconnectNode(state.noteData.noisePanner, "noise panner");
-
-    state.currentNote = null;
-    state.noteState = null;
-    state.noteData = null;
-  }, state.settings.envelope.release * 1000);
-}
-
-function handleNoteTransition(
-  state: SynthState,
-  synthContext: SynthContext,
-  fromNote: Note | null,
-  toNote: Note
-): void {
-  // Calculate the last frequency from the fromNote if available
-  let lastFrequency = null;
-  if (fromNote) {
-    lastFrequency = noteToFrequency(fromNote, state.settings.tune);
-  } else if (state.currentNote && state.noteData) {
-    // Fallback to current oscillator frequency if no fromNote
-    const activeOsc = state.noteData.oscillators[0];
-    if (activeOsc) {
-      lastFrequency = activeOsc.frequency.value;
-    }
-  }
-
-  // Clean up any existing note data before starting new note
-  if (state.noteData) {
-    state.noteData.oscillators.forEach((osc) => {
+    noteDataToCleanup.oscillators.forEach((osc) => {
       if (osc) {
         try {
           osc.stop();
@@ -1063,11 +1072,33 @@ function handleNoteTransition(
         }
       }
     });
-    state.noteData = null;
-  }
 
-  // Start the new note with the last frequency
-  triggerAttack(state, synthContext, toNote, lastFrequency);
+    // Cleanup main nodes
+    if (noteDataToCleanup.gainNode) {
+      noteDataToCleanup.gainNode.disconnect();
+    }
+    if (noteDataToCleanup.filterNode) {
+      noteDataToCleanup.filterNode.disconnect();
+    }
+
+    // Cleanup noise nodes
+    if (noteDataToCleanup.noiseNode) {
+      noteDataToCleanup.noiseNode.disconnect();
+    }
+    if (noteDataToCleanup.noiseGain) {
+      noteDataToCleanup.noiseGain.disconnect();
+    }
+    if (noteDataToCleanup.noisePanner) {
+      noteDataToCleanup.noisePanner.disconnect();
+    }
+
+    // Only clear state if this is still the current note
+    if (state.currentNote === note) {
+      state.currentNote = null;
+      state.noteState = null;
+      state.noteData = null;
+    }
+  }, state.settings.envelope.release * 1000);
 }
 
 function dispose(state: SynthState, synthContext: SynthContext): void {
