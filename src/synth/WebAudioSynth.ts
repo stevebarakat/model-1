@@ -748,12 +748,20 @@ function triggerAttack(
 ): void {
   const now = synthContext.context.currentTime;
 
-  // Store the current note's frequency before any changes
-  if (!lastFrequency && state.currentNote && state.noteData) {
-    const activeOsc = state.noteData.oscillators[0];
-    if (activeOsc) {
-      lastFrequency = activeOsc.frequency.value;
-    }
+  // Clean up any existing note data before creating new one
+  if (state.noteData) {
+    // Stop and disconnect existing oscillators
+    state.noteData.oscillators.forEach((osc) => {
+      if (osc) {
+        try {
+          osc.stop();
+          osc.disconnect();
+        } catch (e) {
+          console.warn("Error cleaning up oscillator:", e);
+        }
+      }
+    });
+    state.noteData = null;
   }
 
   state.noteState = {
@@ -1017,23 +1025,20 @@ function handleNoteTransition(
   fromNote: Note | null,
   toNote: Note
 ): void {
-  // Get the current note's frequency before any changes
+  // Calculate the last frequency from the fromNote if available
   let lastFrequency = null;
-  if (state.currentNote && state.noteData) {
-    // Get the actual current frequency from the first active oscillator
+  if (fromNote) {
+    lastFrequency = noteToFrequency(fromNote, state.settings.tune);
+  } else if (state.currentNote && state.noteData) {
+    // Fallback to current oscillator frequency if no fromNote
     const activeOsc = state.noteData.oscillators[0];
     if (activeOsc) {
       lastFrequency = activeOsc.frequency.value;
     }
   }
 
-  // Calculate the target frequency
-  const targetFrequency = noteToFrequency(toNote, state.settings.tune);
-
   // Start the new note with the last frequency
   triggerAttack(state, synthContext, toNote, lastFrequency);
-
-  // Don't release the previous note - let it fade out naturally
 }
 
 function dispose(state: SynthState, synthContext: SynthContext): void {
