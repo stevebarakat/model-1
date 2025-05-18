@@ -96,28 +96,21 @@
       hsl(350deg 80% 10%) 98.5%,
       hsl(350deg 80% 5%) 100%
     );
+    box-shadow: inset 1px 0 2px hsl(0 0% 5% / 100%),
+      inset -1px 0 2px hsl(0 0% 5% / 100%);
     /* &:before {
       display: block;
       position: absolute;
-      top: 0;
+      top: 2%;
       left: -6px;
       z-index: 100;
-      height: 103%;
+      height: 96%;
       content: "";
       display: block;
-      width: 10px;
-      background: linear-gradient(
-        270deg,
-        hsl(350deg 80% 20% / 20%) 0%,
-        hsl(350deg 80% 30% / 30%) 20%,
-        hsl(350deg 80% 20% / 40%) 40%,
-        hsl(350deg 80% 0% / 50%) 50%,
-        hsl(350deg 80% 20% / 40%) 60%,
-        hsl(350deg 80% 30% / 30%) 80%,
-        hsl(350deg 80% 20% / 20%) 100%
-      );
-    }
-    &:after {
+      width: 100%;
+      box-shadow: inset 6px 0 4px hsl(0 0% 5% / 100%);
+    } */
+    /* &:after {
       display: block;
       position: absolute;
       top: 0;
@@ -149,7 +142,7 @@
       hsl(45deg 80% 25%),
       hsl(45deg 80% 20% / 90%)
     );
-    &:before {
+    /* &:before {
       display: block;
       position: absolute;
       top: 0;
@@ -190,7 +183,7 @@
         hsl(45deg 80% 30% / 30%) 80%,
         hsl(45deg 80% 20% / 20%) 100%
       );
-    }
+    } */
   }
   &:last-of-type {
     background-color: hsl(160deg 40% 20% / 90%); /* Emerald */
