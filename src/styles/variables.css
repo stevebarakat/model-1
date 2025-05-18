@@ -1,8 +1,11 @@
 :root {
   /* Color System */
   --color-red: hsl(350deg 40% 20%);
+  --color-deep-rose: hsl(320deg 40% 20% / 90%);
   --color-amber: hsl(45deg 40% 20%);
+  --color-warm-amber: hsl(35deg 50% 20% / 90%);
   --color-emerald: hsl(160deg 40% 20%);
+  --color-rich-emerald: hsl(150deg 40% 20% / 90%);
   --color-warm-red: hsl(15deg 50% 20% / 90%);
   --color-vibrant-blue: hsl(210deg 50% 20% / 90%);
   --color-deep-purple: hsl(270deg 40% 20% / 90%);
