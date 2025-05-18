@@ -1,22 +1,21 @@
 .sectionTitle {
   padding: var(--spacing-xs);
   background-color: hsl(0deg 0% 100% / 10%);
-  border-radius: var(--border-radius-md);
   color: var(--color-text-primary);
-  font-size: 1rem;
+  font-size: var(--font-size-md);
   transform: rotate(180deg);
   writing-mode: vertical-rl;
   text-orientation: sideways;
+  height: 72px;
+  text-align: center;
+  text-transform: uppercase;
 }
 
-.row {
+.outerRow {
   position: relative;
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-start;
   align-items: center;
-  gap: var(--spacing-xs);
-  padding: var(--spacing-xs) calc(var(--spacing-sm) + 16px) var(--spacing-sm) calc(var(--spacing-sm) + 16px);
-  width: 100%;
 
   &:first-of-type {
     background: linear-gradient(
@@ -76,7 +75,18 @@
   }
 }
 
-/* Screw decorations */
+.innerRow {
+  position: relative;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--spacing-md);
+  padding-right: calc(var(--spacing-sm) + 16px);
+  padding-left: calc(var(--spacing-sm));
+  padding-top: var(--spacing-xs);
+  padding-bottom: var(--spacing-sm);
+}
+
 .screw {
   position: absolute;
   z-index: 101;

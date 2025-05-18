@@ -1,5 +1,6 @@
 import React from "react";
 import Knob from "../Knob/Knob";
+import styles from "../Modifiers/Modifiers.module.css";
 
 type ADSRValue = {
   value: number;
@@ -78,7 +79,7 @@ function ADSR({
   };
 
   return (
-    <>
+    <div className={styles.innerRow}>
       {Object.entries(adsrControls).map(([param, config]) => (
         <Knob
           key={param}
@@ -86,7 +87,7 @@ function ADSR({
           onChange={handleChange(param as ADSRParam)}
         />
       ))}
-    </>
+    </div>
   );
 }
 
