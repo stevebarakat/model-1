@@ -1,18 +1,9 @@
-.sidePanel {
+.rightPanel {
   position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
   margin: 6px 0 12px;
-  background-color: hsl(217deg 10% 10% / 90%); /* Dark metallic black */
-  background: linear-gradient(
-    0deg,
-    hsl(217deg 10% 10% / 90%),
-    hsl(217deg 10% 15%),
-    hsl(217deg 10% 20%),
-    hsl(217deg 10% 15%),
-    hsl(217deg 10% 10% / 90%)
-  );
 }
 
 .topControls {
@@ -21,7 +12,8 @@
   justify-content: center;
   align-items: center;
   gap: var(--spacing-sm);
-  margin-top: var(--spacing-lg);
+  margin-top: 30px;
+  padding: 0 var(--spacing-sm);
 }
 
 /* Screw decorations */

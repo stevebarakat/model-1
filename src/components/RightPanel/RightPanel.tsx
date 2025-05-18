@@ -41,7 +41,7 @@ type RightPanelProps = TopControlsProps;
 
 function RightPanel(props: RightPanelProps) {
   return (
-    <div className={styles.sidePanel}>
+    <div className={styles.rightPanel}>
       <div className={styles.screwTopLeft} />
       <div className={styles.screwTopRight} />
       <div className={styles.screwBottomLeft} />
