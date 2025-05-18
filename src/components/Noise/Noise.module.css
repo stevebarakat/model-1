@@ -2,7 +2,7 @@
   display: flex;
   flex-direction: column;
   gap: var(--spacing-xs);
-  background-color: hsl(320deg 70% 25% / 90%); /* Hot pink */
+  background-color: hsl(320deg 70% 25% / 90%);
   background: linear-gradient(
     0deg,
     hsl(320deg 70% 25% / 90%),
@@ -12,7 +12,7 @@
     hsl(320deg 70% 25% / 90%)
   );
   position: relative;
-  padding: 8px 20px;
+  padding: 4px 20px;
 }
 
 .screw {

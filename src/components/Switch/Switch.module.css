@@ -6,18 +6,7 @@
 
 .topLabel {
   margin-top: 1px;
-  padding-bottom: var(--spacing-sm);
-  color: var(--color-text-secondary);
-  font-size: var(--font-size-md);
-  text-align: center;
-  text-transform: uppercase;
-  white-space: nowrap;
-  user-select: none;
-}
-
-.bottomLabel {
-  /* margin-top: 1px; */
-  /* padding-bottom: var(--spacing-lg); */
+  padding-bottom: 2px;
   color: var(--color-text-secondary);
   font-size: var(--font-size-md);
   text-align: center;
@@ -32,14 +21,13 @@
   display: flex;
   justify-content: flex-start;
   align-items: center;
-  margin-bottom: var(--spacing-md);
+  margin-bottom: var(--spacing-xs);
   width: 34px;
   height: 19px;
   background: var(--color-off-black);
   border: 1px solid var(--synth-border);
   border-radius: 3px;
   cursor: pointer;
-  rotate: 90deg;
 }
 
 .switchThumb {
@@ -49,7 +37,7 @@
   display: block;
   width: 15px;
   height: 15px;
-  background: linear-gradient(to left, hsl(0deg 0% 75%), hsl(0deg 0% 55%));
+  background: linear-gradient(to bottom, hsl(0deg 0% 75%), hsl(0deg 0% 45%));
   border: 1px solid rgb(0 0 0 / 10%);
   border-radius: 2px;
   transition: var(--transition-fast);
@@ -58,4 +46,10 @@
 
 .switchThumb.checked {
   transform: translateX(15px);
+  background: hsl(330 100% 71%);
+  background: linear-gradient(
+    to bottom,
+    hsl(330 100% 75% / 80%),
+    hsl(330 50% 45% / 100%)
+  );
 }
