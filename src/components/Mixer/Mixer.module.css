@@ -2,10 +2,10 @@
   position: relative;
   display: flex;
   gap: var(--spacing-md);
-  padding: var(--spacing-xs);
+  padding-top: var(--spacing-xs);
+  padding-left: calc(var(--spacing-sm) + 16px);
   padding-right: calc(var(--spacing-sm) + 16px);
   padding-bottom: var(--spacing-sm);
-  padding-left: calc(var(--spacing-sm) + 16px);
 }
 
 .row {
