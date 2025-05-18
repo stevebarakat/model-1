@@ -14,17 +14,17 @@
   );
   background: linear-gradient(
     to bottom,
-    hsl(350deg 80% 5%) 0%,
-    hsl(350deg 80% 15%) 0.5%,
-    hsl(350deg 80% 25%) 1%,
-    hsl(350deg 80% 30%) 1.5%,
-    hsl(350deg 80% 32.5% / 90%) 3%,
-    hsl(350deg 80% 35%) 5%,
-    hsl(350deg 80% 20% / 90%) 94%,
-    hsl(350deg 80% 18.5%) 98.5%,
-    hsl(350deg 80% 15%) 99%,
-    hsl(350deg 80% 10%) 99.5%,
-    hsl(350deg 80% 5%) 100%
+    hsl(220deg 80% 5%) 0%,
+    hsl(220deg 80% 15%) 0.5%,
+    hsl(220deg 80% 25%) 1%,
+    hsl(220deg 80% 30%) 1.5%,
+    hsl(220deg 80% 32.5% / 90%) 3%,
+    hsl(220deg 80% 35%) 5%,
+    hsl(220deg 80% 20% / 90%) 94%,
+    hsl(220deg 80% 18.5%) 98.5%,
+    hsl(220deg 80% 15%) 99%,
+    hsl(220deg 80% 10%) 99.5%,
+    hsl(220deg 80% 5%) 100%
   );
   box-shadow: inset 1px 0 2px hsl(0deg 0% 5% / 100%),
     inset -1px 0 2px hsl(0deg 0% 5% / 100%);
