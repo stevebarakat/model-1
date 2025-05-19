@@ -12,8 +12,8 @@
     height: calc(var(--knob-size) * 1.1);
     background: linear-gradient(
       to bottom,
-      hsl(0deg 0% 50% / 50%) 0%,
-      hsl(0deg 0% 50% / 50%) 35%,
+      hsl(0deg 0% 70% / 50%) 0%,
+      hsl(0deg 0% 25% / 50%) 35%,
       hsl(0deg 0% 0% / 50%) 35%,
       hsl(0deg 0% 5% / 100%) 100%
     );
@@ -34,7 +34,7 @@
 }
 
 .knobContainerLarge {
-  --knob-size: 35px;
+  --knob-size: 46px;
 }
 
 .knob {
