@@ -63,7 +63,6 @@
   background: url("./knob-bg.svg") no-repeat center center;
   border-radius: 50%;
   place-items: center;
-  /* filter: drop-shadow(0 1px 0 hsl(0deg 0% 0% / 95%)); */
 }
 
 .dot {
@@ -157,6 +156,8 @@
   white-space: nowrap;
   transform: translateX(-50%);
   user-select: none;
+  isolation: isolate;
+  filter: drop-shadow(0 1px 0 hsl(0deg 0% 0% / 95%));
 }
 
 .knobValue {

@@ -7,7 +7,7 @@
   padding-bottom: var(--spacing-sm);
   padding-left: calc(var(--spacing-sm) + 16px);
 
-  &:first-of-type {
+  /* &:first-of-type {
     background: linear-gradient(
       to bottom,
       hsl(350deg 40% 5%) 0%,
@@ -62,5 +62,5 @@
     );
     box-shadow: inset 1px 0 2px hsl(0deg 0% 5% / 100%),
       inset -1px 0 2px hsl(0deg 0% 5% / 100%);
-  }
+  } */
 }
