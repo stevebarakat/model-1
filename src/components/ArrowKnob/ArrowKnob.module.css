@@ -5,7 +5,7 @@
   flex-direction: column;
   align-items: center;
   margin: var(--spacing-lg) -10px -36px -10px;
-  &::after {
+  &::before {
     content: "";
     position: absolute;
     width: 50%;
@@ -22,7 +22,7 @@
     left: 50%;
     top: calc(50% - 10px);
     z-index: -1;
-    /* filter: drop-shadow(0 -2px 0 hsl(0deg 0% 50% / 50%)); */
+    filter: drop-shadow(0 -1px hsl(0deg 0% 0%));
   }
 }
 
