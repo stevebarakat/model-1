@@ -225,7 +225,7 @@ function ArrowKnob({
             aria-valuetext={ariaValueText}
           >
             <div className={styles.innerKnob}></div>
-            <div className={styles.dot}></div>
+            <div className={styles.line}></div>
           </div>
         </div>
       </div>
