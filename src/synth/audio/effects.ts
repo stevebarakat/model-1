@@ -4,7 +4,7 @@ export function setupEffects(context: AudioContext) {
   const masterGain = context.createGain();
   masterGain.gain.value = 0.3;
 
-  const delayNode = context.createDelay(1.0);
+  const delayNode = context.createDelay(2.0);
   delayNode.delayTime.value = 0.3;
   const delayGain = context.createGain();
   delayGain.gain.value = 0;

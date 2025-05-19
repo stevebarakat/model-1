@@ -208,7 +208,6 @@ function ArrowKnob({
           </div>
         );
       })}
-      {/* Remove dynamic value display, always show label if present */}
       {hasLabel && <div className={styles.knobLabel}>{label}</div>}
       <div className={styles.knob}>
         <div className={styles.knobBtm}>

@@ -2,7 +2,7 @@
   position: relative;
   display: flex;
   flex-direction: row;
-  background: linear-gradient(
+  /* background: linear-gradient(
     to bottom,
     hsl(220deg 80% 5%) 0%,
     hsl(220deg 80% 15%) 0.5%,
@@ -15,7 +15,7 @@
     hsl(220deg 80% 15%) 99%,
     hsl(220deg 80% 10%) 99.5%,
     hsl(220deg 80% 5%) 100%
-  );
+  ); */
   box-shadow: inset 1px 0 2px hsl(0deg 0% 5% / 100%),
     inset -1px 0 2px hsl(0deg 0% 5% / 100%);
 }

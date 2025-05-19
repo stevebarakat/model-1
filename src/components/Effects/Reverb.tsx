@@ -24,7 +24,6 @@ function Reverb({
       <div className={styles.screwTopRight} />
       <div className={styles.screwBottomLeft} />
       <div className={styles.screwBottomRight} />
-      {/* <div className={styles.sectionTitle}>Reverb</div> */}
       <Knob
         value={amount}
         min={0}

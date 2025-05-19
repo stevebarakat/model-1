@@ -4,6 +4,24 @@
   flex-direction: column;
   align-items: center;
   margin-top: var(--spacing-lg);
+  &::after {
+    content: "";
+    position: absolute;
+    width: calc(var(--knob-size) * 1.1);
+    height: calc(var(--knob-size) * 1.1);
+    background: linear-gradient(
+      to bottom,
+      hsl(0deg 0% 50% / 50%) 0%,
+      hsl(0deg 0% 50% / 50%) 35%,
+      hsl(0deg 0% 0% / 50%) 35%,
+      hsl(0deg 0% 5% / 100%) 100%
+    );
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    left: 50%;
+    top: 50%;
+    z-index: -1;
+  }
 }
 
 .knobContainerSmall {
@@ -15,7 +33,7 @@
 }
 
 .knobContainerLarge {
-  --knob-size: 45px;
+  --knob-size: 35px;
 }
 
 .knob {
@@ -23,7 +41,7 @@
   width: var(--knob-size);
   height: var(--knob-size);
   border-radius: 50%;
-  filter: drop-shadow(0 -1px 0 hsl(0deg 0% 50% / 50%));
+  /* filter: drop-shadow(0 -1px 0 hsl(0deg 0% 50% / 100%)); */
 }
 
 .knobBtm {
@@ -32,7 +50,7 @@
   left: 0;
   width: var(--knob-size);
   height: var(--knob-size);
-  filter: drop-shadow(0 1px 1px hsl(0deg 0% 0% / 75%));
+  /* filter: drop-shadow(0 3px 0px hsl(0deg 0% 50% / 85%)); */
 }
 
 .outerKnob {
@@ -42,18 +60,7 @@
   background: url("./knob-bg.svg") no-repeat center center;
   border-radius: 50%;
   place-items: center;
-
-  img {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    z-index: -1;
-    width: 100%;
-    height: 100%;
-    transform: translate(-50%, -50%);
-    user-select: none;
-    pointer-events: none;
-  }
+  /* filter: drop-shadow(0 1px 0 hsl(0deg 0% 0% / 95%)); */
 }
 
 .dot {
