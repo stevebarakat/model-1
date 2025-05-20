@@ -209,23 +209,25 @@ function ArrowKnob({
         );
       })}
       {hasLabel && <div className={styles.knobLabel}>{label}</div>}
-      <div className={styles.knob}>
-        <div className={styles.knobBtm}>
-          <div
-            className={styles.outerKnob}
-            ref={knobRef}
-            style={{ transform: `rotate(${rotation}deg)` }}
-            onMouseDown={handleMouseDown}
-            tabIndex={0}
-            role="slider"
-            aria-valuemin={min}
-            aria-valuemax={max}
-            aria-valuenow={value}
-            aria-label={label}
-            aria-valuetext={ariaValueText}
-          >
-            <div className={styles.innerKnob}></div>
-            <div className={styles.line}></div>
+      <div className={styles.knobRing}>
+        <div className={styles.knob}>
+          <div className={styles.knobBtm}>
+            <div
+              className={styles.outerKnob}
+              ref={knobRef}
+              style={{ transform: `rotate(${rotation}deg)` }}
+              onMouseDown={handleMouseDown}
+              tabIndex={0}
+              role="slider"
+              aria-valuemin={min}
+              aria-valuemax={max}
+              aria-valuenow={value}
+              aria-label={label}
+              aria-valuetext={ariaValueText}
+            >
+              <div className={styles.innerKnob}></div>
+              <div className={styles.line}></div>
+            </div>
           </div>
         </div>
       </div>
