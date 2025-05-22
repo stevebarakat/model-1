@@ -22,6 +22,9 @@ type SynthControlsProps = {
     osc2Volume: number;
     osc3Volume: number;
     modMix: number;
+    osc1Bypassed: boolean;
+    osc2Bypassed: boolean;
+    osc3Bypassed: boolean;
   };
   noise: {
     volume: number;
@@ -133,12 +136,24 @@ function SynthControls({
         osc1Pan={oscillators.osc1.pan ?? 0}
         osc2Pan={oscillators.osc2.pan ?? 0}
         osc3Pan={oscillators.osc3.pan ?? 0}
+        osc1Bypassed={mixer.osc1Bypassed}
+        osc2Bypassed={mixer.osc2Bypassed}
+        osc3Bypassed={mixer.osc3Bypassed}
         onOsc1VolumeChange={(value) => onMixerChange({ osc1Volume: value })}
         onOsc2VolumeChange={(value) => onMixerChange({ osc2Volume: value })}
         onOsc3VolumeChange={(value) => onMixerChange({ osc3Volume: value })}
         onOsc1PanChange={(value) => handleOsc1Change("pan", value)}
         onOsc2PanChange={(value) => handleOsc2Change("pan", value)}
         onOsc3PanChange={(value) => handleOsc3Change("pan", value)}
+        onOsc1BypassChange={(bypassed) =>
+          onMixerChange({ osc1Bypassed: bypassed })
+        }
+        onOsc2BypassChange={(bypassed) =>
+          onMixerChange({ osc2Bypassed: bypassed })
+        }
+        onOsc3BypassChange={(bypassed) =>
+          onMixerChange({ osc3Bypassed: bypassed })
+        }
       />
       <OscillatorBank
         osc1={oscillators.osc1}

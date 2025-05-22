@@ -54,6 +54,9 @@ export function createInitialState(): Omit<
       osc2Volume: 0.7,
       osc3Volume: 0.7,
       modMix: 50,
+      osc1Bypassed: false,
+      osc2Bypassed: false,
+      osc3Bypassed: false,
     },
     noise: {
       volume: 0,

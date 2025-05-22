@@ -65,19 +65,19 @@ function App() {
           {
             ...oscillators.osc1,
             type: oscillators.osc1.waveform,
-            volume: mixer.osc1Volume,
+            volume: mixer.osc1Bypassed ? 0 : mixer.osc1Volume,
             detune: oscillators.osc1.detune,
           },
           {
             ...oscillators.osc2,
             type: oscillators.osc2.waveform,
-            volume: mixer.osc2Volume,
+            volume: mixer.osc2Bypassed ? 0 : mixer.osc2Volume,
             detune: oscillators.osc2.detune,
           },
           {
             ...oscillators.osc3,
             type: oscillators.osc3.waveform,
-            volume: mixer.osc3Volume,
+            volume: mixer.osc3Bypassed ? 0 : mixer.osc3Volume,
             detune: oscillators.osc3.detune,
           },
         ],

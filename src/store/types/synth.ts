@@ -33,6 +33,9 @@ export type SynthState = {
     osc2Volume: number;
     osc3Volume: number;
     modMix: number;
+    osc1Bypassed: boolean;
+    osc2Bypassed: boolean;
+    osc3Bypassed: boolean;
   };
 
   // Noise state
