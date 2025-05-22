@@ -379,7 +379,6 @@ function createNoiseChain(
   noiseFilter: BiquadFilterNode | null;
 } {
   if (settings.volume <= 0) {
-    console.log("[Noise] Volume is 0, noise chain not created");
     return {
       noiseNode: null,
       noiseGain: null,
@@ -389,7 +388,6 @@ function createNoiseChain(
   }
 
   try {
-    console.log(`[Noise] Creating ${settings.type} noise chain`);
     // Validate input parameters
     if (!Number.isFinite(targetFrequency) || targetFrequency <= 0) {
       targetFrequency = 440; // Default to A4 if invalid
@@ -448,9 +446,7 @@ function createNoiseChain(
       noiseNode.connect(noiseGain);
       noiseGain.connect(noiseFilter);
       noiseFilter.connect(noisePanner);
-      console.log("[Noise] Noise chain connected successfully");
     } catch (e) {
-      console.warn("Error connecting noise chain nodes:", e);
       // Cleanup on connection error
       noiseNode.disconnect();
       noiseGain.disconnect();
@@ -809,11 +805,7 @@ function updateSettings(
       const oldVolume = synthContext.noiseGain.gain.value;
       synthContext.noiseGain.gain.value = newVolume;
 
-      // Log enable/disable state changes
-      if (oldVolume === 0 && newVolume > 0) {
-        console.log("[Noise] Enabled");
-      } else if (oldVolume > 0 && newVolume === 0) {
-        console.log("[Noise] Disabled");
+      if (oldVolume > 0 && newVolume === 0) {
         // Clean up noise nodes when disabled
         try {
           // Disconnect from the audio chain
@@ -1172,7 +1164,6 @@ function triggerAttack(
 
   // Connect noise chain if present
   if (noiseNode && noiseGain && noisePanner) {
-    console.log("[Noise] Connecting noise chain to note gain");
     noisePanner.connect(noteGain);
   }
 

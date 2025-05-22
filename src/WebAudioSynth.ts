@@ -186,14 +186,12 @@ export class NoiseGenerator {
 
   start(): void {
     if (!this.isPlaying) {
-      console.log(`[NoiseGenerator] Starting ${this.type} noise`);
       this.startNoise();
     }
   }
 
   stop(): void {
     if (this.isPlaying) {
-      console.log(`[NoiseGenerator] Stopping ${this.type} noise`);
       this.currentSource?.stop();
       this.currentSource?.disconnect();
       this.currentSource = null;
