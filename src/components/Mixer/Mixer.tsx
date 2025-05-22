@@ -36,29 +36,30 @@ function OscillatorControls({
   showPanLabels = true,
 }: OscillatorControlsProps) {
   return (
-    <>
-      <div className={styles.row}>
-        <Knob
-          value={volume}
-          min={0}
-          max={1}
-          step={0.01}
-          label={showVolumeLabels ? label : ""}
-          onChange={onVolumeChange}
-          displayMode={!showVolumeLabels ? "always" : "replace"}
-        />
-        <Knob
-          value={pan}
-          min={-1}
-          max={1}
-          step={0.01}
-          label={showPanLabels ? "Pan" : ""}
-          onChange={onPanChange}
-          displayMode={!showPanLabels ? "always" : "replace"}
-        />
-      </div>
-      {/* <span className={styles.horizontalIndent}></span> */}
-    </>
+    <div className={styles.row}>
+      <div className={styles.screwTopLeft} />
+      <div className={styles.screwTopRight} />
+      <div className={styles.screwBottomLeft} />
+      <div className={styles.screwBottomRight} />
+      <Knob
+        value={volume}
+        min={0}
+        max={1}
+        step={0.01}
+        label={showVolumeLabels ? label : ""}
+        onChange={onVolumeChange}
+        displayMode={!showVolumeLabels ? "always" : "replace"}
+      />
+      <Knob
+        value={pan}
+        min={-1}
+        max={1}
+        step={0.01}
+        label={showPanLabels ? "Pan" : ""}
+        onChange={onPanChange}
+        displayMode={!showPanLabels ? "always" : "replace"}
+      />
+    </div>
   );
 }
 

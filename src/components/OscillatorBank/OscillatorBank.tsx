@@ -62,55 +62,56 @@ function OscillatorControls({
   showLabels?: boolean;
 }) {
   return (
-    <>
-      <div className={styles.row}>
-        <ArrowKnob
-          value={rangeToValue(osc.range)}
-          min={0}
-          max={4}
-          step={1}
-          valueLabels={{
-            0: "32 '",
-            1: "16 '",
-            2: "8 '",
-            3: "4 '",
-            4: "2 '",
-          }}
-          onChange={(value) => onChange("range", valueToRange(value))}
-        />
-        <Knob
-          size="large"
-          value={osc.frequency}
-          min={-12}
-          max={12}
-          step={0.1}
-          label={showLabels ? "Freq" : ""}
-          unit={!showLabels ? "st" : ""}
-          onChange={(value) => onChange("frequency", value)}
-          displayMode={!showLabels ? "always" : "replace"}
-        />
-        <Knob
-          size="large"
-          value={osc.detune}
-          min={-50}
-          max={50}
-          step={1}
-          label={showLabels ? "Detune" : ""}
-          unit={!showLabels ? "ct" : ""}
-          onChange={(value) => onChange("detune", value)}
-          displayMode={!showLabels ? "always" : "replace"}
-        />
-        <ArrowKnob
-          value={waveformToValue(osc.waveform ?? "sine")}
-          min={0}
-          max={3}
-          step={1}
-          valueLabels={WAVEFORM_ICONS}
-          onChange={(value) => onChange("waveform", valueToWaveform(value))}
-        />
-      </div>
-      <span className={styles.horizontalIndent}></span>
-    </>
+    <div className={styles.row}>
+      <div className={styles.screwTopLeft} />
+      <div className={styles.screwTopRight} />
+      <div className={styles.screwBottomLeft} />
+      <div className={styles.screwBottomRight} />
+      <ArrowKnob
+        value={rangeToValue(osc.range)}
+        min={0}
+        max={4}
+        step={1}
+        valueLabels={{
+          0: "32 '",
+          1: "16 '",
+          2: "8 '",
+          3: "4 '",
+          4: "2 '",
+        }}
+        onChange={(value) => onChange("range", valueToRange(value))}
+      />
+      <Knob
+        size="large"
+        value={osc.frequency}
+        min={-12}
+        max={12}
+        step={0.1}
+        label={showLabels ? "Freq" : ""}
+        unit={!showLabels ? "st" : ""}
+        onChange={(value) => onChange("frequency", value)}
+        displayMode={!showLabels ? "always" : "replace"}
+      />
+      <Knob
+        size="large"
+        value={osc.detune}
+        min={-50}
+        max={50}
+        step={1}
+        label={showLabels ? "Detune" : ""}
+        unit={!showLabels ? "ct" : ""}
+        onChange={(value) => onChange("detune", value)}
+        displayMode={!showLabels ? "always" : "replace"}
+      />
+      <ArrowKnob
+        value={waveformToValue(osc.waveform ?? "sine")}
+        min={0}
+        max={3}
+        step={1}
+        valueLabels={WAVEFORM_ICONS}
+        onChange={(value) => onChange("waveform", valueToWaveform(value))}
+      />
+    </div>
   );
 }
 

@@ -8,7 +8,6 @@ import Modifiers from "../Modifiers";
 import Effects from "../Effects";
 import Noise from "../Noise/Noise";
 import Spacer from "../Spacer";
-import OscillatorSection from "../OscillatorSection";
 import Mixer from "../Mixer";
 import OscillatorBank from "../OscillatorBank";
 
