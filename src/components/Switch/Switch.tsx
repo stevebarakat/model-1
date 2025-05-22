@@ -4,15 +4,20 @@ type SwitchProps = {
   checked: boolean;
   onCheckedChange: (checked: boolean) => void;
   label?: string;
-  className?: string;
+  orientation?: "horizontal" | "vertical";
 };
 
-function Switch({ checked, onCheckedChange, label, className }: SwitchProps) {
+function Switch({
+  checked,
+  onCheckedChange,
+  label,
+  orientation = "horizontal",
+}: SwitchProps) {
   return (
-    <div className={styles.switchContainer}>
+    <div className={`${styles.switchContainer}`}>
       {label && <label className={styles.switchLabel}>{label}</label>}
       <button
-        className={`${styles.switchRoot} ${className || ""}`}
+        className={`${styles.switchRoot} ${styles[orientation]}`}
         role="switch"
         aria-checked={checked}
         onClick={() => onCheckedChange(!checked)}

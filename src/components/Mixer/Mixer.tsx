@@ -1,5 +1,5 @@
 import Knob from "../Knob/Knob";
-import Switch from "../Switch/Switch";
+import Switch from "../Switch";
 import styles from "./Mixer.module.css";
 
 export type MixerProps = {
@@ -52,7 +52,7 @@ function OscillatorControls({
         checked={enabled}
         onCheckedChange={onEnabledChange}
         label={label}
-        className={styles.oscSwitch}
+        orientation="vertical"
       />
       <Knob
         value={volume}
