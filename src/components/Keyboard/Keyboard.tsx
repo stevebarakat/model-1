@@ -1,15 +1,15 @@
-import React, {
-  useState,
-  useEffect,
-  useImperativeHandle,
-  forwardRef,
-} from "react";
+import { useState, useCallback, useMemo } from "react";
 import styles from "./Keyboard.module.css";
+import React from "react";
 
 type Note = {
   note: string;
   isSharp: boolean;
 };
+
+type Synth = Awaited<
+  ReturnType<typeof import("../../synth/WebAudioSynth").createSynth>
+> | null;
 
 type KeyboardProps = {
   activeKeys?: string | null;
@@ -18,15 +18,7 @@ type KeyboardProps = {
   onKeyUp?: (note: string) => void;
   onMouseDown?: () => void;
   onMouseUp?: () => void;
-  synth: Awaited<
-    ReturnType<typeof import("../../synth/WebAudioSynth").createSynth>
-  > | null;
-};
-
-type KeyboardRef = {
-  synth: Awaited<
-    ReturnType<typeof import("../../synth/WebAudioSynth").createSynth>
-  > | null;
+  synth: Synth;
 };
 
 const OCTAVE_NOTES: Note[] = [
@@ -44,10 +36,11 @@ const OCTAVE_NOTES: Note[] = [
   { note: "B", isSharp: false },
 ];
 
-function generateKeyboardKeys(octaveRange: {
+// Memoize the keyboard generation function
+const generateKeyboardKeys = (octaveRange: {
   min: number;
   max: number;
-}): Note[] {
+}): Note[] => {
   const keys = Array.from(
     { length: octaveRange.max - octaveRange.min + 1 },
     (_, i) => octaveRange.min + i
@@ -60,49 +53,105 @@ function generateKeyboardKeys(octaveRange: {
 
   // Add one more key at the end (C of the next octave)
   return [...keys, { note: `C${octaveRange.max + 1}`, isSharp: false }];
-}
+};
 
-function Keyboard(
-  {
-    activeKeys = null,
-    octaveRange = { min: 3, max: 6 },
-    onKeyDown = () => {},
-    onKeyUp = () => {},
-    onMouseDown = () => {},
-    onMouseUp = () => {},
-    synth,
-  }: KeyboardProps,
-  ref: React.ForwardedRef<KeyboardRef>
-) {
-  const [isLoaded, setIsLoaded] = useState(false);
+// Memoize the WhiteKey component
+const WhiteKey = React.memo(
+  ({
+    isActive,
+    onPointerDown,
+    onPointerUp,
+    onPointerEnter,
+    onPointerLeave,
+  }: {
+    isActive: boolean;
+    onPointerDown: () => void;
+    onPointerUp: () => void;
+    onPointerEnter: () => void;
+    onPointerLeave: () => void;
+  }) => (
+    <div
+      className={`${styles.whiteKey} ${isActive ? styles.whiteKeyActive : ""}`}
+      onPointerDown={onPointerDown}
+      onPointerUp={onPointerUp}
+      onPointerEnter={onPointerEnter}
+      onPointerLeave={onPointerLeave}
+    />
+  )
+);
+
+// Memoize the BlackKey component
+const BlackKey = React.memo(
+  ({
+    isActive,
+    position,
+    width,
+    onPointerDown,
+    onPointerUp,
+    onPointerEnter,
+    onPointerLeave,
+  }: {
+    isActive: boolean;
+    position: number;
+    width: number;
+    onPointerDown: () => void;
+    onPointerUp: () => void;
+    onPointerEnter: () => void;
+    onPointerLeave: () => void;
+  }) => (
+    <div
+      className={`${styles.blackKey} ${isActive ? styles.blackKeyActive : ""}`}
+      style={{ left: `${position}%`, width: `${width}%` }}
+      onPointerDown={onPointerDown}
+      onPointerUp={onPointerUp}
+      onPointerEnter={onPointerEnter}
+      onPointerLeave={onPointerLeave}
+    />
+  )
+);
+
+function Keyboard({
+  activeKeys = null,
+  octaveRange = { min: 3, max: 6 },
+  onKeyDown = () => {},
+  onKeyUp = () => {},
+  onMouseDown = () => {},
+  onMouseUp = () => {},
+}: KeyboardProps) {
   const [isMouseDown, setIsMouseDown] = useState(false);
 
-  const keys = generateKeyboardKeys(octaveRange);
+  // Memoize the keys array
+  const keys = useMemo(() => generateKeyboardKeys(octaveRange), [octaveRange]);
 
-  function handleKeyPress(note: string): void {
-    if (!isLoaded) return;
-    onKeyDown(note);
-  }
+  // Memoize event handlers
+  const handleKeyPress = useCallback(
+    (note: string): void => {
+      onKeyDown(note);
+    },
+    [onKeyDown]
+  );
 
-  function handleKeyRelease(note: string): void {
-    if (!isLoaded) return;
-    onKeyUp(note);
-  }
+  const handleKeyRelease = useCallback(
+    (note: string): void => {
+      onKeyUp(note);
+    },
+    [onKeyUp]
+  );
 
-  function handleMouseDown(): void {
+  const handleMouseDown = useCallback((): void => {
     setIsMouseDown(true);
     onMouseDown();
-  }
+  }, [onMouseDown]);
 
-  function handleMouseUp(): void {
+  const handleMouseUp = useCallback((): void => {
     setIsMouseDown(false);
     if (activeKeys) {
       onKeyUp(activeKeys);
     }
     onMouseUp();
-  }
+  }, [activeKeys, onKeyUp, onMouseUp]);
 
-  function handleMouseLeave(): void {
+  const handleMouseLeave = useCallback((): void => {
     if (isMouseDown) {
       setIsMouseDown(false);
       if (activeKeys) {
@@ -110,46 +159,36 @@ function Keyboard(
       }
       onMouseUp();
     }
-  }
+  }, [isMouseDown, activeKeys, onKeyUp, onMouseUp]);
 
-  function handleKeyInteraction(note: string): void {
-    if (isMouseDown) {
-      handleKeyPress(note);
-    }
-  }
-
-  function handleKeyLeave(note: string): void {
-    if (isMouseDown) {
-      handleKeyRelease(note);
-    }
-  }
-
-  useEffect(() => {
-    if (synth) {
-      setIsLoaded(true);
-    }
-  }, [synth]);
-
-  useImperativeHandle(
-    ref,
-    () => ({
-      synth,
-    }),
-    [synth]
+  const handleKeyInteraction = useCallback(
+    (note: string): void => {
+      if (isMouseDown) {
+        handleKeyPress(note);
+      }
+    },
+    [isMouseDown, handleKeyPress]
   );
 
-  function renderWhiteKeys() {
+  const handleKeyLeave = useCallback(
+    (note: string): void => {
+      if (isMouseDown) {
+        handleKeyRelease(note);
+      }
+    },
+    [isMouseDown, handleKeyRelease]
+  );
+
+  // Memoize the white keys render function
+  const renderWhiteKeys = useCallback(() => {
     return keys
       .filter((key) => !key.isSharp)
       .map((key, index) => {
         const isActive = activeKeys === key.note;
-
         return (
-          <div
+          <WhiteKey
             key={`white-${key.note}-${index}`}
-            className={`${styles.whiteKey} ${
-              isActive ? styles.whiteKeyActive : ""
-            }`}
+            isActive={isActive}
             onPointerDown={() => {
               handleMouseDown();
               handleKeyPress(key.note);
@@ -160,9 +199,18 @@ function Keyboard(
           />
         );
       });
-  }
+  }, [
+    keys,
+    activeKeys,
+    handleMouseDown,
+    handleKeyPress,
+    handleKeyRelease,
+    handleKeyInteraction,
+    handleKeyLeave,
+  ]);
 
-  function renderBlackKeys() {
+  // Memoize the black keys render function
+  const renderBlackKeys = useCallback(() => {
     const whiteKeyWidth = 100 / keys.filter((key) => !key.isSharp).length;
 
     return keys
@@ -176,12 +224,11 @@ function Keyboard(
         const position = (whiteKeysBefore - 0.3) * whiteKeyWidth;
 
         return (
-          <div
+          <BlackKey
             key={`black-${key.note}-${index}`}
-            className={`${styles.blackKey} ${
-              isActive ? styles.blackKeyActive : ""
-            }`}
-            style={{ left: `${position}%`, width: `${whiteKeyWidth * 0.7}%` }}
+            isActive={isActive}
+            position={position}
+            width={whiteKeyWidth * 0.7}
             onPointerDown={() => {
               handleMouseDown();
               handleKeyPress(key.note);
@@ -192,7 +239,15 @@ function Keyboard(
           />
         );
       });
-  }
+  }, [
+    keys,
+    activeKeys,
+    handleMouseDown,
+    handleKeyPress,
+    handleKeyRelease,
+    handleKeyInteraction,
+    handleKeyLeave,
+  ]);
 
   return (
     <div
@@ -212,4 +267,5 @@ function Keyboard(
   );
 }
 
-export default forwardRef(Keyboard);
+// Memoize the entire Keyboard component
+export default React.memo(Keyboard);

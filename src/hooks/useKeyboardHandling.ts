@@ -1,11 +1,10 @@
-import { useCallback, useState, useEffect } from "react";
-import { MutableRefObject } from "react";
-import createSynth from "../synth/WebAudioSynth";
+import { type RefObject, useCallback, useEffect } from "react";
+import { createSynth } from "../synth/WebAudioSynth";
 
 type Note = string;
 
 interface KeyboardHandlingProps {
-  keyboardRef: MutableRefObject<{
+  keyboardRef: RefObject<{
     synth: Awaited<ReturnType<typeof createSynth>> | null;
   }>;
   activeKeys: Note | null;
@@ -23,17 +22,12 @@ export function useKeyboardHandling({
   currentOctave,
   setCurrentOctave,
 }: KeyboardHandlingProps) {
-  const [lastPlayedNote, setLastPlayedNote] = useState<string | null>(null);
-  const [isMouseDown, setIsMouseDown] = useState(false);
-
   const handleKeyDown = useCallback(
     (note: Note) => {
       if (keyboardRef.current.synth) {
-        // Always use triggerAttack, which will now use the last played frequency for glide
         keyboardRef.current.synth.triggerAttack(note);
       }
       setActiveKeys(note);
-      setLastPlayedNote(note);
     },
     [setActiveKeys, keyboardRef]
   );
@@ -43,23 +37,20 @@ export function useKeyboardHandling({
       if (note === activeKeys) {
         setActiveKeys(null);
         keyboardRef.current.synth?.triggerRelease(note);
-        setLastPlayedNote(null);
       }
     },
     [setActiveKeys, keyboardRef, activeKeys]
   );
 
   const handleMouseDown = useCallback(() => {
-    setIsMouseDown(true);
+    // Mouse down handler
   }, []);
 
   const handleMouseUp = useCallback(() => {
-    setIsMouseDown(false);
     if (activeKeys) {
       keyboardRef.current.synth?.triggerRelease(activeKeys);
       setActiveKeys(null);
     }
-    setLastPlayedNote(null);
   }, [activeKeys, keyboardRef, setActiveKeys]);
 
   useEffect(() => {
@@ -128,7 +119,8 @@ export function useKeyboardHandling({
   return {
     handleKeyDown,
     handleKeyUp,
-    handleMouseDown,
     handleMouseUp,
+    handleMouseDown,
+    keyboardRef,
   };
 }
