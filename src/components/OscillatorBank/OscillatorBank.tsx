@@ -87,7 +87,6 @@ function OscillatorControls({
         step={0.1}
         label="Freq"
         unit="st"
-        displayMode="replace"
         onChange={(value) => onChange("frequency", value)}
       />
       <Knob
@@ -98,7 +97,6 @@ function OscillatorControls({
         step={1}
         label="Detune"
         unit="ct"
-        displayMode="replace"
         onChange={(value) => onChange("detune", value)}
       />
       <ArrowKnob
