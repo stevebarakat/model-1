@@ -233,24 +233,23 @@ function createLFOConnections(
   ];
 }
 
-function updateLFOConnections(noteData: NoteData, routing: LFORouting): void {
-  const connections = createLFOConnections(noteData, routing);
-
+function reconnectLFO(noteData: NoteData, routing: LFORouting): void {
   // First disconnect all connections
-  connections.forEach(({ source }) => {
-    source.disconnect();
+  Object.values(noteData.lfoGains).forEach((gain) => {
+    gain.disconnect();
   });
 
-  // Then connect enabled ones
+  // Then connect enabled ones in a single pass
+  const connections = createLFOConnections(noteData, routing);
   connections
     .filter(({ enabled, target }) => enabled && target)
     .forEach(({ source, target }) => {
-      source.connect(target);
+      try {
+        source.connect(target);
+      } catch (e) {
+        console.warn("Error connecting LFO:", e);
+      }
     });
-}
-
-function reconnectLFO(noteData: NoteData, routing: LFORouting): void {
-  updateLFOConnections(noteData, routing);
 }
 
 function createOscillatorChain(
@@ -274,55 +273,95 @@ function createOscillatorChain(
     };
   }
 
-  const rangeMultiplier = getRangeMultiplier(oscSettings.range);
-  const frequencyOffset = Math.pow(2, oscSettings.frequency / 12);
-  const finalFrequency = baseFrequency * rangeMultiplier * frequencyOffset;
+  try {
+    const rangeMultiplier = getRangeMultiplier(oscSettings.range);
+    const frequencyOffset = Math.pow(2, oscSettings.frequency / 12);
+    const finalFrequency = baseFrequency * rangeMultiplier * frequencyOffset;
 
-  // Only use lastFrequency for glide if it's valid and glide is enabled
-  const startFrequency =
-    glide > 0 && lastFrequency
-      ? lastFrequency * rangeMultiplier * frequencyOffset
-      : finalFrequency;
+    // Only use lastFrequency for glide if it's valid and glide is enabled
+    const startFrequency =
+      glide > 0 && lastFrequency
+        ? lastFrequency * rangeMultiplier * frequencyOffset
+        : finalFrequency;
 
-  const oscillator = context.createOscillator();
-  const gainNode = context.createGain();
-  const panNode = context.createStereoPanner();
+    // Create nodes with optimized settings
+    const oscillator = context.createOscillator();
+    const gainNode = context.createGain();
+    const panNode = context.createStereoPanner();
 
-  oscillator.type = (oscSettings.waveform ?? "sine") as OscillatorType;
-  oscillator.frequency.value = startFrequency;
-  oscillator.detune.value = oscSettings.detune ?? 0;
-  panNode.pan.value = oscSettings.pan ?? 0;
+    // Set oscillator properties
+    oscillator.type = (oscSettings.waveform ?? "sine") as OscillatorType;
+    oscillator.frequency.value = startFrequency;
+    oscillator.detune.value = oscSettings.detune ?? 0;
+    panNode.pan.value = oscSettings.pan ?? 0;
 
-  oscillator.connect(gainNode);
-  gainNode.connect(panNode);
-  oscillator.start(startTime);
+    // Connect nodes with error handling
+    try {
+      oscillator.connect(gainNode);
+      gainNode.connect(panNode);
+    } catch (e) {
+      console.warn("Error connecting oscillator chain nodes:", e);
+      // Cleanup on connection error
+      oscillator.disconnect();
+      gainNode.disconnect();
+      panNode.disconnect();
+      return {
+        oscillator: null,
+        gain: null,
+        panner: null,
+      };
+    }
 
-  // Only apply glide if it's enabled
-  if (glide > 0 && lastFrequency) {
-    // Convert glide value (0-10) to time in seconds using logarithmic scale
-    const glideTime = Math.pow(10, glide / 5) * 0.02; // Scale 0-10 to approximately 0.02-2 seconds
-    const currentTime = context.currentTime;
+    // Start oscillator with error handling
+    try {
+      oscillator.start(startTime);
+    } catch (e) {
+      console.warn("Error starting oscillator:", e);
+      // Cleanup on start error
+      oscillator.disconnect();
+      gainNode.disconnect();
+      panNode.disconnect();
+      return {
+        oscillator: null,
+        gain: null,
+        panner: null,
+      };
+    }
 
-    // Ensure we're not scheduling in the past
-    const scheduleTime = Math.max(currentTime, startTime);
+    // Only apply glide if it's enabled
+    if (glide > 0 && lastFrequency) {
+      // Convert glide value (0-10) to time in seconds using logarithmic scale
+      const glideTime = Math.pow(10, glide / 5) * 0.02; // Scale 0-10 to approximately 0.02-2 seconds
+      const currentTime = context.currentTime;
 
-    // Cancel any existing scheduled changes
-    oscillator.frequency.cancelScheduledValues(scheduleTime);
+      // Ensure we're not scheduling in the past
+      const scheduleTime = Math.max(currentTime, startTime);
 
-    // Set the current value
-    oscillator.frequency.setValueAtTime(startFrequency, scheduleTime);
+      // Cancel any existing scheduled changes
+      oscillator.frequency.cancelScheduledValues(scheduleTime);
 
-    // Schedule the glide
-    oscillator.frequency.linearRampToValueAtTime(
-      finalFrequency,
-      scheduleTime + glideTime
-    );
-  } else {
-    // If glide is disabled, set frequency immediately
-    oscillator.frequency.value = finalFrequency;
+      // Set the current value
+      oscillator.frequency.setValueAtTime(startFrequency, scheduleTime);
+
+      // Schedule the glide
+      oscillator.frequency.linearRampToValueAtTime(
+        finalFrequency,
+        scheduleTime + glideTime
+      );
+    } else {
+      // If glide is disabled, set frequency immediately
+      oscillator.frequency.value = finalFrequency;
+    }
+
+    return { oscillator, gain: gainNode, panner: panNode };
+  } catch (error) {
+    console.error("Error creating oscillator chain:", error);
+    return {
+      oscillator: null,
+      gain: null,
+      panner: null,
+    };
   }
-
-  return { oscillator, gain: gainNode, panner: panNode };
 }
 
 function createNoiseChain(
@@ -354,7 +393,19 @@ function createNoiseChain(
       settings.type === "pink"
         ? "pink-noise-processor"
         : "white-noise-processor";
-    const noiseNode = new AudioWorkletNode(context, processorName);
+
+    // Create nodes with optimized settings
+    const noiseNode = new AudioWorkletNode(context, processorName, {
+      numberOfInputs: 0,
+      numberOfOutputs: 1,
+      processorOptions: {
+        // Add processor options to optimize memory usage
+        bufferSize: 128, // Smaller buffer size for lower latency
+        reuseBuffers: true, // Signal to processor to reuse buffers
+      },
+    });
+
+    // Use createGainNode helper for consistent gain node creation
     const noiseGain = createGainNode(context, settings.volume);
     const noisePanner = context.createStereoPanner();
 
@@ -365,15 +416,12 @@ function createNoiseChain(
     const noiseFilter = context.createBiquadFilter();
     noiseFilter.type = "lowpass";
 
-    // Calculate filter frequency
+    // Calculate filter frequency with bounds checking
     let freq;
     if (settings.sync) {
-      // When sync is enabled, use tone as a multiplier of the note frequency
-      // Map tone (20-20000) to a multiplier (0.045-45)
       const toneMultiplier = settings.tone / 440;
       freq = targetFrequency * toneMultiplier;
     } else {
-      // When sync is disabled, use tone directly as the filter frequency
       freq = settings.tone;
     }
 
@@ -388,9 +436,25 @@ function createNoiseChain(
     noiseFilter.frequency.value = freq;
     noiseFilter.Q.value = 1;
 
-    noiseNode.connect(noiseGain);
-    noiseGain.connect(noiseFilter);
-    noiseFilter.connect(noisePanner);
+    // Connect nodes with error handling
+    try {
+      noiseNode.connect(noiseGain);
+      noiseGain.connect(noiseFilter);
+      noiseFilter.connect(noisePanner);
+    } catch (e) {
+      console.warn("Error connecting noise chain nodes:", e);
+      // Cleanup on connection error
+      noiseNode.disconnect();
+      noiseGain.disconnect();
+      noiseFilter.disconnect();
+      noisePanner.disconnect();
+      return {
+        noiseNode: null,
+        noiseGain: null,
+        noisePanner: null,
+        noiseFilter: null,
+      };
+    }
 
     return { noiseNode, noiseGain, noisePanner, noiseFilter };
   } catch (error) {
@@ -409,14 +473,14 @@ function updateModulation(
   state: SynthState,
   modAmount: number
 ): void {
+  if (!state.noteData || !state.noteData.lfo) {
+    return;
+  }
+
   const baseCutoff = Math.min(
     Math.max(state.settings.filter.cutoff, 20),
     1541.27 // Maximum safe value for BiquadFilter gain
   );
-
-  if (!state.noteData || !state.noteData.lfo) {
-    return;
-  }
 
   // If modulation is disabled (modAmount is 0), stop and cleanup LFO
   if (modAmount === 0) {
@@ -456,34 +520,40 @@ function updateLFOGains(
   baseCutoff: number,
   currentTime: number
 ): void {
-  const smoothingTime = 0.2; // Much longer smoothing time
-  const delayTime = 0.02; // Small delay before applying changes
+  // Use a longer smoothing time for more stable modulation
+  const smoothingTime = 0.2;
+  const delayTime = 0.02;
+
+  // Pre-calculate common values
+  const modDepth = modAmount * lfoDepth;
+  const filterModAmount = baseCutoff * 0.02; // 2% of base cutoff
 
   const lfoGainConfigs = [
     {
       gain: noteData.lfoGains.filterCutoff.gain,
-      multiplier: baseCutoff * 0.02, // Further reduce filter cutoff modulation to 2%
+      multiplier: filterModAmount,
       name: "filterCutoff",
     },
     {
       gain: noteData.lfoGains.filterResonance.gain,
-      multiplier: 0.5, // Reduce resonance modulation to 0.5
+      multiplier: 0.5,
       name: "filterResonance",
     },
     {
       gain: noteData.lfoGains.oscillatorPitch.gain,
-      multiplier: 0.5, // Reduce pitch modulation to 0.5
+      multiplier: 0.5,
       name: "oscillatorPitch",
     },
     {
       gain: noteData.lfoGains.oscillatorVolume.gain,
-      multiplier: 0.05, // Reduce volume modulation to 0.05
+      multiplier: 0.05,
       name: "oscillatorVolume",
     },
   ];
 
+  // Batch process all gain updates
   lfoGainConfigs.forEach(({ gain, multiplier }) => {
-    const targetValue = modAmount * lfoDepth * multiplier;
+    const targetValue = modDepth * multiplier;
 
     // Cancel any scheduled changes
     gain.cancelScheduledValues(currentTime);
