@@ -123,21 +123,9 @@ function OscillatorBank({
 }: OscillatorBankProps) {
   return (
     <div>
-      <OscillatorControls
-        osc={osc1}
-        onChange={onOsc1Change}
-        showLabels={true}
-      />
-      <OscillatorControls
-        osc={osc2}
-        onChange={onOsc2Change}
-        showLabels={false}
-      />
-      <OscillatorControls
-        osc={osc3}
-        onChange={onOsc3Change}
-        showLabels={false}
-      />
+      <OscillatorControls osc={osc1} onChange={onOsc1Change} />
+      <OscillatorControls osc={osc2} onChange={onOsc2Change} />
+      <OscillatorControls osc={osc3} onChange={onOsc3Change} />
     </div>
   );
 }
