@@ -1,6 +1,6 @@
 import { useRef, useEffect } from "react";
 import { useKeyboardHandling } from "./hooks";
-import createSynth from "./synth/WebAudioSynth";
+import { createSynth } from "./synth/WebAudioSynth";
 import SynthControls from "./components/SynthControls";
 import Keyboard from "./components/Keyboard";
 import SidePanel from "./components/SidePanel";
@@ -162,10 +162,6 @@ function App() {
               updateMixer({ modMix: value });
             }}
             onPitchWheelReset={() => setPitchWheel(50)}
-            glide={glide}
-            onGlideChange={setGlide}
-            tune={tune}
-            onTuneChange={setTune}
           />
 
           <Keyboard
@@ -180,14 +176,6 @@ function App() {
           />
 
           <RightPanel
-            pitchWheel={pitchWheel}
-            modWheel={modWheel}
-            onPitchWheelChange={setPitchWheel}
-            onModWheelChange={(value) => {
-              setModWheel(value);
-              updateMixer({ modMix: value });
-            }}
-            onPitchWheelReset={() => setPitchWheel(50)}
             glide={glide}
             onGlideChange={setGlide}
             tune={tune}

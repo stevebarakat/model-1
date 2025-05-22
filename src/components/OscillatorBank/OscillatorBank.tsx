@@ -52,14 +52,12 @@ function valueToWaveform(value: number): OscillatorType {
 function OscillatorControls({
   osc,
   onChange,
-  showLabels = true,
 }: {
   osc: OscillatorSettings;
   onChange: (
     param: keyof OscillatorSettings,
     value: OscillatorSettings[keyof OscillatorSettings]
   ) => void;
-  showLabels?: boolean;
 }) {
   return (
     <div className={styles.row}>
@@ -87,10 +85,10 @@ function OscillatorControls({
         min={-12}
         max={12}
         step={0.1}
-        label={showLabels ? "Freq" : ""}
-        unit={!showLabels ? "st" : ""}
+        label="Freq"
+        unit="st"
+        displayMode="replace"
         onChange={(value) => onChange("frequency", value)}
-        displayMode={!showLabels ? "always" : "replace"}
       />
       <Knob
         size="large"
@@ -98,10 +96,10 @@ function OscillatorControls({
         min={-50}
         max={50}
         step={1}
-        label={showLabels ? "Detune" : ""}
-        unit={!showLabels ? "ct" : ""}
+        label="Detune"
+        unit="ct"
+        displayMode="replace"
         onChange={(value) => onChange("detune", value)}
-        displayMode={!showLabels ? "always" : "replace"}
       />
       <ArrowKnob
         value={waveformToValue(osc.waveform ?? "sine")}

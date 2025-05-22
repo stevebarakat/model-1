@@ -31,8 +31,6 @@ type OscillatorControlsProps = {
   onVolumeChange: (value: number) => void;
   onPanChange: (value: number) => void;
   onEnabledChange: (enabled: boolean) => void;
-  showVolumeLabels?: boolean;
-  showPanLabels?: boolean;
 };
 
 function OscillatorControls({
@@ -43,8 +41,6 @@ function OscillatorControls({
   onVolumeChange,
   onPanChange,
   onEnabledChange,
-  showVolumeLabels = true,
-  showPanLabels = true,
 }: OscillatorControlsProps) {
   return (
     <div className={styles.row}>
@@ -55,7 +51,7 @@ function OscillatorControls({
       <Switch
         checked={enabled}
         onCheckedChange={onEnabledChange}
-        label="On/Off"
+        label={label}
         className={styles.oscSwitch}
       />
       <Knob
@@ -63,18 +59,16 @@ function OscillatorControls({
         min={0}
         max={1}
         step={0.01}
-        label={showVolumeLabels ? label : ""}
+        label="Volume"
         onChange={onVolumeChange}
-        displayMode={!showVolumeLabels ? "always" : "replace"}
       />
       <Knob
         value={pan}
         min={-1}
         max={1}
         step={0.01}
-        label={showPanLabels ? "Pan" : ""}
+        label="Pan"
         onChange={onPanChange}
-        displayMode={!showPanLabels ? "always" : "replace"}
       />
     </div>
   );
@@ -110,8 +104,6 @@ function Mixer({
         onVolumeChange={onOsc1VolumeChange}
         onPanChange={onOsc1PanChange}
         onEnabledChange={onOsc1EnabledChange}
-        showVolumeLabels={true}
-        showPanLabels={true}
       />
       <OscillatorControls
         volume={osc2Volume}
@@ -121,8 +113,6 @@ function Mixer({
         onVolumeChange={onOsc2VolumeChange}
         onPanChange={onOsc2PanChange}
         onEnabledChange={onOsc2EnabledChange}
-        showVolumeLabels={true}
-        showPanLabels={false}
       />
       <OscillatorControls
         volume={osc3Volume}
@@ -132,8 +122,6 @@ function Mixer({
         onVolumeChange={onOsc3VolumeChange}
         onPanChange={onOsc3PanChange}
         onEnabledChange={onOsc3EnabledChange}
-        showVolumeLabels={true}
-        showPanLabels={false}
       />
     </div>
   );
