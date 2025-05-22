@@ -76,7 +76,6 @@ function ArrowKnob({
   const [startY, setStartY] = useState(0);
   const [startValue, setStartValue] = useState(0);
   const [isRightSide, setIsRightSide] = useState(false);
-  const hasLabel = label !== "";
 
   const rotation = getRotation(value, min, max);
   const displayValue = getDisplayValue(value, step, unit, valueLabels);
@@ -208,7 +207,7 @@ function ArrowKnob({
           </div>
         );
       })}
-      {hasLabel && <div className={styles.knobLabel}>{label}</div>}
+      {<div className={styles.knobLabel}>{label}</div>}
       <div className={styles.knobRing}>
         <div className={styles.knob}>
           <div className={styles.knobBtm}>
