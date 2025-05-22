@@ -92,7 +92,8 @@ export function useMidiHandling() {
         case MIDI_CONTROL_CHANGE:
           switch (data1) {
             case CC_MODULATION:
-              setModWheel(data2 / 127);
+              // MIDI CC values are 0-127, normalize to 0-100
+              setModWheel((data2 / 127) * 100);
               break;
             case CC_VOLUME:
               // Handle volume if needed
@@ -105,7 +106,8 @@ export function useMidiHandling() {
 
         case MIDI_PITCH_BEND:
           // MIDI pitch bend is 14-bit (0-16383), center at 8192
-          normalizedValue = (data1 + (data2 << 7)) / 16383;
+          // Normalize to 0-100 range, with 50 being center
+          normalizedValue = ((data1 + (data2 << 7)) / 16383) * 100;
           setPitchWheel(normalizedValue);
           break;
       }
