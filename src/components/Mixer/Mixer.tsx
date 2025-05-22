@@ -1,3 +1,4 @@
+import React, { useCallback } from "react";
 import Knob from "../Knob/Knob";
 import Switch from "../Switch";
 import styles from "./Mixer.module.css";
@@ -33,7 +34,8 @@ type OscillatorControlsProps = {
   onEnabledChange: (enabled: boolean) => void;
 };
 
-function OscillatorControls({
+// Memoize the OscillatorControls component
+const OscillatorControls = React.memo(function OscillatorControls({
   volume,
   pan,
   enabled,
@@ -42,6 +44,14 @@ function OscillatorControls({
   onPanChange,
   onEnabledChange,
 }: OscillatorControlsProps) {
+  // Memoize the enabled change handler to prevent unnecessary re-renders
+  const handleEnabledChange = useCallback(
+    (checked: boolean) => {
+      onEnabledChange(checked);
+    },
+    [onEnabledChange]
+  );
+
   return (
     <div className={styles.row}>
       <div className={styles.screwTopLeft} />
@@ -50,7 +60,7 @@ function OscillatorControls({
       <div className={styles.screwBottomRight} />
       <Switch
         checked={enabled}
-        onCheckedChange={onEnabledChange}
+        onCheckedChange={handleEnabledChange}
         label={label}
         orientation="vertical"
       />
@@ -72,9 +82,10 @@ function OscillatorControls({
       />
     </div>
   );
-}
+});
 
-function Mixer({
+// Memoize the Mixer component
+const Mixer = React.memo(function Mixer({
   osc1Volume,
   osc2Volume,
   osc3Volume,
@@ -125,6 +136,6 @@ function Mixer({
       />
     </div>
   );
-}
+});
 
 export default Mixer;

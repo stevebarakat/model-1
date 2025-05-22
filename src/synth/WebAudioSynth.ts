@@ -264,6 +264,7 @@ function createOscillatorChain(
   gain: GainNode | null;
   panner: StereoPannerNode | null;
 } {
+  // If oscillator is disabled, return null chain
   if (oscSettings.enabled === false) {
     return {
       oscillator: null,
@@ -618,9 +619,9 @@ function updateSettings(
             const volume = oscSettings.volume ?? 0;
             const enabled = oscSettings.enabled !== false;
 
-            if ((volume === 0 || !enabled) && osc) {
+            if (!enabled && osc) {
               try {
-                osc.stop();
+                // Disconnect the entire oscillator chain
                 osc.disconnect();
                 if (noteData.oscillatorGains[index]) {
                   noteData.oscillatorGains[index].disconnect();
@@ -628,6 +629,8 @@ function updateSettings(
                 if (noteData.oscillatorPanners[index]) {
                   noteData.oscillatorPanners[index].disconnect();
                 }
+                // Stop the oscillator to save CPU
+                osc.stop();
                 noteData.oscillators[index] = null as unknown as OscillatorNode;
                 noteData.oscillatorGains[index] = null as unknown as GainNode;
                 noteData.oscillatorPanners[index] =
@@ -636,6 +639,7 @@ function updateSettings(
                 console.warn("Error cleaning up oscillator:", e);
               }
             } else if (!osc && enabled && volume > 0) {
+              // Create new oscillator chain
               const newOsc = createOscillator(
                 synthContext.context,
                 oscSettings,
@@ -655,6 +659,7 @@ function updateSettings(
               noteData.oscillatorGains[index] = newGain;
               noteData.oscillatorPanners[index] = newPanner;
             } else if (osc && enabled && volume > 0) {
+              // Update existing oscillator
               osc.type = oscSettings.waveform;
               const rangeMultiplier = getRangeMultiplier(oscSettings.range);
               const frequencyOffset = Math.pow(2, oscSettings.frequency / 12);

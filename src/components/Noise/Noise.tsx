@@ -1,3 +1,4 @@
+import React, { useCallback } from "react";
 import Knob from "../Knob";
 import Switch from "../Switch";
 import styles from "./Noise.module.css";
@@ -15,7 +16,8 @@ type NoiseProps = {
   onSyncChange: (sync: boolean) => void;
 };
 
-function Noise({
+// Memoize the Noise component
+const Noise = React.memo(function Noise({
   volume,
   type,
   tone,
@@ -25,6 +27,35 @@ function Noise({
   onToneChange,
   onSyncChange,
 }: NoiseProps) {
+  // Memoize handlers to prevent unnecessary re-renders
+  const handleVolumeChange = useCallback(
+    (value: number) => {
+      onVolumeChange(value);
+    },
+    [onVolumeChange]
+  );
+
+  const handleTypeChange = useCallback(
+    (checked: boolean) => {
+      onTypeChange(checked ? "pink" : "white");
+    },
+    [onTypeChange]
+  );
+
+  const handleToneChange = useCallback(
+    (value: number) => {
+      onToneChange(value);
+    },
+    [onToneChange]
+  );
+
+  const handleSyncChange = useCallback(
+    (checked: boolean) => {
+      onSyncChange(checked);
+    },
+    [onSyncChange]
+  );
+
   return (
     <div className={styles.column}>
       <div className={styles.screwTopLeft} />
@@ -39,13 +70,11 @@ function Noise({
           max={1}
           step={0.01}
           label="Noise"
-          onChange={onVolumeChange}
+          onChange={handleVolumeChange}
         />
         <Switch
           checked={type === "pink"}
-          onCheckedChange={(checked) =>
-            onTypeChange(checked ? "pink" : "white")
-          }
+          onCheckedChange={handleTypeChange}
           label={type === "pink" ? "Pink" : "White"}
         />
       </div>
@@ -58,13 +87,17 @@ function Noise({
           max={20000}
           step={1}
           label="Freq"
-          onChange={onToneChange}
+          onChange={handleToneChange}
           logarithmic={true}
         />
-        <Switch checked={sync} onCheckedChange={onSyncChange} label="Sync" />
+        <Switch
+          checked={sync}
+          onCheckedChange={handleSyncChange}
+          label="Sync"
+        />
       </div>
     </div>
   );
-}
+});
 
 export default Noise;
