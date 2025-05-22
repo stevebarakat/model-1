@@ -171,7 +171,7 @@ function App() {
             onKeyUp={handleKeyUp}
             onMouseDown={handleMouseDown}
             onMouseUp={handleMouseUp}
-            octaveRange={{ min: currentOctave - 1, max: currentOctave + 2 }}
+            octaveRange={{ min: currentOctave - 1, max: currentOctave + 1 }}
             synth={keyboardRef.current.synth}
           />
 

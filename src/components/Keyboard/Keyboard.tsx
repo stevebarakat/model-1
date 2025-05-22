@@ -19,13 +19,13 @@ type KeyboardProps = {
   onMouseDown?: () => void;
   onMouseUp?: () => void;
   synth: Awaited<
-    ReturnType<typeof import("../../synth/WebAudioSynth").default>
+    ReturnType<typeof import("../../synth/WebAudioSynth").createSynth>
   > | null;
 };
 
 type KeyboardRef = {
   synth: Awaited<
-    ReturnType<typeof import("../../synth/WebAudioSynth").default>
+    ReturnType<typeof import("../../synth/WebAudioSynth").createSynth>
   > | null;
 };
 
@@ -51,14 +51,12 @@ function generateKeyboardKeys(octaveRange: {
   const keys = Array.from(
     { length: octaveRange.max - octaveRange.min + 1 },
     (_, i) => octaveRange.min + i
-  )
-    .flatMap((octave) =>
-      OCTAVE_NOTES.map((key) => ({
-        note: `${key.note}${octave}`,
-        isSharp: key.isSharp,
-      }))
-    )
-    .slice(5); // Remove first 5 keys
+  ).flatMap((octave) =>
+    OCTAVE_NOTES.map((key) => ({
+      note: `${key.note}${octave}`,
+      isSharp: key.isSharp,
+    }))
+  );
 
   // Add one more key at the end (C of the next octave)
   return [...keys, { note: `C${octaveRange.max + 1}`, isSharp: false }];
