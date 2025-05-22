@@ -4,13 +4,13 @@ import {
   WaveformType,
   LFORouting,
 } from "@/synth/types/index";
-import Mixer from "../Mixer";
-import OscillatorBank from "../OscillatorBank";
 import Modifiers from "../Modifiers";
 import Effects from "../Effects";
 import Noise from "../Noise/Noise";
 import Spacer from "../Spacer";
 import OscillatorSection from "../OscillatorSection";
+import Mixer from "../Mixer";
+import OscillatorBank from "../OscillatorBank";
 
 type SynthControlsProps = {
   oscillators: {
@@ -107,7 +107,7 @@ function SynthControls({
 
   return (
     <>
-      <OscillatorSection
+      {/* <OscillatorSection
         osc1Volume={mixer.osc1Volume}
         osc2Volume={mixer.osc2Volume}
         osc3Volume={mixer.osc3Volume}
@@ -120,6 +120,28 @@ function SynthControls({
         onOsc1PanChange={(value) => handleOsc1Change("pan", value)}
         onOsc2PanChange={(value) => handleOsc2Change("pan", value)}
         onOsc3PanChange={(value) => handleOsc3Change("pan", value)}
+        osc1={oscillators.osc1}
+        osc2={oscillators.osc2}
+        osc3={oscillators.osc3}
+        onOsc1Change={handleOsc1Change}
+        onOsc2Change={handleOsc2Change}
+        onOsc3Change={handleOsc3Change}
+      /> */}
+      <Mixer
+        osc1Volume={mixer.osc1Volume}
+        osc2Volume={mixer.osc2Volume}
+        osc3Volume={mixer.osc3Volume}
+        osc1Pan={oscillators.osc1.pan ?? 0}
+        osc2Pan={oscillators.osc2.pan ?? 0}
+        osc3Pan={oscillators.osc3.pan ?? 0}
+        onOsc1VolumeChange={(value) => onMixerChange({ osc1Volume: value })}
+        onOsc2VolumeChange={(value) => onMixerChange({ osc2Volume: value })}
+        onOsc3VolumeChange={(value) => onMixerChange({ osc3Volume: value })}
+        onOsc1PanChange={(value) => handleOsc1Change("pan", value)}
+        onOsc2PanChange={(value) => handleOsc2Change("pan", value)}
+        onOsc3PanChange={(value) => handleOsc3Change("pan", value)}
+      />
+      <OscillatorBank
         osc1={oscillators.osc1}
         osc2={oscillators.osc2}
         osc3={oscillators.osc3}

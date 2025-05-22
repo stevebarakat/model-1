@@ -7,8 +7,8 @@
   padding-bottom: var(--spacing-sm);
   padding-left: calc(var(--spacing-sm) + 16px);
 
-  /* &:first-of-type {
-    background: linear-gradient(
+  &:first-of-type {
+    /* background: linear-gradient(
       to bottom,
       hsl(350deg 40% 5%) 0%,
       hsl(350deg 40% 15%) 1.5%,
@@ -21,13 +21,13 @@
       hsl(350deg 40% 15%) 97%,
       hsl(350deg 40% 10%) 98.5%,
       hsl(350deg 40% 5%) 100%
-    );
+    ); */
     box-shadow: inset 1px 0 2px hsl(0deg 0% 5% / 100%),
       inset -1px 0 2px hsl(0deg 0% 5% / 100%);
   }
 
   &:nth-of-type(2) {
-    background: linear-gradient(
+    /* background: linear-gradient(
       to bottom,
       hsl(45deg 40% 5%) 0%,
       hsl(45deg 40% 15%) 1.5%,
@@ -40,13 +40,13 @@
       hsl(45deg 40% 15%) 97%,
       hsl(45deg 40% 10%) 98.5%,
       hsl(45deg 40% 5%) 100%
-    );
+    ); */
     box-shadow: inset 1px 0 2px hsl(0deg 0% 5% / 100%),
       inset -1px 0 2px hsl(0deg 0% 5% / 100%);
   }
 
   &:last-of-type {
-    background: linear-gradient(
+    /* background: linear-gradient(
       to bottom,
       hsl(160deg 40% 5%) 0%,
       hsl(160deg 40% 15%) 1.5%,
@@ -59,8 +59,8 @@
       hsl(160deg 40% 15%) 97%,
       hsl(160deg 40% 10%) 98.5%,
       hsl(160deg 40% 5%) 100%
-    );
+    ); */
     box-shadow: inset 1px 0 2px hsl(0deg 0% 5% / 100%),
       inset -1px 0 2px hsl(0deg 0% 5% / 100%);
-  } */
+  }
 }
