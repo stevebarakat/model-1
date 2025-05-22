@@ -18,7 +18,7 @@ export function createInitialState(): Omit<
   | "updateEffects"
 > {
   return {
-    activeKeys: new Set(),
+    activeKeys: null,
     keyboardRef: { synth: null },
     pitchWheel: 50,
     modWheel: 50,

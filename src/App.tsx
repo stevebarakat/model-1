@@ -1,5 +1,6 @@
 import { useRef, useEffect } from "react";
 import { useKeyboardHandling } from "./hooks";
+import { useMidiHandling } from "./hooks/useMidiHandling";
 import { createSynth } from "./synth/WebAudioSynth";
 import SynthControls from "./components/SynthControls";
 import Keyboard from "./components/Keyboard";
@@ -33,6 +34,7 @@ function App() {
     updateNoise,
     tune,
     setTune,
+    setKeyboardRef,
   } = useSynthStore();
 
   const keyboardRef = useRef<{
@@ -48,14 +50,18 @@ function App() {
       setCurrentOctave,
     });
 
+  // Initialize MIDI handling
+  useMidiHandling();
+
   // Initialize synth
   useEffect(() => {
     const initSynth = async () => {
       const synth = await createSynth();
       keyboardRef.current.synth = synth;
+      setKeyboardRef(keyboardRef.current);
     };
     initSynth();
-  }, []);
+  }, [setKeyboardRef]);
 
   // Update synth settings when keyboard ref is available
   useEffect(() => {
