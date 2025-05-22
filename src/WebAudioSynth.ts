@@ -7,7 +7,6 @@ export class NoiseGenerator {
   private filterNode: BiquadFilterNode;
   private currentSource: AudioBufferSourceNode | null;
   private isPlaying: boolean;
-  private volume: number;
   private type: "white" | "pink";
   private tone: number;
   private sync: boolean;
@@ -24,7 +23,6 @@ export class NoiseGenerator {
     this.filterNode = context.createBiquadFilter();
     this.currentSource = null;
     this.isPlaying = false;
-    this.volume = 0;
     this.type = "white";
     this.tone = 1000;
     this.sync = false;
@@ -146,8 +144,13 @@ export class NoiseGenerator {
   }
 
   setVolume(value: number): void {
-    this.volume = value;
-    this.gainNode.gain.setTargetAtTime(value, this.context.currentTime, 0.01);
+    // Convert linear 0-1 to logarithmic scale
+    const logValue = Math.pow(value, 2);
+    this.gainNode.gain.setTargetAtTime(
+      logValue,
+      this.context.currentTime,
+      0.01
+    );
   }
 
   setType(type: "white" | "pink"): void {
@@ -183,12 +186,14 @@ export class NoiseGenerator {
 
   start(): void {
     if (!this.isPlaying) {
+      console.log(`[NoiseGenerator] Starting ${this.type} noise`);
       this.startNoise();
     }
   }
 
   stop(): void {
     if (this.isPlaying) {
+      console.log(`[NoiseGenerator] Stopping ${this.type} noise`);
       this.currentSource?.stop();
       this.currentSource?.disconnect();
       this.currentSource = null;

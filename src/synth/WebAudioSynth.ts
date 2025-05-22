@@ -379,6 +379,7 @@ function createNoiseChain(
   noiseFilter: BiquadFilterNode | null;
 } {
   if (settings.volume <= 0) {
+    console.log("[Noise] Volume is 0, noise chain not created");
     return {
       noiseNode: null,
       noiseGain: null,
@@ -388,6 +389,7 @@ function createNoiseChain(
   }
 
   try {
+    console.log(`[Noise] Creating ${settings.type} noise chain`);
     // Validate input parameters
     if (!Number.isFinite(targetFrequency) || targetFrequency <= 0) {
       targetFrequency = 440; // Default to A4 if invalid
@@ -446,6 +448,7 @@ function createNoiseChain(
       noiseNode.connect(noiseGain);
       noiseGain.connect(noiseFilter);
       noiseFilter.connect(noisePanner);
+      console.log("[Noise] Noise chain connected successfully");
     } catch (e) {
       console.warn("Error connecting noise chain nodes:", e);
       // Cleanup on connection error
@@ -803,16 +806,41 @@ function updateSettings(
     }
     if (newSettings.noise.volume !== undefined) {
       const newVolume = newSettings.noise.volume;
+      const oldVolume = synthContext.noiseGain.gain.value;
       synthContext.noiseGain.gain.value = newVolume;
 
-      // Clean up noise nodes when disabled
-      if (newVolume === 0) {
+      // Log enable/disable state changes
+      if (oldVolume === 0 && newVolume > 0) {
+        console.log("[Noise] Enabled");
+      } else if (oldVolume > 0 && newVolume === 0) {
+        console.log("[Noise] Disabled");
+        // Clean up noise nodes when disabled
         try {
+          // Disconnect from the audio chain
           if (synthContext.noiseNode) {
             synthContext.noiseNode.disconnect();
+            synthContext.noiseNode = null;
           }
           synthContext.noiseGain.disconnect();
           synthContext.noisePanner.disconnect();
+
+          // Also clean up any active note's noise chain
+          if (state.noteData?.noiseNode) {
+            state.noteData.noiseNode.disconnect();
+            state.noteData.noiseNode = null;
+          }
+          if (state.noteData?.noiseGain) {
+            state.noteData.noiseGain.disconnect();
+            state.noteData.noiseGain = null;
+          }
+          if (state.noteData?.noisePanner) {
+            state.noteData.noisePanner.disconnect();
+            state.noteData.noisePanner = null;
+          }
+          if (state.noteData?.noiseFilter) {
+            state.noteData.noiseFilter.disconnect();
+            state.noteData.noiseFilter = null;
+          }
         } catch (e) {
           console.warn("Error cleaning up noise:", e);
         }
@@ -820,6 +848,9 @@ function updateSettings(
     }
     if (newSettings.noise.pan !== undefined) {
       synthContext.noisePanner.pan.value = newSettings.noise.pan;
+    }
+    if (newSettings.noise.type !== undefined) {
+      state.settings.noise.type = newSettings.noise.type;
     }
     if (
       newSettings.noise.tone !== undefined ||
@@ -1141,6 +1172,7 @@ function triggerAttack(
 
   // Connect noise chain if present
   if (noiseNode && noiseGain && noisePanner) {
+    console.log("[Noise] Connecting noise chain to note gain");
     noisePanner.connect(noteGain);
   }
 
