@@ -68,6 +68,7 @@ type OscillatorSettings = {
   volume?: number;
   type?: OscillatorType;
   pan?: number;
+  enabled?: boolean;
 };
 
 type NoiseSettings = {
@@ -264,6 +265,15 @@ function createOscillatorChain(
   gain: GainNode | null;
   panner: StereoPannerNode | null;
 } {
+  // If oscillator is disabled, return null chain
+  if (oscSettings.enabled === false) {
+    return {
+      oscillator: null,
+      gain: null,
+      panner: null,
+    };
+  }
+
   const rangeMultiplier = getRangeMultiplier(oscSettings.range);
   const frequencyOffset = Math.pow(2, oscSettings.frequency / 12);
   const finalFrequency = baseFrequency * rangeMultiplier * frequencyOffset;
@@ -525,8 +535,9 @@ function updateSettings(
           if (osc && index < oscillators.length) {
             const oscSettings = oscillators[index];
             const volume = oscSettings.volume ?? 0;
+            const enabled = oscSettings.enabled !== false;
 
-            if (volume === 0 && osc) {
+            if ((volume === 0 || !enabled) && osc) {
               try {
                 osc.stop();
                 osc.disconnect();
@@ -543,7 +554,7 @@ function updateSettings(
               } catch (e) {
                 console.warn("Error cleaning up oscillator:", e);
               }
-            } else if (volume > 0 && !osc) {
+            } else if (!osc && enabled && volume > 0) {
               const newOsc = createOscillator(
                 synthContext.context,
                 oscSettings,
@@ -562,7 +573,7 @@ function updateSettings(
               noteData.oscillators[index] = newOsc;
               noteData.oscillatorGains[index] = newGain;
               noteData.oscillatorPanners[index] = newPanner;
-            } else if (osc && volume > 0) {
+            } else if (osc && enabled && volume > 0) {
               osc.type = oscSettings.waveform;
               const rangeMultiplier = getRangeMultiplier(oscSettings.range);
               const frequencyOffset = Math.pow(2, oscSettings.frequency / 12);
@@ -1232,7 +1243,7 @@ function dispose(state: SynthState, synthContext: SynthContext): void {
 }
 
 // Factory function to create a synth
-export default async function createSynth() {
+export async function createSynth() {
   const synthContext = createSynthContext(new AudioContext());
   const state = createInitialState();
 

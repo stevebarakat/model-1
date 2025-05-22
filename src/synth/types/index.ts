@@ -46,6 +46,7 @@ export type OscillatorSettings = {
   volume?: number;
   type?: OscillatorType;
   pan?: number; // -1 (left) to 1 (right)
+  enabled?: boolean; // whether the oscillator is enabled
 };
 
 export type LFORouting = {

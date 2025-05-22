@@ -33,6 +33,7 @@ export function createInitialState(): Omit<
         range: "4",
         detune: 0,
         volume: 0.7,
+        enabled: true,
       },
       osc2: {
         frequency: 0,
@@ -40,6 +41,7 @@ export function createInitialState(): Omit<
         range: "4",
         detune: 0,
         volume: 0.7,
+        enabled: true,
       },
       osc3: {
         frequency: 0,
@@ -47,6 +49,7 @@ export function createInitialState(): Omit<
         range: "4",
         detune: 0,
         volume: 0.7,
+        enabled: true,
       },
     },
     mixer: {
@@ -54,9 +57,6 @@ export function createInitialState(): Omit<
       osc2Volume: 0.7,
       osc3Volume: 0.7,
       modMix: 50,
-      osc1Bypassed: false,
-      osc2Bypassed: false,
-      osc3Bypassed: false,
     },
     noise: {
       volume: 0,

@@ -9,28 +9,28 @@ export type MixerProps = {
   osc1Pan: number;
   osc2Pan: number;
   osc3Pan: number;
-  osc1Bypassed: boolean;
-  osc2Bypassed: boolean;
-  osc3Bypassed: boolean;
+  osc1Enabled: boolean;
+  osc2Enabled: boolean;
+  osc3Enabled: boolean;
   onOsc1VolumeChange: (value: number) => void;
   onOsc2VolumeChange: (value: number) => void;
   onOsc3VolumeChange: (value: number) => void;
   onOsc1PanChange: (value: number) => void;
   onOsc2PanChange: (value: number) => void;
   onOsc3PanChange: (value: number) => void;
-  onOsc1BypassChange: (bypassed: boolean) => void;
-  onOsc2BypassChange: (bypassed: boolean) => void;
-  onOsc3BypassChange: (bypassed: boolean) => void;
+  onOsc1EnabledChange: (enabled: boolean) => void;
+  onOsc2EnabledChange: (enabled: boolean) => void;
+  onOsc3EnabledChange: (enabled: boolean) => void;
 };
 
 type OscillatorControlsProps = {
   volume: number;
   pan: number;
-  bypassed: boolean;
+  enabled: boolean;
   label: string;
   onVolumeChange: (value: number) => void;
   onPanChange: (value: number) => void;
-  onBypassChange: (bypassed: boolean) => void;
+  onEnabledChange: (enabled: boolean) => void;
   showVolumeLabels?: boolean;
   showPanLabels?: boolean;
 };
@@ -38,11 +38,11 @@ type OscillatorControlsProps = {
 function OscillatorControls({
   volume,
   pan,
-  bypassed,
+  enabled,
   label,
   onVolumeChange,
   onPanChange,
-  onBypassChange,
+  onEnabledChange,
   showVolumeLabels = true,
   showPanLabels = true,
 }: OscillatorControlsProps) {
@@ -53,9 +53,9 @@ function OscillatorControls({
       <div className={styles.screwBottomLeft} />
       <div className={styles.screwBottomRight} />
       <Switch
-        checked={!bypassed}
-        onCheckedChange={(checked) => onBypassChange(!checked)}
-        label="Bypass"
+        checked={enabled}
+        onCheckedChange={onEnabledChange}
+        label="On/Off"
         className={styles.oscSwitch}
       />
       <Knob
@@ -87,51 +87,51 @@ function Mixer({
   osc1Pan,
   osc2Pan,
   osc3Pan,
-  osc1Bypassed,
-  osc2Bypassed,
-  osc3Bypassed,
+  osc1Enabled,
+  osc2Enabled,
+  osc3Enabled,
   onOsc1VolumeChange,
   onOsc2VolumeChange,
   onOsc3VolumeChange,
   onOsc1PanChange,
   onOsc2PanChange,
   onOsc3PanChange,
-  onOsc1BypassChange,
-  onOsc2BypassChange,
-  onOsc3BypassChange,
+  onOsc1EnabledChange,
+  onOsc2EnabledChange,
+  onOsc3EnabledChange,
 }: MixerProps) {
   return (
     <div className={styles.column}>
       <OscillatorControls
         volume={osc1Volume}
         pan={osc1Pan}
-        bypassed={osc1Bypassed}
+        enabled={osc1Enabled}
         label="Osc 1"
         onVolumeChange={onOsc1VolumeChange}
         onPanChange={onOsc1PanChange}
-        onBypassChange={onOsc1BypassChange}
+        onEnabledChange={onOsc1EnabledChange}
         showVolumeLabels={true}
         showPanLabels={true}
       />
       <OscillatorControls
         volume={osc2Volume}
         pan={osc2Pan}
-        bypassed={osc2Bypassed}
+        enabled={osc2Enabled}
         label="Osc 2"
         onVolumeChange={onOsc2VolumeChange}
         onPanChange={onOsc2PanChange}
-        onBypassChange={onOsc2BypassChange}
+        onEnabledChange={onOsc2EnabledChange}
         showVolumeLabels={true}
         showPanLabels={false}
       />
       <OscillatorControls
         volume={osc3Volume}
         pan={osc3Pan}
-        bypassed={osc3Bypassed}
+        enabled={osc3Enabled}
         label="Osc 3"
         onVolumeChange={onOsc3VolumeChange}
         onPanChange={onOsc3PanChange}
-        onBypassChange={onOsc3BypassChange}
+        onEnabledChange={onOsc3EnabledChange}
         showVolumeLabels={true}
         showPanLabels={false}
       />
