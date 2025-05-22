@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useCallback, useMemo } from "react";
 import Knob from "../Knob/Knob";
 import styles from "../Modifiers/Modifiers.module.css";
 
@@ -24,7 +24,7 @@ type ADSRProps = {
 
 type ADSRParam = "attack" | "decay" | "sustain" | "release";
 
-function ADSR({
+const ADSR = React.memo(function ADSR({
   attack,
   decay,
   sustain,
@@ -34,61 +34,96 @@ function ADSR({
   onSustainChange,
   onReleaseChange,
 }: ADSRProps): React.ReactElement {
-  const adsrControls: Record<ADSRParam, ADSRValue> = {
-    attack: {
-      value: attack,
-      min: 0,
-      max: 2,
-      step: 0.01,
-      label: "ATTACK",
-      unit: "s",
-    },
-    decay: {
-      value: decay,
-      min: 0,
-      max: 2,
-      step: 0.01,
-      label: "DECAY",
-      unit: "s",
-    },
-    sustain: {
-      value: sustain,
-      min: 0,
-      max: 1,
-      step: 0.01,
-      label: "SUSTAIN",
-    },
-    release: {
-      value: release,
-      min: 0,
-      max: 4,
-      step: 0.01,
-      label: "RELEASE",
-      unit: "s",
-    },
-  };
+  // Memoize the controls configuration
+  const adsrControls = useMemo<Record<ADSRParam, ADSRValue>>(
+    () => ({
+      attack: {
+        value: attack,
+        min: 0,
+        max: 2,
+        step: 0.01,
+        label: "ATTACK",
+        unit: "s",
+      },
+      decay: {
+        value: decay,
+        min: 0,
+        max: 2,
+        step: 0.01,
+        label: "DECAY",
+        unit: "s",
+      },
+      sustain: {
+        value: sustain,
+        min: 0,
+        max: 1,
+        step: 0.01,
+        label: "SUSTAIN",
+      },
+      release: {
+        value: release,
+        min: 0,
+        max: 4,
+        step: 0.01,
+        label: "RELEASE",
+        unit: "s",
+      },
+    }),
+    [attack, decay, sustain, release]
+  );
 
-  const handleChange = (param: ADSRParam) => (value: number) => {
-    const handlers: Record<ADSRParam, (value: number) => void> = {
-      attack: onAttackChange,
-      decay: onDecayChange,
-      sustain: onSustainChange,
-      release: onReleaseChange,
-    };
-    handlers[param](value);
-  };
+  // Memoize the handlers
+  const handleAttackChange = useCallback(
+    (value: number) => {
+      onAttackChange(value);
+    },
+    [onAttackChange]
+  );
+
+  const handleDecayChange = useCallback(
+    (value: number) => {
+      onDecayChange(value);
+    },
+    [onDecayChange]
+  );
+
+  const handleSustainChange = useCallback(
+    (value: number) => {
+      onSustainChange(value);
+    },
+    [onSustainChange]
+  );
+
+  const handleReleaseChange = useCallback(
+    (value: number) => {
+      onReleaseChange(value);
+    },
+    [onReleaseChange]
+  );
+
+  // Memoize the handlers map
+  const handlers = useMemo(
+    () => ({
+      attack: handleAttackChange,
+      decay: handleDecayChange,
+      sustain: handleSustainChange,
+      release: handleReleaseChange,
+    }),
+    [
+      handleAttackChange,
+      handleDecayChange,
+      handleSustainChange,
+      handleReleaseChange,
+    ]
+  );
 
   return (
     <div className={styles.innerRow}>
       {Object.entries(adsrControls).map(([param, config]) => (
-        <Knob
-          key={param}
-          {...config}
-          onChange={handleChange(param as ADSRParam)}
-        />
+        <Knob key={param} {...config} onChange={handlers[param as ADSRParam]} />
       ))}
     </div>
   );
-}
+});
 
 export default ADSR;

@@ -1172,9 +1172,12 @@ function triggerAttack(
   filter.connect(filterGain);
   filterGain.connect(synthContext.masterGain);
 
-  // Set up amplitude envelope with a very short attack for smooth transitions
+  // Set up amplitude envelope
   noteGain.gain.setValueAtTime(0, now);
-  noteGain.gain.linearRampToValueAtTime(1, now + 0.001); // 1ms attack
+  noteGain.gain.linearRampToValueAtTime(
+    1,
+    now + state.settings.envelope.attack
+  );
   noteGain.gain.linearRampToValueAtTime(
     state.settings.envelope.sustain,
     now + state.settings.envelope.attack + state.settings.envelope.decay
