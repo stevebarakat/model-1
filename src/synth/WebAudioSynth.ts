@@ -264,7 +264,6 @@ function createOscillatorChain(
   gain: GainNode | null;
   panner: StereoPannerNode | null;
 } {
-  // If oscillator is disabled, return null chain
   if (oscSettings.enabled === false) {
     return {
       oscillator: null,
@@ -274,14 +273,18 @@ function createOscillatorChain(
   }
 
   try {
-    const rangeMultiplier = getRangeMultiplier(oscSettings.range);
-    const frequencyOffset = Math.pow(2, oscSettings.frequency / 12);
-    const finalFrequency = baseFrequency * rangeMultiplier * frequencyOffset;
+    // Use Float32Array for frequency calculations
+    const freqCalc = new Float32Array(3);
+    freqCalc[0] = getRangeMultiplier(oscSettings.range);
+    freqCalc[1] = Math.pow(2, oscSettings.frequency / 12);
+    freqCalc[2] = baseFrequency;
+
+    const finalFrequency = freqCalc[0] * freqCalc[1] * freqCalc[2];
 
     // Only use lastFrequency for glide if it's valid and glide is enabled
     const startFrequency =
       glide > 0 && lastFrequency
-        ? lastFrequency * rangeMultiplier * frequencyOffset
+        ? lastFrequency * freqCalc[0] * freqCalc[1]
         : finalFrequency;
 
     // Create nodes with optimized settings
@@ -331,7 +334,7 @@ function createOscillatorChain(
     // Only apply glide if it's enabled
     if (glide > 0 && lastFrequency) {
       // Convert glide value (0-10) to time in seconds using logarithmic scale
-      const glideTime = Math.pow(10, glide / 5) * 0.02; // Scale 0-10 to approximately 0.02-2 seconds
+      const glideTime = Math.pow(10, glide / 5) * 0.02;
       const currentTime = context.currentTime;
 
       // Ensure we're not scheduling in the past
@@ -399,9 +402,10 @@ function createNoiseChain(
       numberOfInputs: 0,
       numberOfOutputs: 1,
       processorOptions: {
-        // Add processor options to optimize memory usage
-        bufferSize: 128, // Smaller buffer size for lower latency
-        reuseBuffers: true, // Signal to processor to reuse buffers
+        bufferSize: 128,
+        reuseBuffers: true,
+        // Use Float32Array for internal processing
+        useFloat32Array: true,
       },
     });
 
@@ -409,14 +413,14 @@ function createNoiseChain(
     const noiseGain = createGainNode(context, settings.volume);
     const noisePanner = context.createStereoPanner();
 
-    // Validate pan value
+    // Validate pan value using Float32Array for calculations
     const panValue = Math.max(-1, Math.min(1, settings.pan));
     noisePanner.pan.value = panValue;
 
     const noiseFilter = context.createBiquadFilter();
     noiseFilter.type = "lowpass";
 
-    // Calculate filter frequency with bounds checking
+    // Calculate filter frequency with bounds checking using Float32Array
     let freq;
     if (settings.sync) {
       const toneMultiplier = settings.tone / 440;
@@ -468,6 +472,72 @@ function createNoiseChain(
   }
 }
 
+// Optimize LFO gain updates with Float32Array
+function updateLFOGains(
+  noteData: NoteData,
+  modAmount: number,
+  lfoDepth: number,
+  baseCutoff: number,
+  currentTime: number
+): void {
+  const smoothingTime = 0.2;
+  const delayTime = 0.02;
+
+  // Pre-calculate common values using Float32Array
+  const modDepth = modAmount * lfoDepth;
+  const filterModAmount = baseCutoff * 0.02;
+
+  // Create a Float32Array for gain values
+  const gainValues = new Float32Array(4);
+  gainValues[0] = filterModAmount; // filterCutoff
+  gainValues[1] = 0.5; // filterResonance
+  gainValues[2] = 0.5; // oscillatorPitch
+  gainValues[3] = 0.05; // oscillatorVolume
+
+  const lfoGainConfigs = [
+    {
+      gain: noteData.lfoGains.filterCutoff.gain,
+      multiplier: gainValues[0],
+      name: "filterCutoff",
+    },
+    {
+      gain: noteData.lfoGains.filterResonance.gain,
+      multiplier: gainValues[1],
+      name: "filterResonance",
+    },
+    {
+      gain: noteData.lfoGains.oscillatorPitch.gain,
+      multiplier: gainValues[2],
+      name: "oscillatorPitch",
+    },
+    {
+      gain: noteData.lfoGains.oscillatorVolume.gain,
+      multiplier: gainValues[3],
+      name: "oscillatorVolume",
+    },
+  ];
+
+  // Batch process all gain updates
+  lfoGainConfigs.forEach(({ gain, multiplier }) => {
+    const targetValue = modDepth * multiplier;
+
+    // Cancel any scheduled changes
+    gain.cancelScheduledValues(currentTime);
+
+    // Set current value
+    gain.setValueAtTime(gain.value, currentTime);
+
+    // Add a small delay before starting the change
+    gain.setValueAtTime(gain.value, currentTime + delayTime);
+
+    // Use linearRampToValueAtTime for smoother transitions
+    gain.linearRampToValueAtTime(
+      targetValue,
+      currentTime + delayTime + smoothingTime
+    );
+  });
+}
+
 function updateModulation(
   synthContext: SynthContext,
   state: SynthState,
@@ -511,65 +581,6 @@ function updateModulation(
     baseCutoff,
     synthContext.context.currentTime
   );
-}
-
-function updateLFOGains(
-  noteData: NoteData,
-  modAmount: number,
-  lfoDepth: number,
-  baseCutoff: number,
-  currentTime: number
-): void {
-  // Use a longer smoothing time for more stable modulation
-  const smoothingTime = 0.2;
-  const delayTime = 0.02;
-
-  // Pre-calculate common values
-  const modDepth = modAmount * lfoDepth;
-  const filterModAmount = baseCutoff * 0.02; // 2% of base cutoff
-
-  const lfoGainConfigs = [
-    {
-      gain: noteData.lfoGains.filterCutoff.gain,
-      multiplier: filterModAmount,
-      name: "filterCutoff",
-    },
-    {
-      gain: noteData.lfoGains.filterResonance.gain,
-      multiplier: 0.5,
-      name: "filterResonance",
-    },
-    {
-      gain: noteData.lfoGains.oscillatorPitch.gain,
-      multiplier: 0.5,
-      name: "oscillatorPitch",
-    },
-    {
-      gain: noteData.lfoGains.oscillatorVolume.gain,
-      multiplier: 0.05,
-      name: "oscillatorVolume",
-    },
-  ];
-
-  // Batch process all gain updates
-  lfoGainConfigs.forEach(({ gain, multiplier }) => {
-    const targetValue = modDepth * multiplier;
-
-    // Cancel any scheduled changes
-    gain.cancelScheduledValues(currentTime);
-
-    // Set current value
-    gain.setValueAtTime(gain.value, currentTime);
-
-    // Add a small delay before starting the change
-    gain.setValueAtTime(gain.value, currentTime + delayTime);
-
-    // Use linearRampToValueAtTime for smoother transitions
-    gain.linearRampToValueAtTime(
-      targetValue,
-      currentTime + delayTime + smoothingTime
-    );
-  });
 }
 
 function updateSettings(
