@@ -507,6 +507,16 @@ function updateLFOGains(
   gainValues[2] = 0.5; // oscillatorPitch
   gainValues[3] = 0.05; // oscillatorVolume
 
+  // Limit maximum frequency deviation for oscillator pitch
+  if (noteData.oscillators[0]) {
+    const freq = noteData.oscillators[0].frequency.value;
+    // Limit maximum deviation to 1/4 of the base frequency
+    const maxDeviation = freq * 0.25;
+    // Convert to cents (100 cents = 1 semitone)
+    const maxCents = Math.log2(maxDeviation / freq) * 1200;
+    gainValues[2] = Math.min(0.5, maxCents / 100);
+  }
+
   const lfoGainConfigs = [
     {
       gain: noteData.lfoGains.filterCutoff.gain,
