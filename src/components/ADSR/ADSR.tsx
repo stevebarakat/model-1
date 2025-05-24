@@ -34,7 +34,6 @@ const ADSR = React.memo(function ADSR({
   onSustainChange,
   onReleaseChange,
 }: ADSRProps): React.ReactElement {
-  // Keep memoization for controls configuration
   const adsrControls = useMemo<Record<ADSRParam, ADSRValue>>(
     () => ({
       attack: {
@@ -72,7 +71,6 @@ const ADSR = React.memo(function ADSR({
     [attack, decay, sustain, release]
   );
 
-  // Keep memoization for handlers map
   const handlers = useMemo(
     () => ({
       attack: onAttackChange,

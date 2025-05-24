@@ -36,7 +36,6 @@ const OCTAVE_NOTES: Note[] = [
   { note: "B", isSharp: false },
 ];
 
-// Remove useMemo for generateKeyboardKeys
 const generateKeyboardKeys = (octaveRange: {
   min: number;
   max: number;
@@ -55,7 +54,6 @@ const generateKeyboardKeys = (octaveRange: {
   return [...keys, { note: `C${octaveRange.max + 1}`, isSharp: false }];
 };
 
-// Memoize the WhiteKey component
 const WhiteKey = React.memo(
   ({
     isActive,
@@ -80,7 +78,6 @@ const WhiteKey = React.memo(
   )
 );
 
-// Memoize the BlackKey component
 const BlackKey = React.memo(
   ({
     isActive,
@@ -120,10 +117,8 @@ function Keyboard({
 }: KeyboardProps) {
   const [isMouseDown, setIsMouseDown] = useState(false);
 
-  // Remove useMemo for keys array
   const keys = generateKeyboardKeys(octaveRange);
 
-  // Keep useCallback for event handlers as they're used in dependency arrays
   const handleKeyPress = useCallback(
     (note: string): void => {
       onKeyDown(note);
@@ -179,7 +174,6 @@ function Keyboard({
     [isMouseDown, handleKeyRelease]
   );
 
-  // Memoize the white keys render function
   const renderWhiteKeys = useCallback(() => {
     return keys
       .filter((key) => !key.isSharp)
@@ -209,7 +203,6 @@ function Keyboard({
     handleKeyLeave,
   ]);
 
-  // Memoize the black keys render function
   const renderBlackKeys = useCallback(() => {
     const whiteKeyWidth = 100 / keys.filter((key) => !key.isSharp).length;
 
@@ -267,5 +260,4 @@ function Keyboard({
   );
 }
 
-// Remove React.memo from Keyboard component export
 export default Keyboard;
