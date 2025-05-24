@@ -12,18 +12,18 @@ const CC_MODULATION = 1;
 const CC_VOLUME = 7;
 const CC_PAN = 10;
 
+type MIDIValue = number;
+type NoteName = string;
+
 // Helper function for exponential scaling with linear start
-const expScale = (value: number): number => {
-  // Convert 0-127 to 0-1 range
+function expScale(value: MIDIValue): MIDIValue {
   const normalized = value / 127;
-  // Use a mix of linear and exponential curves
-  // This gives more control in the lower range while still providing exponential response
   const scaled =
     normalized < 0.3
-      ? normalized * (1 / 0.3) * 0.3 // Linear scaling for first 30%
-      : 0.3 + Math.pow((normalized - 0.3) / 0.7, 1.5) * 0.7; // Exponential for remaining 70%
+      ? normalized * (1 / 0.3) * 0.3
+      : 0.3 + Math.pow((normalized - 0.3) / 0.7, 1.5) * 0.7;
   return Math.round(scaled * 100);
-};
+}
 
 // Type definitions for Web MIDI API
 interface MIDIMessageEvent {
@@ -51,65 +51,70 @@ declare global {
   }
 }
 
+function midiNoteToNote(midiNote: MIDIValue): NoteName {
+  const noteNames = [
+    "C",
+    "C#",
+    "D",
+    "D#",
+    "E",
+    "F",
+    "F#",
+    "G",
+    "G#",
+    "A",
+    "A#",
+    "B",
+  ];
+  const octave = Math.floor(midiNote / 12) - 1;
+  const noteIndex = midiNote % 12;
+  return `${noteNames[noteIndex]}${octave}`;
+}
+
 export function useMidiHandling() {
   const { setActiveKeys, setPitchWheel, setModWheel, keyboardRef } =
     useSynthStore();
 
-  // Store current values to prevent state loss
-  const currentPitch = useRef<number>(50); // Center position
-  const currentMod = useRef<number>(0); // Start at 0
-  const pendingMod = useRef<number | null>(null);
-  const animationFrameId = useRef<number>();
+  const currentPitch = useRef<MIDIValue>(50);
+  const currentMod = useRef<MIDIValue>(0);
+  const pendingMod = useRef<MIDIValue | null>(null);
+  const pendingPitch = useRef<MIDIValue | null>(null);
+  const animationFrameId = useRef<number | undefined>(undefined);
 
-  const midiNoteToNote = useCallback((midiNote: number): string => {
-    const noteNames = [
-      "C",
-      "C#",
-      "D",
-      "D#",
-      "E",
-      "F",
-      "F#",
-      "G",
-      "G#",
-      "A",
-      "A#",
-      "B",
-    ];
-    const octave = Math.floor(midiNote / 12) - 1;
-    const noteIndex = midiNote % 12;
-    return `${noteNames[noteIndex]}${octave}`;
-  }, []);
-
-  // Process pending modulation updates
-  const processModUpdates = useCallback(() => {
+  const processUpdates = useCallback(() => {
     if (pendingMod.current !== null) {
       setModWheel(pendingMod.current);
       currentMod.current = pendingMod.current;
       keyboardRef.synth?.updateSettings({ modWheel: pendingMod.current });
       pendingMod.current = null;
     }
-    animationFrameId.current = requestAnimationFrame(processModUpdates);
-  }, [setModWheel, keyboardRef]);
 
-  // Start the update loop
+    if (pendingPitch.current !== null) {
+      setPitchWheel(pendingPitch.current);
+      currentPitch.current = pendingPitch.current;
+      pendingPitch.current = null;
+    }
+
+    animationFrameId.current = requestAnimationFrame(processUpdates);
+  }, [setModWheel, setPitchWheel, keyboardRef]);
+
   useEffect(() => {
-    animationFrameId.current = requestAnimationFrame(processModUpdates);
+    animationFrameId.current = requestAnimationFrame(processUpdates);
     return () => {
       if (animationFrameId.current) {
         cancelAnimationFrame(animationFrameId.current);
       }
     };
-  }, [processModUpdates]);
+  }, [processUpdates]);
 
   const handleMidiMessage = useCallback(
     (event: MIDIMessageEvent) => {
       const [status, data1, data2] = event.data;
       const messageType = status & 0xf0;
-      let note: string;
-      let rawValue: number;
-      let newModValue: number;
-      let newPitchValue: number;
+      let note: NoteName;
+      let rawValue: MIDIValue;
+      let newModValue: MIDIValue;
+      let newPitchValue: MIDIValue;
 
       switch (messageType) {
         case MIDI_NOTE_ON:
@@ -147,26 +152,22 @@ export function useMidiHandling() {
         case MIDI_PITCH_BEND:
           rawValue = data1 + (data2 << 7);
           newPitchValue = Math.round((rawValue / 16383) * 100);
-          setPitchWheel(newPitchValue);
-          currentPitch.current = newPitchValue;
+          pendingPitch.current = newPitchValue;
           break;
       }
     },
-    [midiNoteToNote, setActiveKeys, keyboardRef]
+    [setActiveKeys, keyboardRef]
   );
 
-  // Initialize MIDI
   useEffect(() => {
     async function setupMidi() {
       try {
         const midiAccess = await navigator.requestMIDIAccess();
 
-        // Handle MIDI inputs
         midiAccess.inputs.forEach((input) => {
           input.onmidimessage = handleMidiMessage;
         });
 
-        // Handle new MIDI inputs being connected
         midiAccess.onstatechange = (event) => {
           const port = event.port;
           if (port && port.type === "input" && port.state === "connected") {
