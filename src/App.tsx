@@ -171,7 +171,6 @@ function App() {
           />
 
           <Keyboard
-            ref={keyboardRef}
             activeKeys={activeKeys}
             onKeyDown={handleKeyDown}
             onKeyUp={handleKeyUp}

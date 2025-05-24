@@ -1,4 +1,4 @@
-import { useState, useCallback, useMemo } from "react";
+import { useState, useCallback } from "react";
 import styles from "./Keyboard.module.css";
 import React from "react";
 
@@ -36,7 +36,7 @@ const OCTAVE_NOTES: Note[] = [
   { note: "B", isSharp: false },
 ];
 
-// Memoize the keyboard generation function
+// Remove useMemo for generateKeyboardKeys
 const generateKeyboardKeys = (octaveRange: {
   min: number;
   max: number;
@@ -120,10 +120,10 @@ function Keyboard({
 }: KeyboardProps) {
   const [isMouseDown, setIsMouseDown] = useState(false);
 
-  // Memoize the keys array
-  const keys = useMemo(() => generateKeyboardKeys(octaveRange), [octaveRange]);
+  // Remove useMemo for keys array
+  const keys = generateKeyboardKeys(octaveRange);
 
-  // Memoize event handlers
+  // Keep useCallback for event handlers as they're used in dependency arrays
   const handleKeyPress = useCallback(
     (note: string): void => {
       onKeyDown(note);
@@ -267,5 +267,5 @@ function Keyboard({
   );
 }
 
-// Memoize the entire Keyboard component
-export default React.memo(Keyboard);
+// Remove React.memo from Keyboard component export
+export default Keyboard;

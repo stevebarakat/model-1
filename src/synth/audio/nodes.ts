@@ -7,7 +7,7 @@ export function createOscillator(
   baseFrequency: number
 ): OscillatorNode {
   const oscillator = context.createOscillator();
-  oscillator.type = settings.type;
+  oscillator.type = settings.type || "sine";
   const rangeMultiplier = getRangeMultiplier(settings.range);
   const frequencyOffset = Math.pow(2, settings.frequency / 12);
   const finalFrequency = baseFrequency * rangeMultiplier * frequencyOffset;
