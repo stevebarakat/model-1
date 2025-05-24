@@ -57,14 +57,9 @@ export function useMidiHandling() {
 
   // Store current values to prevent state loss
   const currentPitch = useRef<number>(50); // Center position
-  const currentMod = useRef<number | null>(null); // Start as null to indicate uninitialized
-  const animationFrameId = useRef<number | undefined>(undefined);
-  const pendingUpdates = useRef<{
-    pitch?: number;
-    mod?: number;
-  }>({});
-  const lastModUpdate = useRef<number>(0);
-  const MOD_UPDATE_INTERVAL = 32; // 32ms between updates (~30fps)
+  const currentMod = useRef<number>(0); // Start at 0
+  const pendingMod = useRef<number | null>(null);
+  const animationFrameId = useRef<number>();
 
   const midiNoteToNote = useCallback((midiNote: number): string => {
     const noteNames = [
@@ -86,40 +81,26 @@ export function useMidiHandling() {
     return `${noteNames[noteIndex]}${octave}`;
   }, []);
 
-  // Process updates in the next animation frame
-  const processUpdates = useCallback(() => {
-    const now = performance.now();
-
-    if (pendingUpdates.current.pitch !== undefined) {
-      setPitchWheel(pendingUpdates.current.pitch);
-      currentPitch.current = pendingUpdates.current.pitch;
-      pendingUpdates.current.pitch = undefined;
+  // Process pending modulation updates
+  const processModUpdates = useCallback(() => {
+    if (pendingMod.current !== null) {
+      setModWheel(pendingMod.current);
+      currentMod.current = pendingMod.current;
+      keyboardRef.synth?.updateSettings({ modWheel: pendingMod.current });
+      pendingMod.current = null;
     }
-
-    if (pendingUpdates.current.mod !== undefined) {
-      // Only update if enough time has passed since last update
-      if (now - lastModUpdate.current >= MOD_UPDATE_INTERVAL) {
-        const newModValue = pendingUpdates.current.mod;
-        setModWheel(newModValue);
-        currentMod.current = newModValue;
-        keyboardRef.synth?.updateSettings({ modWheel: newModValue });
-        lastModUpdate.current = now;
-        pendingUpdates.current.mod = undefined;
-      }
-    }
-
-    animationFrameId.current = requestAnimationFrame(processUpdates);
-  }, [setPitchWheel, setModWheel, keyboardRef]);
+    animationFrameId.current = requestAnimationFrame(processModUpdates);
+  }, [setModWheel, keyboardRef]);
 
   // Start the update loop
   useEffect(() => {
-    animationFrameId.current = requestAnimationFrame(processUpdates);
+    animationFrameId.current = requestAnimationFrame(processModUpdates);
     return () => {
       if (animationFrameId.current) {
         cancelAnimationFrame(animationFrameId.current);
       }
     };
-  }, [processUpdates]);
+  }, [processModUpdates]);
 
   const handleMidiMessage = useCallback(
     (event: MIDIMessageEvent) => {
@@ -127,6 +108,8 @@ export function useMidiHandling() {
       const messageType = status & 0xf0;
       let note: string;
       let rawValue: number;
+      let newModValue: number;
+      let newPitchValue: number;
 
       switch (messageType) {
         case MIDI_NOTE_ON:
@@ -149,8 +132,8 @@ export function useMidiHandling() {
         case MIDI_CONTROL_CHANGE:
           switch (data1) {
             case CC_MODULATION:
-              // Queue the update with debouncing
-              pendingUpdates.current.mod = expScale(data2);
+              newModValue = expScale(data2);
+              pendingMod.current = newModValue;
               break;
             case CC_VOLUME:
               // Handle volume if needed
@@ -163,14 +146,16 @@ export function useMidiHandling() {
 
         case MIDI_PITCH_BEND:
           rawValue = data1 + (data2 << 7);
-          pendingUpdates.current.pitch = Math.round((rawValue / 16383) * 100);
+          newPitchValue = Math.round((rawValue / 16383) * 100);
+          setPitchWheel(newPitchValue);
+          currentPitch.current = newPitchValue;
           break;
       }
     },
     [midiNoteToNote, setActiveKeys, keyboardRef]
   );
 
-  // Initialize with current MIDI values
+  // Initialize MIDI
   useEffect(() => {
     async function setupMidi() {
       try {
@@ -195,12 +180,4 @@ export function useMidiHandling() {
 
     setupMidi();
   }, [handleMidiMessage]);
-
-  // Only set initial values if we haven't received MIDI input yet
-  useEffect(() => {
-    if (currentMod.current === null) {
-      // Don't set any initial value - wait for MIDI input
-      return;
-    }
-  }, []);
 }
