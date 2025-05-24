@@ -260,7 +260,7 @@ export const presets: Record<string, SynthSettings> = {
     },
     filter: {
       cutoff: 2000,
-      resonance: 2,
+      resonance: 0.2,
       contourAmount: 0.8,
       type: "lowpass",
     },
