@@ -15,20 +15,20 @@ export type NoteData = {
   oscillatorGains: GainNode[];
   oscillatorPanners: StereoPannerNode[];
   gainNode: GainNode;
-  filterNode: BiquadFilterNode;
-  lfo: OscillatorNode;
-  lfoGains: {
+  filterNode?: BiquadFilterNode | null;
+  lfo?: OscillatorNode | null;
+  lfoGains?: {
     filterCutoff: GainNode;
     filterResonance: GainNode;
     oscillatorPitch: GainNode;
     oscillatorVolume: GainNode;
   };
-  filterEnvelope: GainNode;
-  filterModGain: GainNode;
-  noiseNode: AudioWorkletNode | null;
-  noiseGain: GainNode | null;
-  noisePanner: StereoPannerNode | null;
-  noiseFilter: BiquadFilterNode | null;
+  filterEnvelope?: GainNode | null;
+  filterModGain?: GainNode | null;
+  noiseNode?: AudioWorkletNode | null;
+  noiseGain?: GainNode | null;
+  noisePanner?: StereoPannerNode | null;
+  noiseFilter?: BiquadFilterNode | null;
 };
 
 export type NoteState = {
