@@ -74,6 +74,23 @@
   width: 1030px;
   border-right: 2px solid var(--color-off-black);
   border-left: 2px solid var(--color-off-black);
+  &::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: calc(100% - 24px);
+    margin-left: 12px;
+    height: 12px;
+    background: linear-gradient(
+      to bottom,
+      hsl(217deg 50% 25%) 0%,
+      hsl(217deg 50% 8%) 100%
+    );
+    z-index: 100;
+    box-shadow: inset 1px 0 2px hsl(0deg 0% 5% / 100%),
+      inset -1px 0 2px hsl(0deg 0% 5% / 100%);
+  }
 }
 
 .controlsContainer {
