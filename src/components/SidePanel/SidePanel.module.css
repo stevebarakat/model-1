@@ -4,15 +4,8 @@
   flex-direction: column;
   align-items: center;
   margin: 6px 0 12px;
-  background: linear-gradient(
-    0deg,
-    hsl(217deg 10% 10% / 90%),
-    hsl(217deg 10% 15%),
-    hsl(217deg 10% 20%),
-    hsl(217deg 10% 15%),
-    hsl(217deg 10% 10% / 90%)
-  );
-  background-color: hsl(217deg 10% 10% / 90%); /* Dark metallic black */
+  box-shadow: inset 1px 0 4px hsl(0deg 0% 5% / 100%),
+    inset -1px 0 4px hsl(0deg 0% 5% / 100%);
 }
 
 .modWheels {

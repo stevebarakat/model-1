@@ -1,36 +1,6 @@
 .keyboardContainer {
   margin-bottom: var(--spacing-md);
   width: 100%;
-
-  &::before {
-    content: "";
-    position: absolute;
-    bottom: 1px;
-    left: 12px;
-    width: 1.5%;
-    height: 100%;
-    background: linear-gradient(
-      270deg,
-      hsl(217deg 50% 0% / 0%) 0%,
-      hsl(217deg 10% 5% / 25%) 80%,
-      hsl(217deg 10% 5% / 50%) 100%
-    );
-  }
-
-  &::after {
-    position: absolute;
-    right: 12px;
-    bottom: 1px;
-    width: 1.5%;
-    height: 100%;
-    background: linear-gradient(
-      90deg,
-      hsl(217deg 50% 0% / 0%) 0%,
-      hsl(217deg 10% 5% / 50%) 80%,
-      hsl(217deg 10% 5% / 50%) 100%
-    );
-    content: "";
-  }
 }
 
 .keyboard {
