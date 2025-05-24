@@ -61,7 +61,7 @@
 
 .knobLabel {
   position: absolute;
-  top: -15px;
+  top: -24px;
   left: 50%;
   transform: translateX(-50%);
   font-size: var(--font-size-sm);
@@ -149,8 +149,6 @@
 
 .knobValue {
   position: absolute;
-  top: -20px;
-  left: 50%;
   white-space: nowrap;
   user-select: none;
   font-size: var(--font-size-xs);
@@ -160,4 +158,5 @@
 .knobValueContainer {
   position: absolute;
   left: 12.5%;
+  top: -1px;
 }

@@ -85,7 +85,7 @@ function ArrowKnob({
       : value.toFixed(step >= 1 ? 0 : 2) + (unit ? ` ${unit}` : "");
 
   const knobSize = 80; // px, adjust as needed
-  const labelRadius = 38; // px, adjust for label distance from center
+  const labelRadius = 46; // px, adjust for label distance from center
   const stepValues = getStepValues(min, max, step);
 
   function handleMouseDown(e: React.MouseEvent): void {
