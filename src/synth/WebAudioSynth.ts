@@ -209,6 +209,10 @@ function createLFOConnections(
   noteData: NoteData,
   routing: LFORouting
 ): LFOConnection[] {
+  if (!noteData.lfoGains || !noteData.filterNode) {
+    return [];
+  }
+
   return [
     {
       source: noteData.lfoGains.filterCutoff,
@@ -234,8 +238,13 @@ function createLFOConnections(
 }
 
 function reconnectLFO(noteData: NoteData, routing: LFORouting): void {
+  if (!noteData.lfoGains) {
+    return;
+  }
+
   // First disconnect all connections
-  Object.values(noteData.lfoGains).forEach((gain) => {
+  const gains = Object.values(noteData.lfoGains);
+  gains.forEach((gain) => {
     gain.disconnect();
   });
 
@@ -480,6 +489,10 @@ function updateLFOGains(
   baseCutoff: number,
   currentTime: number
 ): void {
+  if (!noteData.lfoGains) {
+    return;
+  }
+
   const smoothingTime = 0.2;
   const delayTime = 0.02;
 
@@ -543,7 +556,7 @@ function updateModulation(
   state: SynthState,
   modAmount: number
 ): void {
-  if (!state.noteData || !state.noteData.lfo) {
+  if (!state.noteData || !state.noteData.lfo || !state.noteData.lfoGains) {
     return;
   }
 
@@ -557,7 +570,8 @@ function updateModulation(
     try {
       state.noteData.lfo.stop();
       state.noteData.lfo.disconnect();
-      Object.values(state.noteData.lfoGains).forEach((gain) => {
+      const gains = Object.values(state.noteData.lfoGains);
+      gains.forEach((gain) => {
         gain.disconnect();
       });
       // Create a new LFO that's stopped
