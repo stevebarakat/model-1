@@ -67,7 +67,6 @@ function Knob({
   const [isKeyboardActive, setIsKeyboardActive] = useState(false);
   const [startY, setStartY] = useState(0);
   const [startValue, setStartValue] = useState(0);
-  const [isRightSide, setIsRightSide] = useState(false);
 
   const rotation = getRotation(value, min, max, logarithmic);
   const displayValue = getDisplayValue(value, step, unit, valueLabels);
@@ -77,15 +76,7 @@ function Knob({
       : value.toFixed(step >= 1 ? 0 : 2) + (unit ? ` ${unit}` : "");
 
   function handleMouseDown(e: React.MouseEvent): void {
-    const knobRect = knobRef.current?.getBoundingClientRect();
-    if (!knobRect) return;
-
-    // Calculate if the click was on the right side of the knob's center
-    const knobCenterX = knobRect.left + knobRect.width / 2;
-    const isRight = e.clientX > knobCenterX;
-
     setIsDragging(true);
-    setIsRightSide(isRight);
     setStartY(e.clientY);
     setStartValue(value);
   }
@@ -97,15 +88,12 @@ function Knob({
       const range = max - min;
       let newValue;
 
-      // Use the stored isRightSide value instead of calculating it during drag
-      const adjustedDeltaY = isRightSide ? -deltaY : deltaY;
-
       if (logarithmic) {
         const logMin = Math.log(min);
         const logMax = Math.log(max);
         const logRange = logMax - logMin;
         const logStartValue = Math.log(startValue);
-        const logDelta = (adjustedDeltaY / 100) * logRange;
+        const logDelta = (deltaY / 100) * logRange;
         const logNewValue = Math.min(
           logMax,
           Math.max(logMin, logStartValue + logDelta)
@@ -114,7 +102,7 @@ function Knob({
       } else {
         newValue = Math.min(
           max,
-          Math.max(min, startValue + (adjustedDeltaY / 100) * range)
+          Math.max(min, startValue + (deltaY / 100) * range)
         );
       }
 
@@ -123,7 +111,7 @@ function Knob({
       newValue = steps * step;
       onChange(Number(newValue.toFixed(step >= 1 ? 0 : 2)));
     },
-    [min, max, startY, startValue, onChange, logarithmic, isRightSide, step]
+    [min, max, startY, startValue, onChange, logarithmic, step]
   );
 
   const handleKeyDown = useCallback(
