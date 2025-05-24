@@ -497,7 +497,9 @@ function updateLFOGains(
   const delayTime = 0.02;
 
   // Pre-calculate common values using Float32Array
-  const modDepth = modAmount * lfoDepth;
+  // Scale down modAmount when it's at maximum (100%)
+  const scaledModAmount = modAmount === 1 ? 0.7 : modAmount;
+  const modDepth = scaledModAmount * lfoDepth;
   const filterModAmount = baseCutoff * 0.02;
 
   // Create a Float32Array for gain values
@@ -507,14 +509,15 @@ function updateLFOGains(
   gainValues[2] = 0.5; // oscillatorPitch
   gainValues[3] = 0.05; // oscillatorVolume
 
-  // Limit maximum frequency deviation for oscillator pitch
+  // Scale oscillator pitch modulation based on range
   if (noteData.oscillators[0]) {
     const freq = noteData.oscillators[0].frequency.value;
-    // Limit maximum deviation to 1/4 of the base frequency
-    const maxDeviation = freq * 0.25;
-    // Convert to cents (100 cents = 1 semitone)
-    const maxCents = Math.log2(maxDeviation / freq) * 1200;
-    gainValues[2] = Math.min(0.5, maxCents / 100);
+    const baseFreq =
+      freq /
+      getRangeMultiplier(noteData.oscillators[0].type === "sine" ? "8" : "8");
+    // Scale modulation inversely with frequency ratio
+    const freqRatio = freq / baseFreq;
+    gainValues[2] = Math.min(0.5, 0.5 / Math.sqrt(freqRatio));
   }
 
   const lfoGainConfigs = [
