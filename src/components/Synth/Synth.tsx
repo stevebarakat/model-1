@@ -6,8 +6,7 @@ import SynthControls from "@/components/SynthControls";
 import Keyboard from "@/components/Keyboard";
 import SidePanel from "@/components/SidePanel";
 import { useSynthStore } from "@/store/synthStore";
-import styles from "@/styles/App.module.css";
-import "@/styles/variables.css";
+import styles from "./Synth.module.css";
 import RightPanel from "@/components/RightPanel";
 
 function Synth() {
