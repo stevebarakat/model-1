@@ -6,7 +6,6 @@
 .keyboard {
   padding: 0 3px 4px;
   background: var(--color-off-black);
-  border-radius: 0 0 4px;
   box-shadow: 0 4px 6px -1px hsl(217deg 30% 25%),
     0 4px 6px -1px hsl(217deg 50% 10%);
 
