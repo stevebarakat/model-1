@@ -1,4 +1,5 @@
 import Knob from "../Knob";
+import ArrowKnob from "../ArrowKnob/ArrowKnob";
 import styles from "./RightPanel.module.css";
 
 type TopControlsProps = {
@@ -14,16 +15,29 @@ function TopControls({
   glide,
   onGlideChange,
 }: TopControlsProps) {
+  const octaveLabels = {
+    [-2]: "-2",
+    [-1]: "-1",
+    0: "0",
+    1: "+1",
+    2: "+2",
+  };
+
+  const handleOctaveChange = (value: number) => {
+    onOctaveChange(Math.round(value));
+  };
+
   return (
     <div className={styles.topControls}>
-      <Knob
+      <ArrowKnob
         value={octave}
         min={-2}
         max={2}
         step={1}
         label="Octave"
         unit=""
-        onChange={onOctaveChange}
+        onChange={handleOctaveChange}
+        valueLabels={octaveLabels}
       />
       <Knob
         value={glide}

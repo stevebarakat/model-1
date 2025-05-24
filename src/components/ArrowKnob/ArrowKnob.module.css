@@ -59,6 +59,16 @@
   place-items: center;
 }
 
+.knobLabel {
+  position: absolute;
+  top: -15px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: var(--font-size-sm);
+  text-transform: uppercase;
+  font-weight: 600;
+}
+
 .line {
   position: absolute;
   top: 28%;
