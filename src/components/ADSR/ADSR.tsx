@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo } from "react";
+import React, { useMemo } from "react";
 import Knob from "../Knob/Knob";
 import styles from "../Modifiers/Modifiers.module.css";
 
@@ -34,7 +34,7 @@ const ADSR = React.memo(function ADSR({
   onSustainChange,
   onReleaseChange,
 }: ADSRProps): React.ReactElement {
-  // Memoize the controls configuration
+  // Keep memoization for controls configuration
   const adsrControls = useMemo<Record<ADSRParam, ADSRValue>>(
     () => ({
       attack: {
@@ -72,49 +72,15 @@ const ADSR = React.memo(function ADSR({
     [attack, decay, sustain, release]
   );
 
-  // Memoize the handlers
-  const handleAttackChange = useCallback(
-    (value: number) => {
-      onAttackChange(value);
-    },
-    [onAttackChange]
-  );
-
-  const handleDecayChange = useCallback(
-    (value: number) => {
-      onDecayChange(value);
-    },
-    [onDecayChange]
-  );
-
-  const handleSustainChange = useCallback(
-    (value: number) => {
-      onSustainChange(value);
-    },
-    [onSustainChange]
-  );
-
-  const handleReleaseChange = useCallback(
-    (value: number) => {
-      onReleaseChange(value);
-    },
-    [onReleaseChange]
-  );
-
-  // Memoize the handlers map
+  // Keep memoization for handlers map
   const handlers = useMemo(
     () => ({
-      attack: handleAttackChange,
-      decay: handleDecayChange,
-      sustain: handleSustainChange,
-      release: handleReleaseChange,
+      attack: onAttackChange,
+      decay: onDecayChange,
+      sustain: onSustainChange,
+      release: onReleaseChange,
     }),
-    [
-      handleAttackChange,
-      handleDecayChange,
-      handleSustainChange,
-      handleReleaseChange,
-    ]
+    [onAttackChange, onDecayChange, onSustainChange, onReleaseChange]
   );
 
   return (
