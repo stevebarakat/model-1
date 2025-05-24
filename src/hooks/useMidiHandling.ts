@@ -12,9 +12,6 @@ const CC_MODULATION = 1;
 const CC_VOLUME = 7;
 const CC_PAN = 10;
 
-// Debounce time in milliseconds
-const DEBOUNCE_TIME = 16; // Approximately 60fps
-
 // Helper function for exponential scaling with linear start
 const expScale = (value: number): number => {
   // Convert 0-127 to 0-1 range
@@ -58,9 +55,14 @@ export function useMidiHandling() {
   const { setActiveKeys, setPitchWheel, setModWheel, keyboardRef } =
     useSynthStore();
 
-  // Refs to store the last update time for each control
-  const lastPitchUpdate = useRef<number>(0);
-  const lastModUpdate = useRef<number>(0);
+  // Store current values to prevent state loss
+  const currentPitch = useRef<number>(50); // Center position
+  const currentMod = useRef<number>(0);
+  const animationFrameId = useRef<number>();
+  const pendingUpdates = useRef<{
+    pitch?: number;
+    mod?: number;
+  }>({});
 
   const midiNoteToNote = useCallback((midiNote: number): string => {
     const noteNames = [
@@ -82,12 +84,37 @@ export function useMidiHandling() {
     return `${noteNames[noteIndex]}${octave}`;
   }, []);
 
+  // Process updates in the next animation frame
+  const processUpdates = useCallback(() => {
+    if (pendingUpdates.current.pitch !== undefined) {
+      setPitchWheel(pendingUpdates.current.pitch);
+      currentPitch.current = pendingUpdates.current.pitch;
+      pendingUpdates.current.pitch = undefined;
+    }
+    if (pendingUpdates.current.mod !== undefined) {
+      setModWheel(pendingUpdates.current.mod);
+      currentMod.current = pendingUpdates.current.mod;
+      pendingUpdates.current.mod = undefined;
+    }
+    animationFrameId.current = requestAnimationFrame(processUpdates);
+  }, [setPitchWheel, setModWheel]);
+
+  // Start the update loop
+  useEffect(() => {
+    animationFrameId.current = requestAnimationFrame(processUpdates);
+    return () => {
+      if (animationFrameId.current) {
+        cancelAnimationFrame(animationFrameId.current);
+      }
+    };
+  }, [processUpdates]);
+
   const handleMidiMessage = useCallback(
     (event: MIDIMessageEvent) => {
       const [status, data1, data2] = event.data;
       const messageType = status & 0xf0;
-      const now = Date.now();
       let note: string;
+      let rawValue: number;
 
       switch (messageType) {
         case MIDI_NOTE_ON:
@@ -112,12 +139,7 @@ export function useMidiHandling() {
         case MIDI_CONTROL_CHANGE:
           switch (data1) {
             case CC_MODULATION:
-              // Only update if enough time has passed since last update
-              if (now - lastModUpdate.current >= DEBOUNCE_TIME) {
-                const normalizedValue = expScale(data2);
-                setModWheel(normalizedValue);
-                lastModUpdate.current = now;
-              }
+              pendingUpdates.current.mod = expScale(data2);
               break;
             case CC_VOLUME:
               // Handle volume if needed
@@ -129,21 +151,14 @@ export function useMidiHandling() {
           break;
 
         case MIDI_PITCH_BEND:
-          // Only update if enough time has passed since last update
-          if (now - lastPitchUpdate.current >= DEBOUNCE_TIME) {
-            // Combine the two bytes and normalize to 0-100 range
-            // Center is at 8192 (0x2000)
-            const rawValue = data1 + (data2 << 7);
-            const normalizedValue = Math.round(
-              ((rawValue - 8192) / 8192) * 50 + 50
-            );
-            setPitchWheel(normalizedValue);
-            lastPitchUpdate.current = now;
-          }
+          // Combine the two bytes for 14-bit resolution (0-16383)
+          rawValue = data1 + (data2 << 7);
+          // Simple linear mapping from 0-16383 to 0-100
+          pendingUpdates.current.pitch = Math.round((rawValue / 16383) * 100);
           break;
       }
     },
-    [midiNoteToNote, setActiveKeys, setModWheel, setPitchWheel, keyboardRef]
+    [midiNoteToNote, setActiveKeys, keyboardRef]
   );
 
   useEffect(() => {
@@ -170,4 +185,10 @@ export function useMidiHandling() {
 
     setupMidi();
   }, [handleMidiMessage]);
+
+  // Ensure values are maintained on re-renders
+  useEffect(() => {
+    setPitchWheel(currentPitch.current);
+    setModWheel(currentMod.current);
+  }, [setPitchWheel, setModWheel]);
 }
