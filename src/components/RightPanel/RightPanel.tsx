@@ -2,28 +2,28 @@ import Knob from "../Knob";
 import styles from "./RightPanel.module.css";
 
 type TopControlsProps = {
-  tune: number;
-  onTuneChange: (value: number) => void;
+  octave: number;
+  onOctaveChange: (value: number) => void;
   glide: number;
   onGlideChange: (value: number) => void;
 };
 
 function TopControls({
-  tune,
-  onTuneChange,
+  octave,
+  onOctaveChange,
   glide,
   onGlideChange,
 }: TopControlsProps) {
   return (
     <div className={styles.topControls}>
       <Knob
-        value={tune}
-        min={-50}
-        max={50}
+        value={octave}
+        min={-2}
+        max={2}
         step={1}
-        label="Tune"
-        unit="ct"
-        onChange={onTuneChange}
+        label="Octave"
+        unit=""
+        onChange={onOctaveChange}
       />
       <Knob
         value={glide}
@@ -47,8 +47,8 @@ function RightPanel(props: RightPanelProps) {
       <div className={styles.screwBottomLeft} />
       <div className={styles.screwBottomRight} />
       <TopControls
-        tune={props.tune}
-        onTuneChange={props.onTuneChange}
+        octave={props.octave}
+        onOctaveChange={props.onOctaveChange}
         glide={props.glide}
         onGlideChange={props.onGlideChange}
       />

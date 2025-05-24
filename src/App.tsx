@@ -34,8 +34,8 @@ function App() {
     updateModifiers,
     noise,
     updateNoise,
-    tune,
-    setTune,
+    octave,
+    setOctave,
     setKeyboardRef,
   } = useSynthStore();
 
@@ -70,7 +70,7 @@ function App() {
     if (!preset) return;
 
     // Update all synth settings
-    setTune(preset.tune);
+    setOctave(preset.octave);
     setGlide(preset.glide);
     updateMixer({ modMix: preset.modMix });
     setModWheel(preset.modWheel);
@@ -150,7 +150,7 @@ function App() {
           contourAmount: modifiers.contourAmount,
           type: modifiers.filterType,
         },
-        tune: tune + ((pitchWheel - 50) / 50) * 100,
+        octave: octave + ((pitchWheel - 50) / 50) * 2,
         modMix: mixer.modMix,
         modWheel,
         glide,
@@ -173,7 +173,7 @@ function App() {
     pitchWheel,
     modWheel,
     glide,
-    tune,
+    octave,
     effects,
     noise,
   ]);
@@ -223,10 +223,10 @@ function App() {
           />
 
           <RightPanel
+            octave={octave}
+            onOctaveChange={setOctave}
             glide={glide}
             onGlideChange={setGlide}
-            tune={tune}
-            onTuneChange={setTune}
           />
         </div>
       </div>

@@ -126,7 +126,7 @@ function createInitialState(): SynthState {
     noteState: null,
     noteData: null,
     settings: {
-      tune: 0,
+      octave: 0,
       modMix: 0,
       modWheel: 50,
       glide: 0,
@@ -663,7 +663,7 @@ function updateSettings(
               const newOsc = createOscillator(
                 synthContext.context,
                 oscSettings,
-                noteToFrequency(state.currentNote!, state.settings.tune)
+                noteToFrequency(state.currentNote!, state.settings.octave)
               );
               const newGain = createGainNode(synthContext.context, volume);
               const newPanner = synthContext.context.createStereoPanner();
@@ -684,7 +684,7 @@ function updateSettings(
               const rangeMultiplier = getRangeMultiplier(oscSettings.range);
               const frequencyOffset = Math.pow(2, oscSettings.frequency / 12);
               const newFrequency =
-                noteToFrequency(state.currentNote!, state.settings.tune) *
+                noteToFrequency(state.currentNote!, state.settings.octave) *
                 rangeMultiplier *
                 frequencyOffset;
               osc.frequency.value = newFrequency;
@@ -873,7 +873,7 @@ function updateSettings(
       if (state.noteData?.noiseFilter && state.currentNote) {
         const noteFreq = noteToFrequency(
           state.currentNote,
-          state.settings.tune
+          state.settings.octave
         );
         let freq;
 
@@ -893,7 +893,7 @@ function updateSettings(
   if (state.noteData && state.currentNote) {
     const baseFrequency = noteToFrequency(
       state.currentNote,
-      state.settings.tune
+      state.settings.octave
     );
 
     state.noteData.oscillators.forEach((osc, index) => {
@@ -1001,6 +1001,10 @@ function updateSettings(
     const modAmount = (state.settings.modWheel / 100) * state.settings.modMix;
     updateModulation(synthContext, state, modAmount);
   }
+
+  if (newSettings.octave !== undefined) {
+    state.settings.octave = newSettings.octave;
+  }
 }
 
 function handleNoteTransition(
@@ -1014,7 +1018,7 @@ function handleNoteTransition(
   // Calculate the last frequency from the fromNote if available
   let lastFrequency = null;
   if (fromNote) {
-    lastFrequency = noteToFrequency(fromNote, state.settings.tune);
+    lastFrequency = noteToFrequency(fromNote, state.settings.octave);
   } else if (state.currentNote && state.noteData) {
     // Fallback to current oscillator frequency if no fromNote
     const activeOsc = state.noteData.oscillators[0];
@@ -1025,7 +1029,7 @@ function handleNoteTransition(
 
   // If we have an existing note, smoothly transition its frequency
   if (state.noteData && state.currentNote) {
-    const targetFrequency = noteToFrequency(toNote, state.settings.tune);
+    const targetFrequency = noteToFrequency(toNote, state.settings.octave);
 
     // Update all oscillators to the new frequency
     state.noteData.oscillators.forEach((osc, index) => {
@@ -1131,7 +1135,7 @@ function triggerAttack(
     return;
   }
 
-  const targetFrequency = noteToFrequency(note, state.settings.tune);
+  const targetFrequency = noteToFrequency(note, state.settings.octave);
 
   // Use lastPlayedFrequency for glide if available and no explicit lastFrequency
   const glideStartFrequency = lastFrequency ?? state.lastPlayedFrequency;

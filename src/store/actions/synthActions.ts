@@ -12,7 +12,7 @@ export function createSynthActions(
     setKeyboardRef: (ref) => set({ keyboardRef: ref }),
     setPitchWheel: (value) => set({ pitchWheel: value }),
     setModWheel: (value) => set({ modWheel: value }),
-    setTune: (value) => set({ tune: value }),
+    setOctave: (value) => set({ octave: value }),
     setModMix: (value) => set({ modMix: value }),
     setCurrentOctave: (value) => set({ currentOctave: value }),
     setGlide: (value) => set({ glide: value }),

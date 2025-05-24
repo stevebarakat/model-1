@@ -57,7 +57,7 @@ export type LFORouting = {
 };
 
 export type SynthSettings = {
-  tune: number;
+  octave: number;
   modMix: number;
   modWheel: number;
   glide: number;

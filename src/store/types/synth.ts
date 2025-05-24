@@ -15,7 +15,7 @@ export type SynthState = {
   // Controller state
   pitchWheel: number;
   modWheel: number;
-  tune: number;
+  octave: number;
   modMix: number;
   currentOctave: number;
   glide: number;
@@ -92,7 +92,7 @@ export type SynthActions = {
   }) => void;
   setPitchWheel: (value: number) => void;
   setModWheel: (value: number) => void;
-  setTune: (value: number) => void;
+  setOctave: (value: number) => void;
   setModMix: (value: number) => void;
   setCurrentOctave: (value: number) => void;
   setGlide: (value: number) => void;

@@ -2,7 +2,7 @@ import { SynthSettings } from "./types";
 
 export const presets: Record<string, SynthSettings> = {
   "Classic Moog": {
-    tune: 0,
+    octave: 0,
     modMix: 50,
     modWheel: 50,
     glide: 0,
@@ -76,7 +76,7 @@ export const presets: Record<string, SynthSettings> = {
     },
   },
   "Warm Pad": {
-    tune: 0,
+    octave: 0,
     modMix: 50,
     modWheel: 50,
     glide: 0.3,
@@ -150,7 +150,7 @@ export const presets: Record<string, SynthSettings> = {
     },
   },
   "Bass Lead": {
-    tune: 0,
+    octave: 0,
     modMix: 50,
     modWheel: 50,
     glide: 0.1,
@@ -224,7 +224,7 @@ export const presets: Record<string, SynthSettings> = {
     },
   },
   Pluck: {
-    tune: 0,
+    octave: 0,
     modMix: 50,
     modWheel: 50,
     glide: 0,

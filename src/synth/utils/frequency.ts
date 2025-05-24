@@ -13,11 +13,11 @@ export const NOTE_FREQUENCIES: Record<string, number> = {
   B: 493.88,
 };
 
-export function noteToFrequency(note: string, tune: number = 0): number {
+export function noteToFrequency(note: string, octaveShift: number = 0): number {
   const noteName = note.slice(0, -1);
   const octave = parseInt(note.slice(-1));
   const baseFrequency = NOTE_FREQUENCIES[noteName];
-  return baseFrequency * Math.pow(2, octave - 4 + tune / 1200);
+  return baseFrequency * Math.pow(2, octave - 4 + octaveShift);
 }
 
 export function getRangeMultiplier(range: string): number {

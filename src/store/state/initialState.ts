@@ -6,7 +6,7 @@ export function createInitialState(): Omit<
   | "setKeyboardRef"
   | "setPitchWheel"
   | "setModWheel"
-  | "setTune"
+  | "setOctave"
   | "setModMix"
   | "setCurrentOctave"
   | "setGlide"
@@ -22,7 +22,7 @@ export function createInitialState(): Omit<
     keyboardRef: { synth: null },
     pitchWheel: 50,
     modWheel: 50,
-    tune: 0,
+    octave: 0,
     modMix: 50,
     currentOctave: 4,
     glide: 0,
