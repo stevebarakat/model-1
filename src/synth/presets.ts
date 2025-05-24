@@ -186,7 +186,7 @@ export const presets: Record<string, SynthSettings> = {
     },
     filter: {
       cutoff: 500,
-      resonance: 3,
+      resonance: 0.3,
       contourAmount: 0.7,
       type: "lowpass",
     },
