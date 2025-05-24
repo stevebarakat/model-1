@@ -176,12 +176,7 @@ function Knob({
         styles[`knobContainer${size.charAt(0).toUpperCase() + size.slice(1)}`]
       }`}
     >
-      {false ? (
-        <>
-          {<div className={styles.knobLabel}>{label}</div>}
-          <div className={styles.knobValue}>{displayValue}</div>
-        </>
-      ) : isDragging || isKeyboardActive ? (
+      {isDragging || isKeyboardActive ? (
         <div className={styles.knobValue}>{displayValue}</div>
       ) : (
         <div className={styles.knobLabel}>{label}</div>
