@@ -1,4 +1,4 @@
-import { useEffect, useCallback } from "react";
+import { useEffect, useCallback, useRef } from "react";
 import { useSynthStore } from "../store/synthStore";
 
 // MIDI message types
@@ -11,6 +11,22 @@ const MIDI_PITCH_BEND = 0xe0;
 const CC_MODULATION = 1;
 const CC_VOLUME = 7;
 const CC_PAN = 10;
+
+// Debounce time in milliseconds
+const DEBOUNCE_TIME = 16; // Approximately 60fps
+
+// Helper function for exponential scaling with linear start
+const expScale = (value: number): number => {
+  // Convert 0-127 to 0-1 range
+  const normalized = value / 127;
+  // Use a mix of linear and exponential curves
+  // This gives more control in the lower range while still providing exponential response
+  const scaled =
+    normalized < 0.3
+      ? normalized * (1 / 0.3) * 0.3 // Linear scaling for first 30%
+      : 0.3 + Math.pow((normalized - 0.3) / 0.7, 1.5) * 0.7; // Exponential for remaining 70%
+  return Math.round(scaled * 100);
+};
 
 // Type definitions for Web MIDI API
 interface MIDIMessageEvent {
@@ -42,6 +58,10 @@ export function useMidiHandling() {
   const { setActiveKeys, setPitchWheel, setModWheel, keyboardRef } =
     useSynthStore();
 
+  // Refs to store the last update time for each control
+  const lastPitchUpdate = useRef<number>(0);
+  const lastModUpdate = useRef<number>(0);
+
   const midiNoteToNote = useCallback((midiNote: number): string => {
     const noteNames = [
       "C",
@@ -66,7 +86,7 @@ export function useMidiHandling() {
     (event: MIDIMessageEvent) => {
       const [status, data1, data2] = event.data;
       const messageType = status & 0xf0;
-      let normalizedValue: number;
+      const now = Date.now();
       let note: string;
 
       switch (messageType) {
@@ -92,8 +112,12 @@ export function useMidiHandling() {
         case MIDI_CONTROL_CHANGE:
           switch (data1) {
             case CC_MODULATION:
-              // MIDI CC values are 0-127, normalize to 0-100
-              setModWheel((data2 / 127) * 100);
+              // Only update if enough time has passed since last update
+              if (now - lastModUpdate.current >= DEBOUNCE_TIME) {
+                const normalizedValue = expScale(data2);
+                setModWheel(normalizedValue);
+                lastModUpdate.current = now;
+              }
               break;
             case CC_VOLUME:
               // Handle volume if needed
@@ -105,10 +129,17 @@ export function useMidiHandling() {
           break;
 
         case MIDI_PITCH_BEND:
-          // MIDI pitch bend is 14-bit (0-16383), center at 8192
-          // Normalize to 0-100 range, with 50 being center
-          normalizedValue = ((data1 + (data2 << 7)) / 16383) * 100;
-          setPitchWheel(normalizedValue);
+          // Only update if enough time has passed since last update
+          if (now - lastPitchUpdate.current >= DEBOUNCE_TIME) {
+            // Combine the two bytes and normalize to 0-100 range
+            // Center is at 8192 (0x2000)
+            const rawValue = data1 + (data2 << 7);
+            const normalizedValue = Math.round(
+              ((rawValue - 8192) / 8192) * 50 + 50
+            );
+            setPitchWheel(normalizedValue);
+            lastPitchUpdate.current = now;
+          }
           break;
       }
     },
