@@ -1021,8 +1021,8 @@ function handleNoteTransition(
         // Set the current value
         osc.frequency.setValueAtTime(osc.frequency.value, now);
 
-        // Schedule the frequency change
-        osc.frequency.linearRampToValueAtTime(newFrequency, now + 0.01);
+        // Schedule the frequency change with a longer transition time
+        osc.frequency.linearRampToValueAtTime(newFrequency, now + 0.05); // 50ms transition
       }
     });
 
@@ -1050,18 +1050,33 @@ function triggerAttack(
       state.lastPlayedFrequency = currentFreq;
     }
 
-    // Stop and disconnect existing oscillators
-    state.noteData.oscillators.forEach((osc) => {
-      if (osc) {
-        try {
-          osc.stop();
-          osc.disconnect();
-        } catch (e) {
-          console.warn("Error cleaning up oscillator:", e);
-        }
+    // Create a copy of the old note data for cleanup
+    const oldNoteData = { ...state.noteData };
+    state.noteData = null;
+
+    // Smoothly fade out old oscillators
+    oldNoteData.oscillatorGains.forEach((gain) => {
+      if (gain) {
+        const currentValue = gain.gain.value;
+        gain.gain.cancelScheduledValues(now);
+        gain.gain.setValueAtTime(currentValue, now);
+        gain.gain.linearRampToValueAtTime(0, now + 0.05); // 50ms fade out
       }
     });
-    state.noteData = null;
+
+    // Schedule cleanup of old oscillators
+    setTimeout(() => {
+      oldNoteData.oscillators.forEach((osc) => {
+        if (osc) {
+          try {
+            osc.stop();
+            osc.disconnect();
+          } catch (e) {
+            console.warn("Error cleaning up oscillator:", e);
+          }
+        }
+      });
+    }, 60); // Slightly longer than fade out to ensure complete cleanup
   }
 
   state.noteState = {
