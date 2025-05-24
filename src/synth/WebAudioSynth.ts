@@ -565,21 +565,15 @@ function updateModulation(
     1541.27 // Maximum safe value for BiquadFilter gain
   );
 
-  // If modulation is disabled (modAmount is 0), stop and cleanup LFO
+  // If modulation is disabled (modAmount is 0), just disconnect gains
   if (modAmount === 0) {
     try {
-      state.noteData.lfo.stop();
-      state.noteData.lfo.disconnect();
       const gains = Object.values(state.noteData.lfoGains);
       gains.forEach((gain) => {
         gain.disconnect();
       });
-      // Create a new LFO that's stopped
-      const stoppedLFO = synthContext.context.createOscillator();
-      stoppedLFO.stop();
-      state.noteData.lfo = stoppedLFO;
     } catch (e) {
-      console.warn("Error cleaning up LFO:", e);
+      console.warn("Error disconnecting LFO gains:", e);
     }
     return;
   }
