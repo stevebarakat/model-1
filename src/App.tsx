@@ -9,6 +9,8 @@ import { useSynthStore } from "./store/synthStore";
 import styles from "./styles/App.module.css";
 import "./styles/variables.css";
 import RightPanel from "./components/RightPanel";
+import PresetSelector from "./components/PresetSelector/PresetSelector";
+import { presets } from "./synth/presets";
 
 function App() {
   const {
@@ -62,6 +64,45 @@ function App() {
     };
     initSynth();
   }, [setKeyboardRef]);
+
+  const handlePresetSelect = (presetName: string) => {
+    const preset = presets[presetName];
+    if (!preset) return;
+
+    // Update all synth settings
+    setTune(preset.tune);
+    setGlide(preset.glide);
+    updateMixer({ modMix: preset.modMix });
+    setModWheel(preset.modWheel);
+
+    // Update oscillators
+    preset.oscillators.forEach((osc, index) => {
+      setOscillator((index + 1) as 1 | 2 | 3, {
+        ...osc,
+        enabled: true,
+      });
+    });
+
+    // Update noise
+    updateNoise(preset.noise);
+
+    // Update modifiers
+    updateModifiers({
+      cutoff: preset.filter.cutoff,
+      resonance: preset.filter.resonance,
+      contourAmount: preset.filter.contourAmount,
+      filterType: preset.filter.type,
+      envelope: preset.envelope,
+      lfo: preset.lfo,
+    });
+
+    // Update effects
+    updateEffects({
+      reverb: preset.reverb,
+      distortion: preset.distortion,
+      delay: preset.delay,
+    });
+  };
 
   // Update synth settings when keyboard ref is available
   useEffect(() => {
@@ -140,6 +181,7 @@ function App() {
   return (
     <div className={styles.synthSides}>
       <div className={styles.synth}>
+        <PresetSelector onPresetSelect={handlePresetSelect} />
         <div className={styles.controlsContainer}>
           <div className={styles.backPanel}></div>
           <div className={styles.innerControlsContainer}>
