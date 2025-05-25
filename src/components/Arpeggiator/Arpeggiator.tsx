@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import * as Tone from "tone";
 import styles from "./Arpeggiator.module.css";
 import { ArpeggiatorMode } from "@/store/types/synth";
@@ -22,9 +22,12 @@ const Arpeggiator = ({
   onStepsChange,
 }: ArpeggiatorProps) => {
   const { keyboardRef, activeKeys } = useSynthStore();
-  const [pattern, setPattern] = useState<Tone.Pattern<string> | null>(null);
   const [currentNote, setCurrentNote] = useState<string | null>(null);
+  const intervalRef = useRef<number | null>(null);
+  const currentIndexRef = useRef<number>(0);
+  const patternNotesRef = useRef<string[]>([]);
 
+  // Update pattern notes when activeKeys or steps change
   useEffect(() => {
     if (!keyboardRef.synth || !activeKeys) return;
 
@@ -34,13 +37,6 @@ const Arpeggiator = ({
       rootMidi = Tone.Frequency(activeKeys).toMidi();
     } else if (typeof activeKeys === "number") {
       rootMidi = activeKeys;
-    } else if (Array.isArray(activeKeys) && activeKeys.length > 0) {
-      // Use the first key if it's an array
-      if (typeof activeKeys[0] === "string") {
-        rootMidi = Tone.Frequency(activeKeys[0]).toMidi();
-      } else if (typeof activeKeys[0] === "number") {
-        rootMidi = activeKeys[0];
-      }
     }
 
     if (typeof rootMidi !== "number" || isNaN(rootMidi)) {
@@ -48,66 +44,112 @@ const Arpeggiator = ({
       return;
     }
 
-    // Generate pattern notes with logging and guards
-    const patternNotes: string[] = steps
-      .map((step) => {
-        const midiNote = rootMidi! + step;
-        if (typeof midiNote !== "number" || midiNote < 0 || midiNote > 127) {
-          console.warn("Skipping invalid MIDI note:", midiNote);
-          return null;
-        }
-        const noteName = Tone.Frequency(midiNote, "midi").toNote();
-        console.log("Pattern step:", midiNote, noteName);
-        return noteName;
-      })
-      .filter((note) => !!note) as string[];
+    // Generate pattern notes
+    const patternNotes: string[] = [];
+    for (const step of steps) {
+      const midiNote = rootMidi + step;
+      if (typeof midiNote !== "number" || midiNote < 0 || midiNote > 127) {
+        console.warn("Skipping invalid MIDI note:", midiNote);
+        continue;
+      }
+      const noteName = Tone.Frequency(midiNote, "midi").toNote();
+      if (noteName) patternNotes.push(noteName);
+    }
 
-    if (patternNotes.length === 0) {
-      console.warn("No valid pattern notes for arpeggiator.");
+    patternNotesRef.current = patternNotes;
+    currentIndexRef.current = 0;
+  }, [steps, keyboardRef.synth, activeKeys]);
+
+  // Control arpeggiator playback
+  useEffect(() => {
+    // Clear any existing interval
+    if (intervalRef.current) {
+      clearInterval(intervalRef.current);
+      intervalRef.current = null;
+    }
+
+    // Release any current note
+    if (currentNote && keyboardRef.synth) {
+      keyboardRef.synth.triggerRelease(currentNote);
+      setCurrentNote(null);
+    }
+
+    if (
+      !activeKeys ||
+      !keyboardRef.synth ||
+      patternNotesRef.current.length === 0
+    ) {
       return;
     }
 
-    const newPattern = new Tone.Pattern<string>(
-      (time, note) => {
-        console.log("Arp note:", note);
-        if (note && keyboardRef.synth) {
-          if (currentNote) {
-            keyboardRef.synth.triggerRelease(currentNote);
-          }
-          keyboardRef.synth.triggerAttack(note);
-          setCurrentNote(note);
-        }
-      },
-      patternNotes,
-      mode
-    );
+    // Start new interval
+    const playNote = () => {
+      if (!keyboardRef.synth) return;
 
-    setPattern(newPattern);
-
-    return () => {
-      if (currentNote && keyboardRef.synth) {
+      // Release previous note
+      if (currentNote) {
         keyboardRef.synth.triggerRelease(currentNote);
       }
-      newPattern.dispose();
-    };
-  }, [steps, rate, mode, keyboardRef.synth, activeKeys, currentNote]);
 
-  useEffect(() => {
-    if (pattern) {
-      if (activeKeys) {
-        Tone.start();
-        Tone.Transport.start();
-        pattern.start(0);
-      } else {
-        pattern.stop();
-        Tone.Transport.stop();
-        if (currentNote && keyboardRef.synth) {
-          keyboardRef.synth.triggerRelease(currentNote);
+      // Get next note based on mode
+      let nextIndex = currentIndexRef.current;
+      switch (mode) {
+        case "up":
+          nextIndex =
+            (currentIndexRef.current + 1) % patternNotesRef.current.length;
+          break;
+        case "down":
+          nextIndex =
+            (currentIndexRef.current - 1 + patternNotesRef.current.length) %
+            patternNotesRef.current.length;
+          break;
+        case "upDown":
+          if (currentIndexRef.current === patternNotesRef.current.length - 1) {
+            nextIndex = currentIndexRef.current - 1;
+          } else if (currentIndexRef.current === 0) {
+            nextIndex = 1;
+          } else {
+            nextIndex = currentIndexRef.current + 1;
+          }
+          break;
+        case "random":
+          nextIndex = Math.floor(
+            Math.random() * patternNotesRef.current.length
+          );
+          break;
+      }
+
+      const note = patternNotesRef.current[nextIndex];
+      currentIndexRef.current = nextIndex;
+
+      // Play the note
+      keyboardRef.synth.triggerAttack(note);
+      setCurrentNote(note);
+
+      // Release the note after 80% of the interval
+      setTimeout(() => {
+        if (currentNote === note) {
+          keyboardRef.synth?.triggerRelease(note);
           setCurrentNote(null);
         }
+      }, rate * 800);
+    };
+
+    // Start the interval
+    intervalRef.current = window.setInterval(playNote, rate * 1000);
+    playNote(); // Play first note immediately
+
+    return () => {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+        intervalRef.current = null;
       }
-    }
-  }, [activeKeys, pattern, currentNote, keyboardRef.synth]);
+      if (currentNote && keyboardRef.synth) {
+        keyboardRef.synth.triggerRelease(currentNote);
+        setCurrentNote(null);
+      }
+    };
+  }, [activeKeys, mode, rate, keyboardRef.synth]);
 
   return (
     <div className={styles.arpeggiator}>
