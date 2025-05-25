@@ -64,7 +64,6 @@ const Arpeggiator = ({
   const modeValue = Object.keys(MODE_VALUES).findIndex(
     (key) => MODE_VALUES[Number(key)] === mode
   );
-  console.log("Current mode:", mode, "Mode value:", modeValue);
 
   // Handle mode change from ArrowKnob
   const handleModeChange = (value: number) => {
@@ -77,11 +76,6 @@ const Arpeggiator = ({
     );
 
     const newMode = MODE_VALUES[boundedValue];
-    console.log("Mode knob changed:", {
-      from: mode,
-      to: newMode,
-      value: boundedValue,
-    });
     onModeChange(newMode);
   };
 
@@ -105,13 +99,6 @@ const Arpeggiator = ({
       Math.min(intValue, presetSteps.length - 1)
     );
 
-    console.log("Steps knob changed:", {
-      from: steps,
-      to: presetSteps[boundedValue],
-      value: boundedValue,
-      label: STEPS_LABELS[boundedValue],
-    });
-
     onStepsChange(presetSteps[boundedValue]);
   };
 
@@ -128,26 +115,15 @@ const Arpeggiator = ({
     ];
     // If steps is undefined, default to first preset
     if (!steps) {
-      console.log("Steps is undefined, defaulting to first preset");
       return Number(key) === 0;
     }
     const matches =
       JSON.stringify(presetSteps[Number(key)]) === JSON.stringify(steps);
-    console.log("Comparing steps:", {
-      current: steps,
-      preset: presetSteps[Number(key)],
-      matches,
-      key,
-    });
     return matches;
   });
 
   // Handle rate change
   const handleRateChange = (value: number) => {
-    console.log("Rate knob changed:", {
-      from: rate,
-      to: value,
-    });
     onRateChange(value);
   };
 
@@ -296,6 +272,7 @@ const Arpeggiator = ({
         setCurrentNote(null);
       }
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeKeys, mode, rate, keyboardRef.synth, enabled]);
 
   return (
