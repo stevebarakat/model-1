@@ -177,9 +177,21 @@ function Knob({
       }`}
     >
       {isDragging || isKeyboardActive ? (
-        <div className={styles.knobValue}>{displayValue}</div>
+        <div
+          className={
+            size === "medium" ? styles.knobValueMedium : styles.knobValue
+          }
+        >
+          {displayValue}
+        </div>
       ) : (
-        <div className={styles.knobLabel}>{label}</div>
+        <div
+          className={
+            size === "medium" ? styles.knobLabelMedium : styles.knobLabel
+          }
+        >
+          {label}
+        </div>
       )}
       <div className={styles.knob}>
         <div className={styles.knobBtm}>

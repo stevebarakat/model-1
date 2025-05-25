@@ -13,6 +13,7 @@
 
 .knobContainerMedium {
   --knob-size: 38px;
+  margin-top: var(--spacing-xs);
 }
 
 .knobContainerLarge {
@@ -133,6 +134,13 @@
   white-space: nowrap;
   transform: translateX(-50%);
   user-select: none;
+}
+
+.knobValueMedium,
+.knobLabelMedium {
+  font-size: var(--font-size-sm);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
 }
 
 .knobValue {

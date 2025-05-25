@@ -71,7 +71,7 @@
   display: flex;
   flex-direction: column;
   margin: 0 auto;
-  width: 1030px;
+  width: 1130px;
   border-right: 2px solid var(--color-off-black);
   border-left: 2px solid var(--color-off-black);
   &::after {
@@ -125,9 +125,9 @@
 .keyRow {
   display: flex;
   overflow: clip;
-  background: linear-gradient(
+  /* background: linear-gradient(
     180deg,
     hsl(217deg 50% 20%) 98%,
     hsl(217deg 50% 8%) 100%
-  );
+  ); */
 }

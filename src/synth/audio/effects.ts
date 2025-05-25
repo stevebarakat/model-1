@@ -68,6 +68,14 @@ export function setupEffects(context: AudioContext) {
   compressor.attack.value = 0.003;
   compressor.release.value = 0.25;
 
+  // Add limiter
+  const limiter = context.createDynamicsCompressor();
+  limiter.threshold.value = -1;
+  limiter.knee.value = 0;
+  limiter.ratio.value = 20;
+  limiter.attack.value = 0.001;
+  limiter.release.value = 0.1;
+
   const dryGain = context.createGain();
   const wetGain = context.createGain();
   dryGain.gain.value = 1;
@@ -78,7 +86,8 @@ export function setupEffects(context: AudioContext) {
   distortionLowEQ.connect(distortion);
   distortion.connect(distortionHighEQ);
   distortionHighEQ.connect(compressor);
-  compressor.connect(wetGain);
+  compressor.connect(limiter);
+  limiter.connect(wetGain);
 
   masterGain.connect(delayNode);
   delayNode.connect(delayFeedback);
@@ -113,5 +122,6 @@ export function setupEffects(context: AudioContext) {
     distortionHighEQ,
     distortion,
     compressor,
+    limiter,
   };
 }

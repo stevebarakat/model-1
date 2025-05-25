@@ -1,103 +1,73 @@
-.arpeggiator {
+.column {
+  position: relative;
   display: flex;
   flex-direction: column;
-  gap: 1rem;
-  padding: 1rem;
-  background: var(--surface-2);
-  border-radius: 0.5rem;
-}
-
-.header {
-  display: flex;
-  justify-content: flex-start;
   align-items: center;
-  padding-bottom: 0.5rem;
-  border-bottom: 1px solid var(--surface-3);
+  padding: 4px 20px;
+  box-shadow: inset 1px 0 2px hsl(0deg 0% 5% / 100%),
+    inset -1px 0 2px hsl(0deg 0% 5% / 100%);
 }
 
-.controls {
-  display: flex;
-  gap: 1rem;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.toggleButton {
-  background: #4a4a4a;
-  border: none;
-  border-radius: 4px;
-  color: #fff;
-  padding: 8px 16px;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  font-family: monospace;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-}
-
-.toggleButton:hover {
-  background: #5a5a5a;
-}
-
-.toggleButton.active {
-  background: #00ff00;
-  color: #000;
-}
-
-.modeControl,
-.rateControl,
-.stepsControl {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.modeControl label,
-.rateControl label,
-.stepsControl label {
-  min-width: 40px;
-  font-family: monospace;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-}
-
-.modeControl select,
-.stepsControl select {
-  flex: 1;
-  background: #4a4a4a;
-  border: none;
-  border-radius: 4px;
-  color: #fff;
-  padding: 4px 8px;
-  font-family: monospace;
-  cursor: pointer;
-}
-
-.modeControl select:hover,
-.stepsControl select:hover {
-  background: #5a5a5a;
-}
-
-.rateControl input[type="range"] {
-  flex: 1;
-  height: 4px;
-  -webkit-appearance: none;
-  background: #4a4a4a;
-  border-radius: 2px;
-  outline: none;
-}
-
-.rateControl input[type="range"]::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  width: 16px;
-  height: 16px;
-  background: #00ff00;
+.screw {
+  position: absolute;
+  z-index: 101;
+  width: 12px;
+  height: 12px;
+  background: radial-gradient(
+    circle at center,
+    hsl(217deg 20% 25%) 0%,
+    hsl(217deg 20% 20%) 30%,
+    hsl(217deg 20% 15%) 60%,
+    hsl(217deg 20% 10%) 100%
+  );
   border-radius: 50%;
-  cursor: pointer;
 }
 
-.rateControl span {
-  min-width: 40px;
-  text-align: right;
-  font-family: monospace;
+.screw::after {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 6px;
+  height: 6px;
+  background: linear-gradient(
+      90deg,
+      transparent 40%,
+      hsl(217deg 20% 5% / 80%) 40%,
+      hsl(217deg 20% 5% / 80%) 60%,
+      transparent 60%
+    ),
+    linear-gradient(
+      0deg,
+      transparent 40%,
+      hsl(217deg 20% 5% / 80%) 40%,
+      hsl(217deg 20% 5% / 80%) 60%,
+      transparent 60%
+    );
+  border-radius: 1px;
+  transform: translate(-50%, -50%) rotate(45deg);
+  content: "";
+}
+
+.screwTopLeft {
+  composes: screw;
+  top: 4px;
+  left: 4px;
+}
+
+.screwTopRight {
+  composes: screw;
+  top: 4px;
+  right: 4px;
+}
+
+.screwBottomLeft {
+  composes: screw;
+  bottom: 4px;
+  left: 4px;
+}
+
+.screwBottomRight {
+  right: 4px;
+  bottom: 4px;
+  composes: screw;
 }

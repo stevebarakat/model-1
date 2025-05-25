@@ -276,12 +276,16 @@ const Arpeggiator = ({
   }, [activeKeys, mode, rate, keyboardRef.synth, enabled]);
 
   return (
-    <div className={styles.arpeggiator}>
+    <div className={styles.column}>
+      <div className={styles.screwTopLeft} />
+      <div className={styles.screwTopRight} />
+      <div className={styles.screwBottomLeft} />
+      <div className={styles.screwBottomRight} />
       <div className={styles.header}>
         <Switch
           checked={enabled}
           onCheckedChange={onEnabledChange}
-          label="Arpeggiator"
+          label="Arp"
         />
       </div>
       <div className={styles.controls}>
@@ -290,7 +294,7 @@ const Arpeggiator = ({
           min={0}
           max={3}
           step={1}
-          label="Mode"
+          label=""
           onChange={handleModeChange}
           valueLabels={MODE_ICONS}
         />
@@ -309,7 +313,7 @@ const Arpeggiator = ({
           min={0}
           max={6}
           step={1}
-          label="Steps"
+          label=""
           onChange={handleStepsChange}
           valueLabels={STEPS_LABELS}
           arc={180}
