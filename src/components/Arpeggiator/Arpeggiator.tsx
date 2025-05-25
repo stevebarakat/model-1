@@ -26,6 +26,7 @@ const Arpeggiator = ({
   const intervalRef = useRef<number | null>(null);
   const currentIndexRef = useRef<number>(0);
   const patternNotesRef = useRef<string[]>([]);
+  const directionRef = useRef<1 | -1>(1); // Track direction for up/down mode
 
   // Update pattern notes when activeKeys or steps change
   useEffect(() => {
@@ -58,6 +59,7 @@ const Arpeggiator = ({
 
     patternNotesRef.current = patternNotes;
     currentIndexRef.current = 0;
+    directionRef.current = 1; // Reset direction when notes change
   }, [steps, keyboardRef.synth, activeKeys]);
 
   // Control arpeggiator playback
@@ -82,62 +84,82 @@ const Arpeggiator = ({
       return;
     }
 
-    // Start new interval
-    const playNote = () => {
-      if (!keyboardRef.synth) return;
+    // Play first note immediately
+    const firstNote = patternNotesRef.current[0];
+    keyboardRef.synth.triggerAttack(firstNote);
+    setCurrentNote(firstNote);
+    currentIndexRef.current = 0;
+    directionRef.current = 1;
 
-      // Release previous note
-      if (currentNote) {
-        keyboardRef.synth.triggerRelease(currentNote);
+    // Schedule first note release
+    setTimeout(() => {
+      if (currentNote === firstNote) {
+        keyboardRef.synth?.triggerRelease(firstNote);
+        setCurrentNote(null);
       }
+    }, rate * 800);
+
+    // Start new interval
+    intervalRef.current = window.setInterval(() => {
+      const patternNotes = patternNotesRef.current;
+      if (!patternNotes.length) return;
 
       // Get next note based on mode
       let nextIndex = currentIndexRef.current;
+      let randomIndex; // Move declaration outside case block
       switch (mode) {
         case "up":
-          nextIndex =
-            (currentIndexRef.current + 1) % patternNotesRef.current.length;
+          nextIndex = (currentIndexRef.current + 1) % patternNotes.length;
           break;
         case "down":
           nextIndex =
-            (currentIndexRef.current - 1 + patternNotesRef.current.length) %
-            patternNotesRef.current.length;
+            (currentIndexRef.current - 1 + patternNotes.length) %
+            patternNotes.length;
           break;
         case "upDown":
-          if (currentIndexRef.current === patternNotesRef.current.length - 1) {
-            nextIndex = currentIndexRef.current - 1;
-          } else if (currentIndexRef.current === 0) {
+          nextIndex = currentIndexRef.current + directionRef.current;
+          // Change direction at ends
+          if (nextIndex >= patternNotes.length) {
+            nextIndex = patternNotes.length - 2;
+            directionRef.current = -1;
+          } else if (nextIndex < 0) {
             nextIndex = 1;
-          } else {
-            nextIndex = currentIndexRef.current + 1;
+            directionRef.current = 1;
           }
           break;
         case "random":
-          nextIndex = Math.floor(
-            Math.random() * patternNotesRef.current.length
+          // Ensure we don't repeat the same note
+          do {
+            randomIndex = Math.floor(Math.random() * patternNotes.length);
+          } while (
+            randomIndex === currentIndexRef.current &&
+            patternNotes.length > 1
           );
+          nextIndex = randomIndex;
           break;
       }
-
-      const note = patternNotesRef.current[nextIndex];
       currentIndexRef.current = nextIndex;
 
-      // Play the note
-      keyboardRef.synth.triggerAttack(note);
-      setCurrentNote(note);
+      // Release previous note
+      if (currentNote && keyboardRef.synth) {
+        keyboardRef.synth.triggerRelease(currentNote);
+      }
 
-      // Release the note after 80% of the interval
-      setTimeout(() => {
-        if (currentNote === note) {
-          keyboardRef.synth?.triggerRelease(note);
-          setCurrentNote(null);
-        }
-      }, rate * 800);
-    };
+      // Play new note
+      const note = patternNotes[nextIndex];
+      if (keyboardRef.synth) {
+        keyboardRef.synth.triggerAttack(note);
+        setCurrentNote(note);
 
-    // Start the interval
-    intervalRef.current = window.setInterval(playNote, rate * 1000);
-    playNote(); // Play first note immediately
+        // Schedule note release
+        setTimeout(() => {
+          if (currentNote === note) {
+            keyboardRef.synth?.triggerRelease(note);
+            setCurrentNote(null);
+          }
+        }, rate * 800); // 80% of the interval
+      }
+    }, rate * 1000); // Convert rate to milliseconds
 
     return () => {
       if (intervalRef.current) {
