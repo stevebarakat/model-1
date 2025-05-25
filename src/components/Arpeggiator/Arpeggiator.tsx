@@ -5,8 +5,6 @@ import { ArpeggiatorMode } from "@/store/types/synth";
 import { useSynthStore } from "@/store/synthStore";
 
 interface ArpeggiatorProps {
-  isActive: boolean;
-  onToggle: (enabled: boolean) => void;
   mode: ArpeggiatorMode;
   onModeChange: (mode: ArpeggiatorMode) => void;
   rate: number;
@@ -16,8 +14,6 @@ interface ArpeggiatorProps {
 }
 
 const Arpeggiator = ({
-  isActive,
-  onToggle,
   mode,
   onModeChange,
   rate,
@@ -25,27 +21,64 @@ const Arpeggiator = ({
   steps,
   onStepsChange,
 }: ArpeggiatorProps) => {
-  const { keyboardRef } = useSynthStore();
+  const { keyboardRef, activeKeys } = useSynthStore();
   const [pattern, setPattern] = useState<Tone.Pattern<string> | null>(null);
   const [currentNote, setCurrentNote] = useState<string | null>(null);
 
   useEffect(() => {
-    if (!keyboardRef.synth) return;
+    if (!keyboardRef.synth || !activeKeys) return;
 
-    // Create the pattern
+    // Support both string and number for activeKeys
+    let rootMidi: number | null = null;
+    if (typeof activeKeys === "string") {
+      rootMidi = Tone.Frequency(activeKeys).toMidi();
+    } else if (typeof activeKeys === "number") {
+      rootMidi = activeKeys;
+    } else if (Array.isArray(activeKeys) && activeKeys.length > 0) {
+      // Use the first key if it's an array
+      if (typeof activeKeys[0] === "string") {
+        rootMidi = Tone.Frequency(activeKeys[0]).toMidi();
+      } else if (typeof activeKeys[0] === "number") {
+        rootMidi = activeKeys[0];
+      }
+    }
+
+    if (typeof rootMidi !== "number" || isNaN(rootMidi)) {
+      console.warn("Invalid root MIDI note from activeKeys:", activeKeys);
+      return;
+    }
+
+    // Generate pattern notes with logging and guards
+    const patternNotes: string[] = steps
+      .map((step) => {
+        const midiNote = rootMidi! + step;
+        if (typeof midiNote !== "number" || midiNote < 0 || midiNote > 127) {
+          console.warn("Skipping invalid MIDI note:", midiNote);
+          return null;
+        }
+        const noteName = Tone.Frequency(midiNote, "midi").toNote();
+        console.log("Pattern step:", midiNote, noteName);
+        return noteName;
+      })
+      .filter((note) => !!note) as string[];
+
+    if (patternNotes.length === 0) {
+      console.warn("No valid pattern notes for arpeggiator.");
+      return;
+    }
+
     const newPattern = new Tone.Pattern<string>(
       (time, note) => {
+        console.log("Arp note:", note);
         if (note && keyboardRef.synth) {
-          // Release previous note if exists
           if (currentNote) {
             keyboardRef.synth.triggerRelease(currentNote);
           }
-          // Trigger new note
           keyboardRef.synth.triggerAttack(note);
           setCurrentNote(note);
         }
       },
-      steps.map((step) => Tone.Frequency(60 + step, "midi").toNote()),
+      patternNotes,
       mode
     );
 
@@ -57,11 +90,11 @@ const Arpeggiator = ({
       }
       newPattern.dispose();
     };
-  }, [steps, rate, mode, keyboardRef.synth]);
+  }, [steps, rate, mode, keyboardRef.synth, activeKeys, currentNote]);
 
   useEffect(() => {
     if (pattern) {
-      if (isActive) {
+      if (activeKeys) {
         Tone.start();
         Tone.Transport.start();
         pattern.start(0);
@@ -74,17 +107,11 @@ const Arpeggiator = ({
         }
       }
     }
-  }, [isActive, pattern, currentNote, keyboardRef.synth]);
+  }, [activeKeys, pattern, currentNote, keyboardRef.synth]);
 
   return (
     <div className={styles.arpeggiator}>
       <div className={styles.controls}>
-        <button
-          className={`${styles.toggleButton} ${isActive ? styles.active : ""}`}
-          onClick={() => onToggle(!isActive)}
-        >
-          {isActive ? "Stop" : "Start"}
-        </button>
         <div className={styles.modeControl}>
           <label>Mode:</label>
           <select

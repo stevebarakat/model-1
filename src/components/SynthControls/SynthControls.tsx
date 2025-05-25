@@ -167,8 +167,6 @@ function SynthControls({
         onOsc3Change={handleOsc3Change}
       />
       <Arpeggiator
-        isActive={arpeggiator.enabled}
-        onToggle={(enabled) => onArpeggiatorChange({ enabled })}
         mode={arpeggiator.mode}
         onModeChange={(mode) => onArpeggiatorChange({ mode })}
         rate={arpeggiator.rate}
