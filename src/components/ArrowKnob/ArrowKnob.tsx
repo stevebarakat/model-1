@@ -10,6 +10,7 @@ type ArrowKnobProps = {
   unit?: string;
   onChange: (value: number) => void;
   valueLabels: Record<number, string | React.ReactElement>;
+  arc?: number; // Arc range in degrees (default: 120)
 };
 
 type MousePosition = {
@@ -17,10 +18,15 @@ type MousePosition = {
   clientX: number;
 };
 
-function getRotation(value: number, min: number, max: number): number {
+function getRotation(
+  value: number,
+  min: number,
+  max: number,
+  arc: number
+): number {
   const range = max - min;
   const percentage = (value - min) / range;
-  return percentage * 120 - 60; // -60 to +60 degrees (top 120° arc)
+  return percentage * arc - arc / 2; // Center the arc around 0 degrees
 }
 
 function getDisplayValue(
@@ -69,6 +75,7 @@ function ArrowKnob({
   unit = "",
   onChange,
   valueLabels,
+  arc = 120, // Default to 120 degrees
 }: ArrowKnobProps): React.ReactElement {
   const knobRef = useRef<HTMLDivElement>(null);
   const [isDragging, setIsDragging] = useState(false);
@@ -77,7 +84,7 @@ function ArrowKnob({
   const [startValue, setStartValue] = useState(0);
   const [isRightSide, setIsRightSide] = useState(false);
 
-  const rotation = getRotation(value, min, max);
+  const rotation = getRotation(value, min, max, arc);
   const displayValue = getDisplayValue(value, step, unit, valueLabels);
   const ariaValueText =
     typeof displayValue === "string"
@@ -181,7 +188,7 @@ function ArrowKnob({
     >
       {/* Value labels around the knob */}
       {stepValues.map((v) => {
-        const angle = getRotation(v, min, max);
+        const angle = getRotation(v, min, max, arc);
         const { left, top } = getLabelPosition(
           angle,
           labelRadius,

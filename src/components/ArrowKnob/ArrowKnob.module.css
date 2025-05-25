@@ -152,7 +152,9 @@
   white-space: nowrap;
   user-select: none;
   font-size: var(--font-size-xs);
-  text-transform: unset;
+  svg {
+    color: var(--color-text-primary);
+  }
 }
 
 .knobValueContainer {

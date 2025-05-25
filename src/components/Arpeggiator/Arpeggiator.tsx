@@ -3,6 +3,10 @@ import * as Tone from "tone";
 import styles from "./Arpeggiator.module.css";
 import { ArpeggiatorMode } from "@/store/types/synth";
 import { useSynthStore } from "@/store/synthStore";
+import ArrowKnob from "../ArrowKnob/ArrowKnob";
+import Knob from "../Knob/Knob";
+import Switch from "../Switch/Switch";
+import { ArrowUp, ArrowDown, ArrowUpDown, Shuffle } from "lucide-react";
 
 interface ArpeggiatorProps {
   mode: ArpeggiatorMode;
@@ -11,7 +15,33 @@ interface ArpeggiatorProps {
   onRateChange: (rate: number) => void;
   steps: number[];
   onStepsChange: (steps: number[]) => void;
+  enabled: boolean;
+  onEnabledChange: (enabled: boolean) => void;
 }
+
+const MODE_VALUES: Record<number, ArpeggiatorMode> = {
+  0: "up",
+  1: "down",
+  2: "upDown",
+  3: "random",
+};
+
+const MODE_ICONS: Record<number, React.ReactElement> = {
+  0: <ArrowUp size={12} strokeWidth={2} />,
+  1: <ArrowDown size={12} strokeWidth={2} />,
+  2: <ArrowUpDown size={12} strokeWidth={2} />,
+  3: <Shuffle size={12} strokeWidth={2} />,
+};
+
+const STEPS_LABELS: Record<number, string> = {
+  0: "M",
+  1: "m",
+  2: "Aug",
+  3: "Dim",
+  4: "M7",
+  5: "m7",
+  6: "7",
+};
 
 const Arpeggiator = ({
   mode,
@@ -20,13 +50,106 @@ const Arpeggiator = ({
   onRateChange,
   steps,
   onStepsChange,
+  enabled,
+  onEnabledChange,
 }: ArpeggiatorProps) => {
   const { keyboardRef, activeKeys } = useSynthStore();
   const [currentNote, setCurrentNote] = useState<string | null>(null);
   const intervalRef = useRef<number | null>(null);
   const currentIndexRef = useRef<number>(0);
   const patternNotesRef = useRef<string[]>([]);
-  const directionRef = useRef<1 | -1>(1); // Track direction for up/down mode
+  const directionRef = useRef<1 | -1>(1);
+
+  // Convert mode string to number for ArrowKnob
+  const modeValue = Object.keys(MODE_VALUES).findIndex(
+    (key) => MODE_VALUES[Number(key)] === mode
+  );
+  console.log("Current mode:", mode, "Mode value:", modeValue);
+
+  // Handle mode change from ArrowKnob
+  const handleModeChange = (value: number) => {
+    // Ensure we only use integer values
+    const intValue = Math.round(value);
+    // Ensure value is within bounds
+    const boundedValue = Math.max(
+      0,
+      Math.min(intValue, Object.keys(MODE_VALUES).length - 1)
+    );
+
+    const newMode = MODE_VALUES[boundedValue];
+    console.log("Mode knob changed:", {
+      from: mode,
+      to: newMode,
+      value: boundedValue,
+    });
+    onModeChange(newMode);
+  };
+
+  // Handle steps change from ArrowKnob
+  const handleStepsChange = (value: number) => {
+    // Ensure we only use integer values
+    const intValue = Math.round(value);
+    const presetSteps = [
+      [0, 4, 7, 12],
+      [0, 3, 7, 12],
+      [0, 4, 8, 12],
+      [0, 3, 6, 9],
+      [0, 4, 7, 11],
+      [0, 3, 7, 10],
+      [0, 4, 7, 10],
+    ];
+
+    // Ensure value is within bounds
+    const boundedValue = Math.max(
+      0,
+      Math.min(intValue, presetSteps.length - 1)
+    );
+
+    console.log("Steps knob changed:", {
+      from: steps,
+      to: presetSteps[boundedValue],
+      value: boundedValue,
+      label: STEPS_LABELS[boundedValue],
+    });
+
+    onStepsChange(presetSteps[boundedValue]);
+  };
+
+  // Convert steps array to number for ArrowKnob
+  const stepsValue = Object.keys(STEPS_LABELS).findIndex((key) => {
+    const presetSteps = [
+      [0, 4, 7, 12],
+      [0, 3, 7, 12],
+      [0, 4, 8, 12],
+      [0, 3, 6, 9],
+      [0, 4, 7, 11],
+      [0, 3, 7, 10],
+      [0, 4, 7, 10],
+    ];
+    // If steps is undefined, default to first preset
+    if (!steps) {
+      console.log("Steps is undefined, defaulting to first preset");
+      return Number(key) === 0;
+    }
+    const matches =
+      JSON.stringify(presetSteps[Number(key)]) === JSON.stringify(steps);
+    console.log("Comparing steps:", {
+      current: steps,
+      preset: presetSteps[Number(key)],
+      matches,
+      key,
+    });
+    return matches;
+  });
+
+  // Handle rate change
+  const handleRateChange = (value: number) => {
+    console.log("Rate knob changed:", {
+      from: rate,
+      to: value,
+    });
+    onRateChange(value);
+  };
 
   // Update pattern notes when activeKeys or steps change
   useEffect(() => {
@@ -76,7 +199,9 @@ const Arpeggiator = ({
       setCurrentNote(null);
     }
 
+    // Don't start if not enabled
     if (
+      !enabled ||
       !activeKeys ||
       !keyboardRef.synth ||
       patternNotesRef.current.length === 0
@@ -106,7 +231,7 @@ const Arpeggiator = ({
 
       // Get next note based on mode
       let nextIndex = currentIndexRef.current;
-      let randomIndex; // Move declaration outside case block
+      let randomIndex = 0; // Declare outside case block
       switch (mode) {
         case "up":
           nextIndex = (currentIndexRef.current + 1) % patternNotes.length;
@@ -157,9 +282,9 @@ const Arpeggiator = ({
             keyboardRef.synth?.triggerRelease(note);
             setCurrentNote(null);
           }
-        }, rate * 800); // 80% of the interval
+        }, rate * 800);
       }
-    }, rate * 1000); // Convert rate to milliseconds
+    }, rate * 1000);
 
     return () => {
       if (intervalRef.current) {
@@ -171,53 +296,47 @@ const Arpeggiator = ({
         setCurrentNote(null);
       }
     };
-  }, [activeKeys, mode, rate, keyboardRef.synth]);
+  }, [activeKeys, mode, rate, keyboardRef.synth, enabled]);
 
   return (
     <div className={styles.arpeggiator}>
+      <div className={styles.header}>
+        <Switch
+          checked={enabled}
+          onCheckedChange={onEnabledChange}
+          label="Arpeggiator"
+        />
+      </div>
       <div className={styles.controls}>
-        <div className={styles.modeControl}>
-          <label>Mode:</label>
-          <select
-            value={mode}
-            onChange={(e) => onModeChange(e.target.value as ArpeggiatorMode)}
-          >
-            <option value="up">Up</option>
-            <option value="down">Down</option>
-            <option value="upDown">Up/Down</option>
-            <option value="random">Random</option>
-          </select>
-        </div>
-        <div className={styles.rateControl}>
-          <label>Rate:</label>
-          <input
-            type="range"
-            min="0.1"
-            max="0.5"
-            step="0.05"
-            value={rate}
-            onChange={(e) => onRateChange(parseFloat(e.target.value))}
-          />
-          <span>{rate.toFixed(2)}s</span>
-        </div>
-        <div className={styles.stepsControl}>
-          <label>Steps:</label>
-          <select
-            value={JSON.stringify(steps)}
-            onChange={(e) => onStepsChange(JSON.parse(e.target.value))}
-          >
-            <option value={JSON.stringify([0, 4, 7, 12])}>Major</option>
-            <option value={JSON.stringify([0, 3, 7, 12])}>Minor</option>
-            <option value={JSON.stringify([0, 4, 8, 12])}>Augmented</option>
-            <option value={JSON.stringify([0, 3, 6, 9])}>Diminished</option>
-            <option value={JSON.stringify([0, 2, 4, 6, 8, 10])}>
-              Whole Tone
-            </option>
-            <option value={JSON.stringify([0, 4, 7, 11])}>Major 7th</option>
-            <option value={JSON.stringify([0, 3, 7, 10])}>Minor 7th</option>
-            <option value={JSON.stringify([0, 4, 7, 10])}>Dominant 7th</option>
-          </select>
-        </div>
+        <ArrowKnob
+          value={modeValue >= 0 ? modeValue : 0}
+          min={0}
+          max={3}
+          step={1}
+          label="Mode"
+          onChange={handleModeChange}
+          valueLabels={MODE_ICONS}
+        />
+        <Knob
+          value={rate}
+          min={0.1}
+          max={0.5}
+          step={0.05}
+          label="Rate"
+          unit="s"
+          onChange={handleRateChange}
+          size="medium"
+        />
+        <ArrowKnob
+          value={stepsValue >= 0 ? stepsValue : 0}
+          min={0}
+          max={6}
+          step={1}
+          label="Steps"
+          onChange={handleStepsChange}
+          valueLabels={STEPS_LABELS}
+          arc={180}
+        />
       </div>
     </div>
   );

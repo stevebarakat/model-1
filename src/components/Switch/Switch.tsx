@@ -13,6 +13,10 @@ function Switch({
   label,
   orientation = "horizontal",
 }: SwitchProps) {
+  const handleClick = () => {
+    onCheckedChange(!checked);
+  };
+
   return (
     <div className={`${styles.switchContainer}`}>
       {label && <label className={styles.switchLabel}>{label}</label>}
@@ -20,7 +24,7 @@ function Switch({
         className={`${styles.switchRoot} ${styles[orientation]}`}
         role="switch"
         aria-checked={checked}
-        onClick={() => onCheckedChange(!checked)}
+        onClick={handleClick}
       >
         <div
           className={`${styles.switchThumb} ${checked ? styles.checked : ""}`}

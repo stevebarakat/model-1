@@ -173,6 +173,8 @@ function SynthControls({
         onRateChange={(rate) => onArpeggiatorChange({ rate })}
         steps={arpeggiator.steps}
         onStepsChange={(steps) => onArpeggiatorChange({ steps })}
+        enabled={arpeggiator.enabled}
+        onEnabledChange={(enabled) => onArpeggiatorChange({ enabled })}
       />
       <Noise
         volume={noise.volume}
