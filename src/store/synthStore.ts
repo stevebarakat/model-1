@@ -56,6 +56,12 @@ export const useSynthStore = create<
           reverb: { ...state.effects.reverb },
           distortion: { ...state.effects.distortion },
           delay: { ...state.effects.delay },
+          arpeggiator: {
+            enabled: state.arpeggiator.enabled,
+            mode: state.arpeggiator.mode,
+            rate: state.arpeggiator.rate,
+            steps: state.arpeggiator.steps,
+          },
         };
       },
     }),
