@@ -1,0 +1,94 @@
+.arpeggiator {
+  background: #2a2a2a;
+  border-radius: 8px;
+  padding: 16px;
+  color: #fff;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  margin: 16px 0;
+}
+
+.controls {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.toggleButton {
+  background: #4a4a4a;
+  border: none;
+  border-radius: 4px;
+  color: #fff;
+  padding: 8px 16px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: monospace;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.toggleButton:hover {
+  background: #5a5a5a;
+}
+
+.toggleButton.active {
+  background: #00ff00;
+  color: #000;
+}
+
+.modeControl,
+.rateControl,
+.stepsControl {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.modeControl label,
+.rateControl label,
+.stepsControl label {
+  min-width: 40px;
+  font-family: monospace;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.modeControl select,
+.stepsControl select {
+  flex: 1;
+  background: #4a4a4a;
+  border: none;
+  border-radius: 4px;
+  color: #fff;
+  padding: 4px 8px;
+  font-family: monospace;
+  cursor: pointer;
+}
+
+.modeControl select:hover,
+.stepsControl select:hover {
+  background: #5a5a5a;
+}
+
+.rateControl input[type="range"] {
+  flex: 1;
+  height: 4px;
+  -webkit-appearance: none;
+  background: #4a4a4a;
+  border-radius: 2px;
+  outline: none;
+}
+
+.rateControl input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 16px;
+  height: 16px;
+  background: #00ff00;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.rateControl span {
+  min-width: 40px;
+  text-align: right;
+  font-family: monospace;
+}

@@ -34,6 +34,8 @@ function Synth() {
     octave,
     setOctave,
     setKeyboardRef,
+    arpeggiator,
+    updateArpeggiator,
   } = useSynthStore();
 
   const keyboardRef = useRef<{
@@ -148,11 +150,13 @@ function Synth() {
               noise={noise}
               modifiers={modifiers}
               effects={effects}
+              arpeggiator={arpeggiator}
               onOscillatorChange={setOscillator}
               onMixerChange={updateMixer}
               onNoiseChange={updateNoise}
               onModifiersChange={updateModifiers}
               onEffectsChange={updateEffects}
+              onArpeggiatorChange={updateArpeggiator}
             />
           </div>
           <div className={styles.horizontalIndent}></div>

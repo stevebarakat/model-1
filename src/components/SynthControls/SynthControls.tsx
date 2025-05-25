@@ -10,6 +10,7 @@ import Noise from "../Noise/Noise";
 import Spacer from "../Spacer";
 import Mixer from "../Mixer";
 import OscillatorBank from "../OscillatorBank";
+import Arpeggiator from "../Arpeggiator/Arpeggiator";
 
 type SynthControlsProps = {
   oscillators: {
@@ -53,6 +54,12 @@ type SynthControlsProps = {
     delay: { amount: number; time: number; feedback: number };
     distortion: { outputGain: number; lowEQ: number; highEQ: number };
   };
+  arpeggiator: {
+    enabled: boolean;
+    mode: "up" | "down" | "upDown" | "random";
+    rate: number;
+    steps: number[];
+  };
   onOscillatorChange: (osc: 1 | 2 | 3, settings: OscillatorSettings) => void;
   onMixerChange: (settings: Partial<SynthControlsProps["mixer"]>) => void;
   onNoiseChange: (settings: Partial<SynthControlsProps["noise"]>) => void;
@@ -60,6 +67,9 @@ type SynthControlsProps = {
     settings: Partial<SynthControlsProps["modifiers"]>
   ) => void;
   onEffectsChange: (settings: Partial<SynthControlsProps["effects"]>) => void;
+  onArpeggiatorChange: (
+    settings: Partial<SynthControlsProps["arpeggiator"]>
+  ) => void;
 };
 
 function SynthControls({
@@ -68,11 +78,13 @@ function SynthControls({
   noise,
   modifiers,
   effects,
+  arpeggiator,
   onOscillatorChange,
   onMixerChange,
   onNoiseChange,
   onModifiersChange,
   onEffectsChange,
+  onArpeggiatorChange,
 }: SynthControlsProps) {
   const handleOsc1Change = (
     param: keyof OscillatorSettings,
@@ -153,6 +165,16 @@ function SynthControls({
         onOsc1Change={handleOsc1Change}
         onOsc2Change={handleOsc2Change}
         onOsc3Change={handleOsc3Change}
+      />
+      <Arpeggiator
+        isActive={arpeggiator.enabled}
+        onToggle={(enabled) => onArpeggiatorChange({ enabled })}
+        mode={arpeggiator.mode}
+        onModeChange={(mode) => onArpeggiatorChange({ mode })}
+        rate={arpeggiator.rate}
+        onRateChange={(rate) => onArpeggiatorChange({ rate })}
+        steps={arpeggiator.steps}
+        onStepsChange={(steps) => onArpeggiatorChange({ steps })}
       />
       <Noise
         volume={noise.volume}

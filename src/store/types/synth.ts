@@ -2,6 +2,7 @@ import { OscillatorSettings, FilterType } from "@/synth/types";
 
 export type OscillatorType = "sine" | "square" | "sawtooth" | "triangle";
 export type Note = string;
+export type ArpeggiatorMode = "up" | "down" | "upDown" | "random";
 
 export type SynthState = {
   // Keyboard state
@@ -19,6 +20,14 @@ export type SynthState = {
   modMix: number;
   currentOctave: number;
   glide: number;
+
+  // Arpeggiator state
+  arpeggiator: {
+    enabled: boolean;
+    mode: ArpeggiatorMode;
+    rate: number;
+    steps: number[];
+  };
 
   // Oscillator state
   oscillators: {
@@ -105,4 +114,5 @@ export type SynthActions = {
   updateNoise: (settings: Partial<SynthState["noise"]>) => void;
   updateModifiers: (settings: Partial<SynthState["modifiers"]>) => void;
   updateEffects: (settings: Partial<SynthState["effects"]>) => void;
+  updateArpeggiator: (settings: Partial<SynthState["arpeggiator"]>) => void;
 };

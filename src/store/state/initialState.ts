@@ -16,6 +16,7 @@ export function createInitialState(): Omit<
   | "updateNoise"
   | "updateModifiers"
   | "updateEffects"
+  | "updateArpeggiator"
 > {
   return {
     activeKeys: null,
@@ -26,6 +27,12 @@ export function createInitialState(): Omit<
     modMix: 50,
     currentOctave: 4,
     glide: 0,
+    arpeggiator: {
+      enabled: false,
+      mode: "up",
+      rate: 0.25,
+      steps: [0, 4, 7, 12], // Major arpeggio
+    },
     oscillators: {
       osc1: {
         frequency: 0,

@@ -1,8 +1,13 @@
-import { StateCreator } from "zustand";
 import { SynthState, SynthActions } from "../types/synth";
 
 export function createSynthActions(
-  set: Parameters<StateCreator<SynthState & SynthActions>>[0]
+  set: (
+    partial:
+      | SynthState
+      | Partial<SynthState>
+      | ((state: SynthState) => Partial<SynthState>),
+    replace?: boolean
+  ) => void
 ): SynthActions {
   return {
     setActiveKeys: (key) =>
@@ -45,6 +50,13 @@ export function createSynthActions(
     updateEffects: (settings) =>
       set((state: SynthState) => ({
         effects: { ...state.effects, ...settings },
+      })),
+    updateArpeggiator: (settings) =>
+      set((state) => ({
+        arpeggiator: {
+          ...state.arpeggiator,
+          ...settings,
+        },
       })),
   };
 }
