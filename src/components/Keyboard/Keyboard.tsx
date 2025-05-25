@@ -40,7 +40,8 @@ const generateKeyboardKeys = (octaveRange: {
   min: number;
   max: number;
 }): Note[] => {
-  const keys = Array.from(
+  // Generate the main octave keys
+  const mainKeys = Array.from(
     { length: octaveRange.max - octaveRange.min + 1 },
     (_, i) => octaveRange.min + i
   ).flatMap((octave) =>
@@ -51,7 +52,15 @@ const generateKeyboardKeys = (octaveRange: {
   );
 
   // Add one more key at the end (C of the next octave)
-  return [...keys, { note: `C${octaveRange.max + 1}`, isSharp: false }];
+  const endKey = { note: `C${octaveRange.max + 1}`, isSharp: false };
+
+  // Add 7 extra keys at the beginning (F through B of the previous octave)
+  const extraKeys = OCTAVE_NOTES.slice(5, 12).map((key) => ({
+    note: `${key.note}${octaveRange.min - 1}`,
+    isSharp: key.isSharp,
+  }));
+
+  return [...extraKeys, ...mainKeys, endKey];
 };
 
 const WhiteKey = React.memo(

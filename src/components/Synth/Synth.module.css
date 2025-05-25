@@ -125,9 +125,4 @@
 .keyRow {
   display: flex;
   overflow: clip;
-  /* background: linear-gradient(
-    180deg,
-    hsl(217deg 50% 20%) 98%,
-    hsl(217deg 50% 8%) 100%
-  ); */
 }
