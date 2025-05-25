@@ -4,6 +4,7 @@ export class NoiseGenerator {
   private whiteNoiseBuffer: AudioBuffer;
   private pinkNoiseBuffer: AudioBuffer;
   private gainNode: GainNode;
+  private boostGainNode: GainNode;
   private filterNode: BiquadFilterNode;
   private currentSource: AudioBufferSourceNode | null;
   private isPlaying: boolean;
@@ -20,6 +21,7 @@ export class NoiseGenerator {
     this.whiteNoiseBuffer = this.createWhiteNoiseBuffer();
     this.pinkNoiseBuffer = this.createPinkNoiseBuffer();
     this.gainNode = context.createGain();
+    this.boostGainNode = context.createGain();
     this.filterNode = context.createBiquadFilter();
     this.currentSource = null;
     this.isPlaying = false;
@@ -35,9 +37,13 @@ export class NoiseGenerator {
     this.filterNode.frequency.value = this.tone;
     this.filterNode.Q.value = 0.7;
 
+    // Set boost gain to 16x (24dB)
+    this.boostGainNode.gain.value = 16;
+
     // Connect nodes
     this.filterNode.connect(this.gainNode);
-    this.gainNode.connect(context.destination);
+    this.gainNode.connect(this.boostGainNode);
+    this.boostGainNode.connect(context.destination);
   }
 
   private createWhiteNoiseBuffer(): AudioBuffer {
