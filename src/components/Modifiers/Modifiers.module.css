@@ -3,9 +3,13 @@
   background-color: hsl(0deg 0% 100% / 10%);
   color: var(--color-text-primary);
   font-size: var(--font-size-md);
-  transform: rotate(180deg);
-  writing-mode: vertical-rl;
-  text-orientation: sideways;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  width: 1rem;
+  word-break: break-all;
   height: 72px;
   text-align: center;
   text-transform: uppercase;
