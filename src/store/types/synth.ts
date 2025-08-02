@@ -17,7 +17,6 @@ export type SynthState = {
   pitchWheel: number;
   modWheel: number;
   octave: number;
-  modMix: number;
   currentOctave: number;
   glide: number;
 
@@ -102,7 +101,6 @@ export type SynthActions = {
   setPitchWheel: (value: number) => void;
   setModWheel: (value: number) => void;
   setOctave: (value: number) => void;
-  setModMix: (value: number) => void;
   setCurrentOctave: (value: number) => void;
   setGlide: (value: number) => void;
   updateOscillator: (

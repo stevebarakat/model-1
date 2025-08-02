@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState, useCallback } from "react";
 import styles from "./Knob.module.css";
 
 type KnobProps = {
-  value: number;
+  value: number | undefined;
   min: number;
   max: number;
   step?: number;
@@ -39,11 +39,16 @@ function getRotation(
 }
 
 function getDisplayValue(
-  value: number,
+  value: number | undefined,
   step: number,
   unit: string,
   valueLabels?: Record<number, string | React.ReactElement>
 ): string | React.ReactElement {
+  // Safety check for undefined value
+  if (value === undefined || value === null) {
+    return "0" + (unit ? ` ${unit}` : "");
+  }
+
   return (
     valueLabels?.[Math.round(value)] ??
     value.toFixed(step >= 1 ? 0 : 2) + (unit ? ` ${unit}` : "")
@@ -68,29 +73,34 @@ function Knob({
   const [startY, setStartY] = useState(0);
   const [startValue, setStartValue] = useState(0);
 
-  const rotation = getRotation(value, min, max, logarithmic);
-  const displayValue = getDisplayValue(value, step, unit, valueLabels);
+  // Safety check for undefined value
+  const safeValue = value ?? 0;
+  const safeMin = min ?? 0;
+  const safeMax = max ?? 100;
+
+  const rotation = getRotation(safeValue, safeMin, safeMax, logarithmic);
+  const displayValue = getDisplayValue(safeValue, step, unit, valueLabels);
   const ariaValueText =
     typeof displayValue === "string"
       ? displayValue
-      : value.toFixed(step >= 1 ? 0 : 2) + (unit ? ` ${unit}` : "");
+      : (safeValue ?? 0).toFixed(step >= 1 ? 0 : 2) + (unit ? ` ${unit}` : "");
 
   function handleMouseDown(e: React.MouseEvent): void {
     setIsDragging(true);
     setStartY(e.clientY);
-    setStartValue(value);
+    setStartValue(safeValue);
   }
 
   const handleMouseMove = useCallback(
     (e: MousePosition): void => {
       const sensitivity = 1.0;
       const deltaY = (startY - e.clientY) * sensitivity;
-      const range = max - min;
+      const range = safeMax - safeMin;
       let newValue;
 
       if (logarithmic) {
-        const logMin = Math.log(min);
-        const logMax = Math.log(max);
+        const logMin = Math.log(safeMin);
+        const logMax = Math.log(safeMax);
         const logRange = logMax - logMin;
         const logStartValue = Math.log(startValue);
         const logDelta = (deltaY / 100) * logRange;
@@ -101,8 +111,8 @@ function Knob({
         newValue = Math.exp(logNewValue);
       } else {
         newValue = Math.min(
-          max,
-          Math.max(min, startValue + (deltaY / 100) * range)
+          safeMax,
+          Math.max(safeMin, startValue + (deltaY / 100) * range)
         );
       }
 
@@ -111,7 +121,7 @@ function Knob({
       newValue = steps * step;
       onChange(Number(newValue.toFixed(step >= 1 ? 0 : 2)));
     },
-    [min, max, startY, startValue, onChange, logarithmic, step]
+    [safeMin, safeMax, startY, startValue, onChange, logarithmic, step]
   );
 
   const handleKeyDown = useCallback(
@@ -122,25 +132,27 @@ function Knob({
       const multiplier = isShiftPressed ? 10 : 1;
       const stepSize = step * multiplier;
 
-      let newValue = value;
+      let newValue = safeValue;
 
       switch (e.key) {
         case "ArrowUp":
         case "ArrowRight":
-          newValue = Math.min(max, value + stepSize);
+          newValue = Math.min(safeMax, safeValue + stepSize);
           break;
         case "ArrowDown":
         case "ArrowLeft":
-          newValue = Math.max(min, value - stepSize);
+          newValue = Math.max(safeMin, safeValue - stepSize);
           break;
         default:
           return;
       }
 
-      setIsKeyboardActive(true);
-      onChange(Number(newValue.toFixed(2)));
+      // Round to the nearest step
+      const steps = Math.round(newValue / step);
+      newValue = steps * step;
+      onChange(Number(newValue.toFixed(step >= 1 ? 0 : 2)));
     },
-    [value, min, max, step, onChange]
+    [safeValue, safeMin, safeMax, step, onChange]
   );
 
   useEffect(() => {

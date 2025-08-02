@@ -24,7 +24,6 @@ export function createInitialState(): Omit<
     pitchWheel: 50,
     modWheel: 50,
     octave: 0,
-    modMix: 50,
     currentOctave: 4,
     glide: 0,
     arpeggiator: {

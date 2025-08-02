@@ -7,6 +7,7 @@ import {
 } from "../../synth/types";
 import ArrowKnob from "../ArrowKnob";
 import { WAVEFORM_ICONS } from "../Modifiers/constants";
+import { useSynthSelectors } from "@/store/synthStore";
 import styles from "./OscillatorBank.module.css";
 
 // Constants for mapping values
@@ -48,7 +49,76 @@ function valueToWaveform(value: number): OscillatorType {
   return WAVEFORMS[Math.max(0, Math.min(WAVEFORMS.length - 1, index))];
 }
 
-// Component for individual oscillator row
+// Optimized individual oscillator component using selectors
+function OptimizedOscillatorControls({ id }: { id: 1 | 2 | 3 }) {
+  const oscillator = useSynthSelectors.useOscillator(id);
+  const setOscillator = useSynthSelectors.useSetOscillator();
+
+  // Safety check for undefined oscillator
+  if (!oscillator) {
+    return <div>Loading oscillator {id}...</div>;
+  }
+
+  const handleChange = (
+    param: keyof OscillatorSettings,
+    value: OscillatorSettings[keyof OscillatorSettings]
+  ) => {
+    setOscillator(id, { ...oscillator, [param]: value });
+  };
+
+  return (
+    <div className={styles.row}>
+      <div className={styles.screwTopLeft} />
+      <div className={styles.screwTopRight} />
+      <div className={styles.screwBottomLeft} />
+      <div className={styles.screwBottomRight} />
+      <ArrowKnob
+        value={rangeToValue(oscillator.range)}
+        min={0}
+        max={4}
+        step={1}
+        valueLabels={{
+          0: "32 '",
+          1: "16 '",
+          2: "8 '",
+          3: "4 '",
+          4: "2 '",
+        }}
+        onChange={(value) => handleChange("range", valueToRange(value))}
+      />
+      <Knob
+        size="large"
+        value={oscillator.frequency ?? 0}
+        min={-12}
+        max={12}
+        step={0.1}
+        label="Freq"
+        unit="st"
+        onChange={(value) => handleChange("frequency", value)}
+      />
+      <Knob
+        size="large"
+        value={oscillator.detune ?? 0}
+        min={-50}
+        max={50}
+        step={1}
+        label="Detune"
+        unit="ct"
+        onChange={(value) => handleChange("detune", value)}
+      />
+      <ArrowKnob
+        value={waveformToValue(oscillator.waveform ?? "sine")}
+        min={0}
+        max={3}
+        step={1}
+        valueLabels={WAVEFORM_ICONS}
+        onChange={(value) => handleChange("waveform", valueToWaveform(value))}
+      />
+    </div>
+  );
+}
+
+// Legacy component for individual oscillator row (kept for backward compatibility)
 function OscillatorControls({
   osc,
   onChange,
@@ -111,6 +181,18 @@ function OscillatorControls({
   );
 }
 
+// Optimized OscillatorBank using individual optimized components
+function OptimizedOscillatorBank() {
+  return (
+    <div>
+      <OptimizedOscillatorControls id={1} />
+      <OptimizedOscillatorControls id={2} />
+      <OptimizedOscillatorControls id={3} />
+    </div>
+  );
+}
+
+// Legacy OscillatorBank component (kept for backward compatibility)
 function OscillatorBank({
   osc1,
   osc2,
@@ -128,6 +210,7 @@ function OscillatorBank({
   );
 }
 
-export default OscillatorBank;
+// Export the optimized version as default
+export default OptimizedOscillatorBank;
 
 export type { OscillatorBankProps };

@@ -14,12 +14,13 @@
       "stylelint-order",
       "stylelint-config-standard",
       "react-router-dom",
-      "zustand",
+      "xstate",
       "zod"
     ]
   },
   "documentation": {
-    "includeComments": false
+    "includeComments": false,
+    "preferDescriptiveFunctionNames": true
   },
   "typescript": {
     "preferTypes": true,
@@ -44,5 +45,11 @@
       "maxFunctionLines": 50,
       "preferPureFunctions": true
     }
+  },
+  "structure": {
+    "colocateFiles": true,
+    "colocationDescription": "Whenever possible, place related files (component, styles, tests, hooks, types, audio, store, utils, etc.) in the same directory to improve discoverability and maintainability.",
+    "indexFileForComponents": true,
+    "indexFileDescription": "Each component directory should include an index.ts file that re-exports the default component (e.g., export { default } from './ComponentName';) to enable cleaner and more consistent imports."
   }
 }

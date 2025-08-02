@@ -5,38 +5,40 @@ import { createSynth } from "@/synth/WebAudioSynth";
 import SynthControls from "@/components/SynthControls";
 import Keyboard from "@/components/Keyboard";
 import SidePanel from "@/components/SidePanel";
-import { useSynthStore } from "@/store/synthStore";
+import { useSynthSelectors } from "@/store/synthStore";
 import styles from "./Synth.module.css";
 import RightPanel from "@/components/RightPanel";
 
 function Synth() {
-  const {
-    activeKeys,
-    setActiveKeys,
-    pitchWheel,
-    setPitchWheel,
-    modWheel,
-    setModWheel,
-    currentOctave,
-    setCurrentOctave,
-    glide,
-    setGlide,
-    effects,
-    updateEffects,
-    oscillators,
-    setOscillator,
-    mixer,
-    updateMixer,
-    modifiers,
-    updateModifiers,
-    noise,
-    updateNoise,
-    octave,
-    setOctave,
-    setKeyboardRef,
-    arpeggiator,
-    updateArpeggiator,
-  } = useSynthStore();
+  // Use optimized selectors to prevent unnecessary re-renders
+  const activeKeys = useSynthSelectors.useActiveKeys();
+  const setActiveKeys = useSynthSelectors.useSetActiveKeys();
+  const currentOctave = useSynthSelectors.useCurrentOctave();
+  const setCurrentOctave = useSynthSelectors.useSetCurrentOctave();
+
+  const pitchWheel = useSynthSelectors.usePitchWheel();
+  const setPitchWheel = useSynthSelectors.useSetPitchWheel();
+  const modWheel = useSynthSelectors.useModWheel();
+  const setModWheel = useSynthSelectors.useSetModWheel();
+  const octave = useSynthSelectors.useOctave();
+  const setOctave = useSynthSelectors.useSetOctave();
+  const glide = useSynthSelectors.useGlide();
+  const setGlide = useSynthSelectors.useSetGlide();
+
+  const oscillators = useSynthSelectors.useOscillators();
+  const mixer = useSynthSelectors.useMixer();
+  const noise = useSynthSelectors.useNoise();
+  const modifiers = useSynthSelectors.useModifiers();
+  const effects = useSynthSelectors.useEffects();
+  const arpeggiator = useSynthSelectors.useArpeggiator();
+
+  const setKeyboardRef = useSynthSelectors.useSetKeyboardRef();
+  const updateEffects = useSynthSelectors.useUpdateEffects();
+  const setOscillator = useSynthSelectors.useSetOscillator();
+  const updateMixer = useSynthSelectors.useUpdateMixer();
+  const updateModifiers = useSynthSelectors.useUpdateModifiers();
+  const updateNoise = useSynthSelectors.useUpdateNoise();
+  const updateArpeggiator = useSynthSelectors.useUpdateArpeggiator();
 
   const keyboardRef = useRef<{
     synth: Awaited<ReturnType<typeof createSynth>> | null;
@@ -66,7 +68,14 @@ function Synth() {
 
   // Update synth settings when keyboard ref is available
   useEffect(() => {
-    if (keyboardRef.current.synth) {
+    if (
+      keyboardRef.current.synth &&
+      oscillators &&
+      mixer &&
+      modifiers &&
+      effects &&
+      noise
+    ) {
       keyboardRef.current.synth.updateSettings({
         oscillators: [
           {
@@ -166,10 +175,7 @@ function Synth() {
             pitchWheel={pitchWheel}
             modWheel={modWheel}
             onPitchWheelChange={setPitchWheel}
-            onModWheelChange={(value) => {
-              setModWheel(value);
-              updateMixer({ modMix: value });
-            }}
+            onModWheelChange={setModWheel}
             onPitchWheelReset={() => setPitchWheel(50)}
           />
 

@@ -244,50 +244,7 @@ function SynthControls({
           onModifiersChange({ lfo: { ...modifiers.lfo, routing: value } })
         }
       />
-      <Effects
-        reverbAmount={effects.reverb.amount}
-        reverbDecay={effects.reverb.decay}
-        reverbEq={effects.reverb.eq}
-        delayAmount={effects.delay.amount}
-        delayTime={effects.delay.time}
-        delayFeedback={effects.delay.feedback}
-        distortionAmount={effects.distortion.outputGain}
-        distortionLowEQ={effects.distortion.lowEQ}
-        distortionHighEQ={effects.distortion.highEQ}
-        onReverbAmountChange={(value) =>
-          onEffectsChange({ reverb: { ...effects.reverb, amount: value } })
-        }
-        onReverbDecayChange={(value) =>
-          onEffectsChange({ reverb: { ...effects.reverb, decay: value } })
-        }
-        onReverbEqChange={(value) =>
-          onEffectsChange({ reverb: { ...effects.reverb, eq: value } })
-        }
-        onDelayAmountChange={(value) =>
-          onEffectsChange({ delay: { ...effects.delay, amount: value } })
-        }
-        onDelayTimeChange={(value) =>
-          onEffectsChange({ delay: { ...effects.delay, time: value } })
-        }
-        onDelayFeedbackChange={(value) =>
-          onEffectsChange({ delay: { ...effects.delay, feedback: value } })
-        }
-        onDistortionAmountChange={(value) =>
-          onEffectsChange({
-            distortion: { ...effects.distortion, outputGain: value },
-          })
-        }
-        onDistortionLowEQChange={(value) =>
-          onEffectsChange({
-            distortion: { ...effects.distortion, lowEQ: value },
-          })
-        }
-        onDistortionHighEQChange={(value) =>
-          onEffectsChange({
-            distortion: { ...effects.distortion, highEQ: value },
-          })
-        }
-      />
+      <Effects />
       <Spacer />
     </>
   );

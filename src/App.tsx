@@ -1,4 +1,4 @@
-import { useSynthStore } from "./store/synthStore";
+import { useSynthSelectors } from "./store/synthStore";
 import styles from "./styles/App.module.css";
 import "./styles/variables.css";
 import PresetSelector from "./components/PresetSelector/PresetSelector";
@@ -6,16 +6,14 @@ import { presets } from "./synth/presets";
 import Synth from "./components/Synth/Synth";
 
 function App() {
-  const {
-    setOctave,
-    setGlide,
-    updateMixer,
-    setModWheel,
-    setOscillator,
-    updateNoise,
-    updateModifiers,
-    updateEffects,
-  } = useSynthStore();
+  const setOctave = useSynthSelectors.useSetOctave();
+  const setGlide = useSynthSelectors.useSetGlide();
+  const updateMixer = useSynthSelectors.useUpdateMixer();
+  const setModWheel = useSynthSelectors.useSetModWheel();
+  const setOscillator = useSynthSelectors.useSetOscillator();
+  const updateNoise = useSynthSelectors.useUpdateNoise();
+  const updateModifiers = useSynthSelectors.useUpdateModifiers();
+  const updateEffects = useSynthSelectors.useUpdateEffects();
 
   const handlePresetSelect = (presetName: string) => {
     const preset = presets[presetName];
